@@ -6,6 +6,8 @@ This repository attempts to streamline the process of creating and running brows
 - Host demos of experiments to showcase the capabilities of the template and provide examples for customization.
 - Highlight resources and tutorials for learning more about experiment design and coding and accelerating the development process.
 
+Check our [experiments directory](experiments/README) for a list of examples of experiments that can be previewed.
+
 ## Overview
 
 You can think of this repository as a thin guide and set of examples for getting started using two libraries to create and run experiments online. The two libraries are jsPsych and JATOS.
@@ -14,10 +16,6 @@ You can think of this repository as a thin guide and set of examples for getting
 - [JATOS](https://www.jatos.org/): If jsPsych is for creating experiments, JATOS is for running them. JATOS is a server that runs on your computer or on a server. It manages the participants, the study assets, and the data. It also provides a web-based user interface for researchers to manage their studies and participants.
 
 It's useful to read the documentation and tutorials for both libraries to understand how they work and how to use them. They are probably higher quality and more up-to-date than the information provided here.
-
-Backend and frontend are terms used to distinguish between the server side and the client side of a website.
-The server side is the backend, which is responsible for managing data and requests from the client side. The client side is the frontend, which is responsible for displaying the data and interacting with the user.
-We use jsPsych to manage the client side / frontend of the experiment and JATOS to manage the server side / backend of the experiment.
 
 ## Uses for Experienced Developers
 
@@ -29,7 +27,7 @@ If you already know how to create experiments using jsPsych and how to run them 
 
 - **Basic and detailed experiment implementation archive.** We provide basic examples of experiments that can be run using Github Pages or JATOS or Live Server. These examples can be used as a starting point for creating your own experiments. We also provide more detailed examples that show how to configure experiments to run in different conditions or with different sequences of stimuli.
 
-## Some Basic Concepts
+## Some Basics
 
 ### HTML, CSS, and JavaScript
 
@@ -47,7 +45,7 @@ You are probably used to collaborating on documents using Google Docs or Microso
 
 At the same time, it has some limitations that make it different from Google Docs. For example, you can't edit the same file at the same time as someone else. You have to take turns. This is because Git is designed to prevent conflicts between different versions of the same file, as well as to track who made what changes and when so that you can revert to or just look at a previous version if necessary.
 
-Github is a platform that hosts Git repositories. It provides a web-based interface for managing your repositories, as well as tools for collaboration, like issues, pull requests, and project boards. It also provides a way to host static websites, like this one.
+Github is a platform that hosts Git repositories. It provides a web-based interface for managing your repositories, as well as tools for collaboration, like issues, pull requests, and project boards. It also provides a way to host static websites, including demo versions of your experiments.
 
 ### Recommended Tools and Software
 
