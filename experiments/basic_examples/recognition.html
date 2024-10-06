@@ -3,6 +3,12 @@
   <head>
     <title>Recognition Memory Experiment</title>
     <script src="jatos.js"></script> 
+    <script>
+      // Since JATOS uses root-relative pathing, we need to set the base URL for local testing
+      const base = document.createElement('base');
+      base.href = typeof jatos !== 'undefined' ? '.' : '../../'; 
+      document.head.appendChild(base);
+    </script>
     <!-- Include jsPsych library and plugins using local paths -->
     <script src="../../core/jspsych/jspsych.js"></script>
     <script src="../../core/jspsych/plugins/plugin-html-keyboard-response.js"></script>
