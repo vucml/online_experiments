@@ -1,4 +1,4 @@
-# online_experiments2
+# online_experiments
 
 This repository attempts to streamline the process of creating and running browser-based experiments using JavaScript, HTML, and CSS. We try to:
 
