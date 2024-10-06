@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Recognition Memory Experiment</title>
+    <script src="jatos.js"></script> 
+    <!-- Include jsPsych library and plugins using local paths -->
+    <script src="../../core/jspsych/jspsych.js"></script>
+    <script src="../../core/jspsych/plugins/plugin-html-keyboard-response.js"></script>
+    <script src="../../core/jspsych/plugins/plugin-instructions.js"></script>
+    <script src="../../core/jspsych/plugins/plugin-fullscreen.js"></script>
+    <script src="../../core/jspsych/plugins/plugin-call-function.js"></script>
+    <script src="../../core/jspsych/plugins/plugin-html-button-response.js"></script>
+    <!-- Include custom plugins -->
+    <script src="../../core/jspsych/custom-plugins/jspsych-fixation.js"></script>
+    <script src="../../core/jspsych/custom-plugins/jspsych-item-presentation.js"></script>
+    <!-- Include CSS files -->
+    <link href="../../core/jspsych/css/jspsych.css" rel="stylesheet" type="text/css">
+    <link href="../../core/jspsych/css/lpl-recall-recog-probe.css" rel="stylesheet" type="text/css">
+    <script src="../../core/init_experiment.js"></script>
+  </head>
+  <body></body>
+  <script>
+    /* Configuration Section */
+    const config = {
+      subjectID: 'sub-101', // Unique subject identifier
+      wordList: [
+        'apple', 'banana', 'orange', 'grape', 'pear',
+        'peach', 'plum', 'kiwi', 'mango', 'melon',
+        'lemon', 'lime', 'cherry', 'strawberry', 'blueberry',
+        'pineapple', 'papaya', 'apricot', 'blackberry', 'cranberry'
+      ],
+      distractorList: [
+        'car', 'house', 'book', 'chair', 'computer',
+        'phone', 'table', 'lamp', 'shirt', 'pen',
+        'dog', 'cat', 'bird', 'tree', 'flower',
+        'river', 'mountain', 'cloud', 'sun', 'moon'
+      ],
+      numTrials: 2,
+      numWordsPerTrial: 10,
+      numDistractorsPerTrial: 10,
+      wordTime: 1000,          // Time to display each word (ms)
+      interWordTime: 0,        // Time between words (ms)
+    };
+
+    // Initialize jsPsych
+    var jsPsych = initJsPsych({
+      on_finish: function() {
+        // Process data to generate CSV
+        var allData = jsPsych.data.get().values();
+        var csvRows = [];
+        var headers = ['subject', 'list', 'trial_type', 'position', 'item', 'response', 'correct'];
+        csvRows.push(headers.join(','));
+
+        for (var i = 0; i < allData.length; i++) {
+          var trial = allData[i];
+
+          if (trial.trial_type === 'item-presentation') {
+            // Study events
+            var row = [
+              trial.subject,
+              trial.list,
+              'study',
+              trial.position,
+              trial.item,
+              '',
+              ''
+            ];
+            csvRows.push(row.join(','));
+          } else if (trial.trial_type === 'html-button-response' && trial.phase === 'test') {
+            // Recognition test events
+            var position = trial.position;
+            var item = trial.item;
+            var response = trial.response_label;
+            var correct = trial.correct;
+            var row = [
+              trial.subject,
+              trial.list,
+              'test',
+              position,
+              item,
+              response,
+              correct
+            ];
+            csvRows.push(row.join(','));
+          }
+        }
+
+        var csvString = csvRows.join('\n');
+        // Create a Blob from the CSV string
+        var blob = new Blob([csvString], { type: 'text/csv' });
+        // Generate a URL for the Blob
+        var url = URL.createObjectURL(blob);
+        // Create a download link
+        var displayElement = jsPsych.getDisplayElement();
+        displayElement.innerHTML = '<p>Your data is ready for download.</p>';
+        var downloadButton = document.createElement('a');
+        downloadButton.href = url;
+        downloadButton.download = 'data.csv';
+        downloadButton.textContent = 'Download CSV Data';
+        downloadButton.style.fontSize = '20px';
+        downloadButton.style.textDecoration = 'none';
+        downloadButton.style.color = 'white';
+        downloadButton.style.backgroundColor = '#1a73e8';
+        downloadButton.style.padding = '10px 20px';
+        downloadButton.style.borderRadius = '5px';
+        downloadButton.style.display = 'inline-block';
+        downloadButton.style.marginTop = '20px';
+        displayElement.appendChild(downloadButton);
+      }
+    });
+
+    var timeline = [];
+
+    // Cursor control functions
+    var cursor_off = {
+      type: jsPsychCallFunction,
+      func: function() {
+        document.body.style.cursor = "none";
+      }
+    };
+
+    var cursor_on = {
+      type: jsPsychCallFunction,
+      func: function() {
+        document.body.style.cursor = "auto";
+      }
+    };
+
+    // Fullscreen prompt
+    const fullscreen = {
+      type: jsPsychFullscreen,
+      message: '<p><strong>Full Screen Mode</strong></p><p>Press the button below to switch to full screen mode.</p>',
+      button_label: 'Enter Full Screen',
+      fullscreen_mode: true
+    };
+    timeline.push(fullscreen);
+
+    // Instructions
+    const instructions = {
+      type: jsPsychInstructions,
+      pages: [
+        `<p>Welcome to the experiment!</p><p>In this experiment, you'll be asked to study and recognize words.</p><p>Press Next when you are ready to proceed.</p>`,
+        '<p>During the study phase, you will see a series of words presented one at a time.</p><p>Your goal is to remember these words for a later memory test.</p>',
+        '<p>After the list is presented, you will be shown words one at a time.</p><p>Your task is to indicate whether each word is <strong>"Old"</strong> (studied) or <strong>"New"</strong> (unstudied).</p>',
+        '<p>Press Next when you are ready to begin the experiment.</p>',
+      ],
+      show_clickable_nav: true,
+      button_label_previous: 'Previous',
+      button_label_next: 'Next'
+    };
+    timeline.push(instructions);
+
+    // Start of the experiment
+    timeline.push({
+      type: jsPsychInstructions,
+      pages: [
+        '<p>END OF INSTRUCTIONS.</p><p>When you\'re ready, press Next to begin the experiment.</p>',
+      ],
+      show_clickable_nav: true,
+      button_label_next: 'Next'
+    });
+
+    // Experiment Trials
+    for (let trial = 0; trial < config.numTrials; trial++) {
+      let listNumber = trial + 1;
+
+      // Randomly select words for this trial
+      let trialWords = jsPsych.randomization.sampleWithoutReplacement(config.wordList, config.numWordsPerTrial);
+
+      timeline.push(cursor_off);
+
+      // Fixation cross
+      timeline.push({
+        type: jsPsychFixation,
+        fixation: '+',
+        duration: 500
+      });
+
+      // Study Phase
+      for (let i = 0; i < trialWords.length; i++) {
+        let word = trialWords[i];
+        let position = i + 1;
+
+        let studyTrial = {
+          type: jsPsychItemPresentation,
+          word_list: [word],
+          category_list: [''],
+          word_time: config.wordTime,
+          inter_word_time: config.interWordTime,
+          data: {
+            subject: config.subjectID,
+            list: listNumber,
+            trial_type: 'study',
+            position: position,
+            item: word
+          }
+        };
+        timeline.push(studyTrial);
+      }
+
+      timeline.push(cursor_on);
+
+      // Instructions before Test Phase (updated to be concise)
+      timeline.push({
+        type: jsPsychInstructions,
+        pages: [
+          `<p>You have completed the study phase for list ${listNumber}.</p>
+          <p>In the test phase, you will see words one at a time.</p>
+          <p>If you studied the word, press <strong>"Old"</strong>.</p>
+          <p>If the word is unstudied, press <strong>"New"</strong>.</p>`
+        ],
+        show_clickable_nav: true,
+        button_label_next: 'Next'
+      });
+
+      // Test Phase (Recognition)
+      let distractorWords = jsPsych.randomization.sampleWithoutReplacement(config.distractorList, config.numDistractorsPerTrial);
+      let testWords = jsPsych.randomization.shuffle(trialWords.concat(distractorWords));
+
+      for (let i = 0; i < testWords.length; i++) {
+        let word = testWords[i];
+        let position = i + 1;
+
+        let testTrial = {
+          type: jsPsychHtmlButtonResponse,
+          stimulus: `<p style="font-size: 48px;">${word}</p>`,
+          choices: ['Old', 'New'],
+          data: {
+            subject: config.subjectID,
+            list: listNumber,
+            trial_type: 'test',
+            position: position,
+            item: word,
+            phase: 'test',
+            correct_response: trialWords.includes(word) ? 'Old' : 'New'
+          },
+          on_finish: function(data) {
+            data.response_label = data.response == 0 ? 'Old' : 'New';
+            data.correct = data.response_label === data.correct_response;
+          }
+        };
+        timeline.push(testTrial);
+      }
+
+      // Break between trials or end of experiment message
+      if (trial < config.numTrials - 1) {
+        let breakScreen = {
+          type: jsPsychInstructions,
+          pages: [
+            `<p>You have completed list ${listNumber} of ${config.numTrials}.</p><p>When you're ready for the next list, press Next.</p>`
+          ],
+          show_clickable_nav: true,
+          button_label_next: 'Next'
+        };
+        timeline.push(breakScreen);
+      } else {
+        let endMessage = {
+          type: jsPsychInstructions,
+          pages: [
+            `<p>You have completed the experiment. Thank you for your participation!</p><p>Click Finish to see your data.</p>`
+          ],
+          show_clickable_nav: true,
+          button_label_next: 'Finish'
+        };
+        timeline.push(endMessage);
+      }
+    }
+
+    // Run the experiment
+    initializeExperiment(timeline);
+  </script>
+</html>

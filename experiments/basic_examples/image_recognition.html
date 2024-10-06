@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Recognition Memory Experiment with Images</title>
+    <script src="jatos.js"></script> 
+    <!-- Include jsPsych library and plugins using local paths -->
+    <script src="../../core/jspsych/jspsych.js"></script>
+    <script src="../../core/jspsych/plugins/plugin-image-keyboard-response.js"></script>
+    <script src="../../core/jspsych/plugins/plugin-image-button-response.js"></script>
+    <script src="../../core/jspsych/plugins/plugin-instructions.js"></script>
+    <script src="../../core/jspsych/plugins/plugin-fullscreen.js"></script>
+    <script src="../../core/jspsych/plugins/plugin-call-function.js"></script>
+    <!-- Include custom plugins -->
+    <script src="../../core/jspsych/custom-plugins/jspsych-fixation.js"></script>
+    <!-- Include CSS files -->
+    <link href="../../core/jspsych/css/jspsych.css" rel="stylesheet" type="text/css">
+    <!-- Include your custom CSS if needed -->
+    <link href="../../core/jspsych/css/lpl-recall-recog-probe.css" rel="stylesheet" type="text/css">
+    <script src="../../core/init_experiment.js"></script>
+  </head>
+  <body></body>
+  <script>
+    /* Configuration Section */
+    const config = {
+      subjectID: 'sub-101', // Unique subject identifier
+      numTrials: 2,
+      numImagesPerTrial: 6,
+      numDistractorsPerTrial: 6,
+      imageTime: 1000,          // Time to display each image (ms)
+      interImageTime: 500,      // Time between images (ms)
+    };
+
+    // Create the full image pool
+    const allImages = [];
+    for (let i = 1; i <= 12; i++) {
+      allImages.push('img/' + i + '.gif'); // Adjust extension if necessary
+    }
+
+    // Initialize jsPsych
+    var jsPsych = initJsPsych({
+      on_finish: function() {
+        // Process data to generate CSV
+        var allData = jsPsych.data.get().values();
+        var csvRows = [];
+        var headers = ['subject', 'list', 'trial_type', 'position', 'item', 'response', 'correct'];
+        csvRows.push(headers.join(','));
+
+        for (var i = 0; i < allData.length; i++) {
+          var trial = allData[i];
+
+          if (trial.trial_type === 'image-keyboard-response' && trial.phase === 'study') {
+            // Study events
+            var row = [
+              trial.subject,
+              trial.list,
+              'study',
+              trial.position,
+              trial.item,
+              '',
+              ''
+            ];
+            csvRows.push(row.join(','));
+          } else if (trial.trial_type === 'image-button-response' && trial.phase === 'test') {
+            // Recognition test events
+            var position = trial.position;
+            var item = trial.item;
+            var response = trial.response_label;
+            var correct = trial.correct;
+            var row = [
+              trial.subject,
+              trial.list,
+              'test',
+              position,
+              item,
+              response,
+              correct
+            ];
+            csvRows.push(row.join(','));
+          }
+        }
+
+        var csvString = csvRows.join('\n');
+        // Create a Blob from the CSV string
+        var blob = new Blob([csvString], { type: 'text/csv' });
+        // Generate a URL for the Blob
+        var url = URL.createObjectURL(blob);
+        // Create a download link
+        var displayElement = jsPsych.getDisplayElement();
+        displayElement.innerHTML = '<p>Your data is ready for download.</p>';
+        var downloadButton = document.createElement('a');
+        downloadButton.href = url;
+        downloadButton.download = 'data.csv';
+        downloadButton.textContent = 'Download CSV Data';
+        // Styling the button (optional)
+        downloadButton.style.fontSize = '20px';
+        downloadButton.style.textDecoration = 'none';
+        downloadButton.style.color = 'white';
+        downloadButton.style.backgroundColor = '#1a73e8';
+        downloadButton.style.padding = '10px 20px';
+        downloadButton.style.borderRadius = '5px';
+        downloadButton.style.display = 'inline-block';
+        downloadButton.style.marginTop = '20px';
+        displayElement.appendChild(downloadButton);
+      }
+    });
+
+    var timeline = [];
+
+    // Cursor control functions
+    var cursor_off = {
+      type: jsPsychCallFunction,
+      func: function() {
+        document.body.style.cursor = "none";
+      }
+    };
+
+    var cursor_on = {
+      type: jsPsychCallFunction,
+      func: function() {
+        document.body.style.cursor = "auto";
+      }
+    };
+
+    // Fullscreen prompt
+    const fullscreen = {
+      type: jsPsychFullscreen,
+      message: '<p><strong>Full Screen Mode</strong></p><p>Press the button below to switch to full screen mode.</p>',
+      button_label: 'Enter Full Screen',
+      fullscreen_mode: true
+    };
+    timeline.push(fullscreen);
+
+    // Instructions
+    const instructions = {
+      type: jsPsychInstructions,
+      pages: [
+        `<p>Welcome to the experiment!</p><p>In this experiment, you'll be asked to study and recognize images.</p><p>Press Next when you are ready to proceed.</p>`,
+        '<p>During the study phase, you will see a series of images presented one at a time.</p><p>Your goal is to remember these images for a later memory test.</p>',
+        '<p>After the list is presented, you will be shown images one at a time.</p><p>Your task is to indicate whether each image is <strong>"Old"</strong> (studied) or <strong>"New"</strong> (unstudied).</p>',
+        '<p>Press Next when you are ready to begin the experiment.</p>',
+      ],
+      show_clickable_nav: true,
+      button_label_previous: 'Previous',
+      button_label_next: 'Next'
+    };
+    timeline.push(instructions);
+
+    // Start of the experiment
+    timeline.push({
+      type: jsPsychInstructions,
+      pages: [
+        '<p>END OF INSTRUCTIONS.</p><p>When you\'re ready, press Next to begin the experiment.</p>',
+      ],
+      show_clickable_nav: true,
+      button_label_next: 'Next'
+    });
+
+    // Experiment Trials
+    for (let trial = 0; trial < config.numTrials; trial++) {
+      let listNumber = trial + 1;
+
+      // Randomly select images for this trial
+      let trialImages = jsPsych.randomization.sampleWithoutReplacement(allImages, config.numImagesPerTrial);
+
+      // Create a list of distractor images by selecting from images not in trialImages
+      let remainingImages = allImages.filter(function(image) {
+        return !trialImages.includes(image);
+      });
+
+      let distractorImages = jsPsych.randomization.sampleWithoutReplacement(remainingImages, config.numDistractorsPerTrial);
+
+      timeline.push(cursor_off);
+
+      // Fixation cross
+      // Fixation cross
+      timeline.push({
+        type: jsPsychFixation,
+        fixation: '+',
+        duration: 500
+      });
+      
+      // Study Phase
+      for (let i = 0; i < trialImages.length; i++) {
+        let image = trialImages[i];
+        let position = i + 1;
+
+        let studyTrial = {
+          type: jsPsychImageKeyboardResponse,
+          stimulus: image,
+          choices: "NO_KEYS",
+          trial_duration: config.imageTime,
+          post_trial_gap: config.interImageTime,
+          data: {
+            subject: config.subjectID,
+            list: listNumber,
+            trial_type: 'study',
+            position: position,
+            item: image,
+            phase: 'study'
+          }
+        };
+        timeline.push(studyTrial);
+      }
+
+      timeline.push(cursor_on);
+
+      // Instructions before Test Phase
+      timeline.push({
+        type: jsPsychInstructions,
+        pages: [
+          `<p>You have completed the study phase for list ${listNumber}.</p>
+          <p>In the test phase, you will see images one at a time.</p>
+          <p>If you studied the image, press <strong>"Old"</strong>.</p>
+          <p>If the image is unstudied, press <strong>"New"</strong>.</p>`
+        ],
+        show_clickable_nav: true,
+        button_label_next: 'Next'
+      });
+
+      // Test Phase (Recognition)
+      let testImages = jsPsych.randomization.shuffle(trialImages.concat(distractorImages));
+
+      for (let i = 0; i < testImages.length; i++) {
+        let image = testImages[i];
+        let position = i + 1;
+
+        let testTrial = {
+          type: jsPsychImageButtonResponse,
+          stimulus: image,
+          choices: ['Old', 'New'],
+          data: {
+            subject: config.subjectID,
+            list: listNumber,
+            trial_type: 'test',
+            position: position,
+            item: image,
+            phase: 'test',
+            correct_response: trialImages.includes(image) ? 'Old' : 'New'
+          },
+          on_finish: function(data) {
+            data.response_label = data.response == 0 ? 'Old' : 'New';
+            data.correct = data.response_label === data.correct_response;
+          }
+        };
+        timeline.push(testTrial);
+      }
+
+      // Break between trials or end of experiment message
+      if (trial < config.numTrials - 1) {
+        let breakScreen = {
+          type: jsPsychInstructions,
+          pages: [
+            `<p>You have completed list ${listNumber} of ${config.numTrials}.</p><p>When you're ready for the next list, press Next.</p>`
+          ],
+          show_clickable_nav: true,
+          button_label_next: 'Next'
+        };
+        timeline.push(breakScreen);
+      } else {
+        let endMessage = {
+          type: jsPsychInstructions,
+          pages: [
+            `<p>You have completed the experiment. Thank you for your participation!</p><p>Click Finish to see your data.</p>`
+          ],
+          show_clickable_nav: true,
+          button_label_next: 'Finish'
+        };
+        timeline.push(endMessage);
+      }
+    }
+
+    // Run the experiment
+    initializeExperiment(timeline);
+  </script>
+</html>

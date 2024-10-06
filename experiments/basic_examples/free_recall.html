@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Free Recall Experiment</title>
+    <script src="jatos.js"></script> 
+    <!-- Include jsPsych library and plugins using local paths -->
+    <script src="../../core/jspsych/jspsych.js"></script>
+    <script src="../../core/jspsych/plugins/plugin-html-keyboard-response.js"></script>
+    <script src="../../core/jspsych/plugins/plugin-instructions.js"></script>
+    <script src="../../core/jspsych/plugins/plugin-fullscreen.js"></script>
+    <script src="../../core/jspsych/plugins/plugin-call-function.js"></script>
+    <!-- Include custom plugins -->
+    <script src="../../core/jspsych/custom-plugins/jspsych-free-recall.js"></script>
+    <script src="../../core/jspsych/custom-plugins/jspsych-fixation.js"></script>
+    <script src="../../core/jspsych/custom-plugins/jspsych-item-presentation.js"></script>
+    <!-- Include CSS files -->
+    <link href="../../core/jspsych/css/jspsych.css" rel="stylesheet" type="text/css">
+    <link href="../../core/jspsych/css/lpl-recall-recog-probe.css" rel="stylesheet" type="text/css">
+    <script src="../../core/init_experiment.js"></script>
+  </head>
+  <body></body>
+  <script>
+    /* Configuration Section */
+    const config = {
+      subjectID: 'sub-101', // Unique subject identifier
+      wordList: [
+        'apple', 'banana', 'orange', 'grape', 'pear',
+        'peach', 'plum', 'kiwi', 'mango', 'melon',
+        'lemon', 'lime', 'cherry', 'strawberry', 'blueberry',
+        'pineapple', 'papaya', 'apricot', 'blackberry', 'cranberry'
+      ],
+      numTrials: 2,
+      numWordsPerTrial: 10,
+      wordTime: 1000,          // Time to display each word (ms)
+      interWordTime: 0,        // Time between words (ms)
+      recallTime: 30000        // Time for free recall (ms)
+    };
+
+    // Initialize jsPsych
+    var jsPsych = initJsPsych({
+      on_finish: function() {
+        // Process data to generate CSV
+        var allData = jsPsych.data.get().values();
+        var csvRows = [];
+        var headers = ['subject', 'list', 'trial_type', 'position', 'item'];
+        csvRows.push(headers.join(','));
+
+        for (var i = 0; i < allData.length; i++) {
+          var trial = allData[i];
+
+          if (trial.trial_type === 'item-presentation') {
+            // Study events
+            var row = [
+              trial.subject,
+              trial.list,
+              'study',
+              trial.position,
+              trial.item
+            ];
+            csvRows.push(row.join(','));
+          } else if (trial.trial_type === 'free-recall') {
+            // Recall events
+            var recallWords = trial.recall_words;
+            if (recallWords) {
+              for (var j = 0; j < recallWords.length; j++) {
+                var item = recallWords[j];
+                var position = j + 1;
+                var row = [
+                  trial.subject,
+                  trial.list,
+                  'recall',
+                  position,
+                  item
+                ];
+                csvRows.push(row.join(','));
+              }
+            }
+          }
+        }
+
+        var csvString = csvRows.join('\n');
+        // Create a Blob from the CSV string
+        var blob = new Blob([csvString], { type: 'text/csv' });
+        // Generate a URL for the Blob
+        var url = URL.createObjectURL(blob);
+        // Create a download link
+        var displayElement = jsPsych.getDisplayElement();
+        displayElement.innerHTML = '<p>Your data is ready for download.</p>';
+        var downloadButton = document.createElement('a');
+        downloadButton.href = url;
+        downloadButton.download = 'data.csv';
+        downloadButton.textContent = 'Download CSV Data';
+        downloadButton.style.fontSize = '20px';
+        downloadButton.style.textDecoration = 'none';
+        downloadButton.style.color = 'white';
+        downloadButton.style.backgroundColor = '#1a73e8';
+        downloadButton.style.padding = '10px 20px';
+        downloadButton.style.borderRadius = '5px';
+        downloadButton.style.display = 'inline-block';
+        downloadButton.style.marginTop = '20px';
+        displayElement.appendChild(downloadButton);
+      }
+    });
+
+    var timeline = [];
+
+    // Cursor control functions
+    var cursor_off = {
+      type: jsPsychCallFunction,
+      func: function() {
+        document.body.style.cursor = "none";
+      }
+    };
+
+    var cursor_on = {
+      type: jsPsychCallFunction,
+      func: function() {
+        document.body.style.cursor = "auto";
+      }
+    };
+
+    // Fullscreen prompt
+    const fullscreen = {
+      type: jsPsychFullscreen,
+      message: '<p><strong>Full Screen Mode</strong></p><p>Press the button below to switch to full screen mode.</p>',
+      button_label: 'Enter Full Screen',
+      fullscreen_mode: true
+    };
+    timeline.push(fullscreen);
+
+    // Instructions
+    const instructions = {
+      type: jsPsychInstructions,
+      pages: [
+        `<p>Welcome to the experiment!</p><p>In this experiment, you'll be asked to study and remember words.</p><p>Press Next when you are ready to proceed.</p>`,
+        '<p>During the study period, you will see a series of words presented one at a time.</p><p>Your goal is to remember the words for a later memory test.</p>',
+        '<p>After the list is presented, you will type as many words as you can remember.</p><p>Here\'s what the recall prompt will look like:</p><p style="font-size: 24px;">Recall the items</p><p style="font-size: 48px;">_</p>',
+        '<p>After you type a word, press ENTER to submit it.</p><p>Do your best with spelling, but don\'t worry about minor errors.</p><p>If you make a typo, you can use BACKSPACE to correct it before pressing ENTER.</p>',
+        '<p>You will have a full minute to recall the words. Keep trying until the end of the minute.</p>',
+        '<p>You\'ll get a short break between trials.</p><p>When you\'re ready for the next trial, press Next.</p>',
+      ],
+      show_clickable_nav: true,
+      button_label_previous: 'Previous',
+      button_label_next: 'Next'
+    };
+    timeline.push(instructions);
+
+    // Start of the experiment
+    timeline.push({
+      type: jsPsychInstructions,
+      pages: [
+        '<p>END OF INSTRUCTIONS.</p><p>When you\'re ready, press Next to begin the experiment.</p>',
+      ],
+      show_clickable_nav: true,
+      button_label_next: 'Next'
+    });
+
+    // Experiment Trials
+    for (let trial = 0; trial < config.numTrials; trial++) {
+      let listNumber = trial + 1;
+
+      // Randomly select words for this trial
+      let trialWords = jsPsych.randomization.sampleWithoutReplacement(config.wordList, config.numWordsPerTrial);
+
+      timeline.push(cursor_off);
+
+      // Fixation cross
+      timeline.push({
+        type: jsPsychFixation,
+        fixation: '+',
+        duration: 500
+      });
+
+      // Study Phase
+      for (let i = 0; i < trialWords.length; i++) {
+        let word = trialWords[i];
+        let position = i + 1;
+
+        let studyTrial = {
+          type: jsPsychItemPresentation,
+          word_list: [word],
+          category_list: [''],
+          word_time: config.wordTime,
+          inter_word_time: config.interWordTime,
+          data: {
+            subject: config.subjectID,
+            list: listNumber,
+            trial_type: 'study',
+            position: position,
+            item: word
+          }
+        };
+        timeline.push(studyTrial);
+      }
+
+      // Free Recall Phase
+      let recallPhase = {
+        type: jsPsychFreeRecall,
+        prompt: '<p>Recall the items:</p>',
+        maximum_recall_time: config.recallTime,
+        data: {
+          subject: config.subjectID,
+          list: listNumber,
+          trial_type: 'recall'
+        }
+      };
+      timeline.push(recallPhase);
+
+      timeline.push(cursor_on);
+
+      // Break between trials or end of experiment message
+      if (trial < config.numTrials - 1) {
+        let breakScreen = {
+          type: jsPsychInstructions,
+          pages: [
+            `<p>You've completed trial ${listNumber} of ${config.numTrials}.</p><p>When you're ready for the next trial, press Next.</p>`
+          ],
+          show_clickable_nav: true,
+          button_label_next: 'Next'
+        };
+        timeline.push(breakScreen);
+      } else {
+        let endMessage = {
+          type: jsPsychInstructions,
+          pages: [
+            `<p>You have completed the experiment. Thank you for your participation!</p><p>Click Finish to see your data.</p>`
+          ],
+          show_clickable_nav: true,
+          button_label_next: 'Finish'
+        };
+        timeline.push(endMessage);
+      }
+    }
+
+    // Run the experiment
+    initializeExperiment(timeline);
+  </script>
+</html>
