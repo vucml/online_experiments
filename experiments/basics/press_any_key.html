@@ -25,6 +25,7 @@
         const timeline = [hello_trial];
 
         // initializes experiment different for JATOS than other hosting environments
-        initializeExperiment(timeline);
+        jsPsych = initializeExperiment(timeline);
+        jsPsych.run(timeline);
     </script>
 </html>

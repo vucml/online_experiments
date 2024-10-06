@@ -39,7 +39,7 @@
     // Create the full image pool
     const allImages = [];
     for (let i = 1; i <= 12; i++) {
-      allImages.push('experiments/basic_examples/img/' + i + '.gif'); // Adjust extension if necessary
+      allImages.push('experiments/2150/img/' + i + '.gif'); // Adjust extension if necessary
     }
 
     // Initialize jsPsych
@@ -276,6 +276,7 @@
     }
 
     // Run the experiment
-    initializeExperiment(timeline);
+    jsPsych = initializeExperiment(timeline);
+    jsPsych.run(timeline);
   </script>
 </html>

@@ -5,7 +5,6 @@ function initializeExperiment(timeline) {
   if (typeof jatos !== 'undefined') {
       console.log('Running in JATOS');
       jsPsychInitOptions = {
-          on_trial_start: jatos.addAbortButton,
           on_finish: () => jatos.endStudy(jsPsych.data.get().json())
       };
   } else {
@@ -15,7 +14,6 @@ function initializeExperiment(timeline) {
       };
   }
 
-  // Initialize jsPsych and run the experiment
-  const jsPsych = initJsPsych(jsPsychInitOptions);
-  jsPsych.run(timeline);
+  // return jsPsych object
+  return initJsPsych(jsPsychInitOptions);
 }
