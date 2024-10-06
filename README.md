@@ -19,6 +19,16 @@ Backend and frontend are terms used to distinguish between the server side and t
 The server side is the backend, which is responsible for managing data and requests from the client side. The client side is the frontend, which is responsible for displaying the data and interacting with the user.
 We use jsPsych to manage the client side / frontend of the experiment and JATOS to manage the server side / backend of the experiment.
 
+## Uses for Experienced Developers
+
+If you already know how to create experiments using jsPsych and how to run them using JATOS, this repository and README still provides a useful framework for organizing your experiments and sharing them with others. 
+
+- **Using JATOS without locking out useful tools.** The main feature we showcase is how to implement your jsPsych experiment so that it can be demoed neatly using VSCode's Live Server extension and Github Pages, facilitating the development process and making it easier to share in-progress experiments with others. The current instructions for interfacing jsPsych with JATOS tend to make this impossible by creating a dependency on the JATOS server. Our template sidesteps this issue by providing an `initializeExperiment` function that works differently depending on whether the experiment is being run in JATOS or not.
+
+- **Configuring behavior between conditions/subjects across hosting platforms.** In our more detailed experiment examples, we also show how to configure experiments in a separate config file that can be dynamically updated to change the experiment's behavior without updates to experiment code. This is a useful feature for running multiple versions of an experiment or for running an experiment with different conditions, or where study sequences presented to different subjects must be carefully controlled based on subject ID or other factors. The documentation for JATOS shows how to do this within their system, but our template provides for flexibility across different hosting environments.
+
+- **Basic and detailed experiment implementation archive.** We provide basic examples of experiments that can be run using Github Pages or JATOS or Live Server. These examples can be used as a starting point for creating your own experiments. We also provide more detailed examples that show how to configure experiments to run in different conditions or with different sequences of stimuli.
+
 ## Some Basic Concepts
 
 ### HTML, CSS, and JavaScript
