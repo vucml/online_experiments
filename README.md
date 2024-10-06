@@ -6,7 +6,7 @@ This repository attempts to streamline the process of creating and running brows
 - Host demos of experiments to showcase the capabilities of the template and provide examples for customization.
 - Highlight resources and tutorials for learning more about experiment design and coding and accelerating the development process.
 
-Check our [experiments directory](experiments/README) for a list of examples of experiments that can be previewed.
+Check our [experiments directory](experiments/) for a list of examples of experiments that can be previewed.
 
 ## Overview
 
