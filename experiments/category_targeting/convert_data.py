@@ -363,10 +363,10 @@ def retrieve_pres_itemids(
 
 
 if __name__ == "__main__":
-    jatos_data_path = "pooled_raw_data.jsonl"
-    stimulus_pool_path = "assets/cuefr_pool.txt"
-    category_pool_path = "assets/cuefr_category_pool.txt"
-    target_data_path = "data/pooled_raw_data.h5"
+    jatos_data_path = "experiments/category_targeting/pooled_raw_data.jsonl"
+    stimulus_pool_path = "experiments/category_targeting/assets/cuefr_pool.txt"
+    category_pool_path = "experiments/category_targeting/assets/cuefr_category_pool.txt"
+    target_data_path = "experiments/category_targeting/pooled_raw_data.h5"
     include_intrusions = False
     distance_threshold = 2
 
