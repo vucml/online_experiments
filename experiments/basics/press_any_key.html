@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Hello World!</title>
+        <title>Press Any Key!</title>
         <script src="jatos.js"></script> 
         <script>
-            // Since JATOS uses root-relative pathing, we need to set the base URL for local testing
+            // Set base URL of file paths different for JATOS than other hosting environments
             const base = document.createElement('base');
             base.href = typeof jatos !== 'undefined' ? '.' : '../../'; 
             document.head.appendChild(base);
@@ -16,6 +16,7 @@
     </head>
     <body></body>
     <script>
+        // basic single-plugin timeline
         const hello_trial = {
             type: jsPsychHtmlKeyboardResponse,
             stimulus: 'Press any key!'
@@ -23,6 +24,7 @@
 
         const timeline = [hello_trial];
 
+        // initializes experiment different for JATOS than other hosting environments
         initializeExperiment(timeline);
     </script>
 </html>
