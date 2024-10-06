@@ -17,3 +17,4 @@ Notes:
 - At same time, repetitions may be required for category-cued recalls if free recall already touched on the word that would be cued by category.
 - Bonus logic need updating.
 - Launch configuration for debugging needs to be updated to use Live Server extension. Otherwise CORS issues will prevent loading of stimuli.
+- Duration until a recall cue expires needs to be set. Currently 60 seconds per event...
