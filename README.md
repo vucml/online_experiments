@@ -89,13 +89,15 @@ If you've cloned using Github Desktop, you should be able to open your project i
 
 You can similarly open the project in your file explorer by clicking the "Show in Explorer/Finder" button.
 
-### Optional: Make a New Branch
+### Optional: Make a New Branch (or Experiment Directory)
 
 If you want to make changes to the repository, it's a good idea to create a new branch. A branch is a version of the repository that extends from and exists alongside the main version. You can make changes to the branch without affecting the main version. Once you are happy with the changes, you can merge the branch back into the main version.
 
 [Here's](https://docs.github.com/en/desktop/making-changes-in-a-branch/managing-branches-in-github-desktop) the documentation for managing branches in Github Desktop.
 
 [Here's](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-and-deleting-branches-within-your-repository) the documentation for managing branches right on Github.
+
+Another less robust but understandably popular way to manage different versions of your experiment is to create a new directory in the `experiments` directory for each new experiment you want to create. This is a good way to keep experiments separate from each other and to avoid conflicts between different versions of the same experiment. For new developers, branch management is maybe a bit more complicated than it needs to be. A new directory for each experiment should be sufficient for most purposes.
 
 ### 3. Add An Experiment's HTML file to JATOS
 Not every html file in your repository is automatically associated with an experiment in JATOS. You have to manually add the file to JATOS as an experiment **Component**.
