@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Recognition Memory Experiment</title>
+    <title>Free Recall Experiment</title>
     <script src="jatos.js"></script> 
     <script>
       // Since JATOS uses root-relative pathing, we need to set the base URL for local testing
@@ -10,19 +10,19 @@
       document.head.appendChild(base);
     </script>
     <!-- Include jsPsych library and plugins using local paths -->
-    <script src="../../core/jspsych/jspsych.js"></script>
-    <script src="../../core/jspsych/plugins/plugin-html-keyboard-response.js"></script>
-    <script src="../../core/jspsych/plugins/plugin-instructions.js"></script>
-    <script src="../../core/jspsych/plugins/plugin-fullscreen.js"></script>
-    <script src="../../core/jspsych/plugins/plugin-call-function.js"></script>
-    <script src="../../core/jspsych/plugins/plugin-html-button-response.js"></script>
+    <script src=core/jspsych/jspsych.js"></script>
+    <script src=core/jspsych/plugins/plugin-html-keyboard-response.js"></script>
+    <script src=core/jspsych/plugins/plugin-instructions.js"></script>
+    <script src=core/jspsych/plugins/plugin-fullscreen.js"></script>
+    <script src=core/jspsych/plugins/plugin-call-function.js"></script>
     <!-- Include custom plugins -->
-    <script src="../../core/jspsych/custom-plugins/jspsych-fixation.js"></script>
-    <script src="../../core/jspsych/custom-plugins/jspsych-item-presentation.js"></script>
+    <script src=core/jspsych/custom-plugins/jspsych-free-recall.js"></script>
+    <script src=core/jspsych/custom-plugins/jspsych-fixation.js"></script>
+    <script src=core/jspsych/custom-plugins/jspsych-item-presentation.js"></script>
     <!-- Include CSS files -->
-    <link href="../../core/jspsych/css/jspsych.css" rel="stylesheet" type="text/css">
-    <link href="../../core/jspsych/css/lpl-recall-recog-probe.css" rel="stylesheet" type="text/css">
-    <script src="../../core/init_experiment.js"></script>
+    <link href=core/jspsych/css/jspsych.css" rel="stylesheet" type="text/css">
+    <link href=core/jspsych/css/lpl-recall-recog-probe.css" rel="stylesheet" type="text/css">
+    <script src=core/init_experiment.js"></script>
   </head>
   <body></body>
   <script>
@@ -35,17 +35,11 @@
         'lemon', 'lime', 'cherry', 'strawberry', 'blueberry',
         'pineapple', 'papaya', 'apricot', 'blackberry', 'cranberry'
       ],
-      distractorList: [
-        'car', 'house', 'book', 'chair', 'computer',
-        'phone', 'table', 'lamp', 'shirt', 'pen',
-        'dog', 'cat', 'bird', 'tree', 'flower',
-        'river', 'mountain', 'cloud', 'sun', 'moon'
-      ],
       numTrials: 2,
       numWordsPerTrial: 10,
-      numDistractorsPerTrial: 10,
       wordTime: 1000,          // Time to display each word (ms)
       interWordTime: 0,        // Time between words (ms)
+      recallTime: 30000        // Time for free recall (ms)
     };
 
     // Initialize jsPsych
@@ -54,7 +48,7 @@
         // Process data to generate CSV
         var allData = jsPsych.data.get().values();
         var csvRows = [];
-        var headers = ['subject', 'list', 'trial_type', 'position', 'item', 'response', 'correct'];
+        var headers = ['subject', 'list', 'trial_type', 'position', 'item'];
         csvRows.push(headers.join(','));
 
         for (var i = 0; i < allData.length; i++) {
@@ -67,27 +61,26 @@
               trial.list,
               'study',
               trial.position,
-              trial.item,
-              '',
-              ''
+              trial.item
             ];
             csvRows.push(row.join(','));
-          } else if (trial.trial_type === 'html-button-response' && trial.phase === 'test') {
-            // Recognition test events
-            var position = trial.position;
-            var item = trial.item;
-            var response = trial.response_label;
-            var correct = trial.correct;
-            var row = [
-              trial.subject,
-              trial.list,
-              'test',
-              position,
-              item,
-              response,
-              correct
-            ];
-            csvRows.push(row.join(','));
+          } else if (trial.trial_type === 'free-recall') {
+            // Recall events
+            var recallWords = trial.recall_words;
+            if (recallWords) {
+              for (var j = 0; j < recallWords.length; j++) {
+                var item = recallWords[j];
+                var position = j + 1;
+                var row = [
+                  trial.subject,
+                  trial.list,
+                  'recall',
+                  position,
+                  item
+                ];
+                csvRows.push(row.join(','));
+              }
+            }
           }
         }
 
@@ -145,10 +138,12 @@
     const instructions = {
       type: jsPsychInstructions,
       pages: [
-        `<p>Welcome to the experiment!</p><p>In this experiment, you'll be asked to study and recognize words.</p><p>Press Next when you are ready to proceed.</p>`,
-        '<p>During the study phase, you will see a series of words presented one at a time.</p><p>Your goal is to remember these words for a later memory test.</p>',
-        '<p>After the list is presented, you will be shown words one at a time.</p><p>Your task is to indicate whether each word is <strong>"Old"</strong> (studied) or <strong>"New"</strong> (unstudied).</p>',
-        '<p>Press Next when you are ready to begin the experiment.</p>',
+        `<p>Welcome to the experiment!</p><p>In this experiment, you'll be asked to study and remember words.</p><p>Press Next when you are ready to proceed.</p>`,
+        '<p>During the study period, you will see a series of words presented one at a time.</p><p>Your goal is to remember the words for a later memory test.</p>',
+        '<p>After the list is presented, you will type as many words as you can remember.</p><p>Here\'s what the recall prompt will look like:</p><p style="font-size: 24px;">Recall the items</p><p style="font-size: 48px;">_</p>',
+        '<p>After you type a word, press ENTER to submit it.</p><p>Do your best with spelling, but don\'t worry about minor errors.</p><p>If you make a typo, you can use BACKSPACE to correct it before pressing ENTER.</p>',
+        '<p>You will have a full minute to recall the words. Keep trying until the end of the minute.</p>',
+        '<p>You\'ll get a short break between trials.</p><p>When you\'re ready for the next trial, press Next.</p>',
       ],
       show_clickable_nav: true,
       button_label_previous: 'Previous',
@@ -204,56 +199,27 @@
         timeline.push(studyTrial);
       }
 
+      // Free Recall Phase
+      let recallPhase = {
+        type: jsPsychFreeRecall,
+        prompt: '<p>Recall the items:</p>',
+        maximum_recall_time: config.recallTime,
+        data: {
+          subject: config.subjectID,
+          list: listNumber,
+          trial_type: 'recall'
+        }
+      };
+      timeline.push(recallPhase);
+
       timeline.push(cursor_on);
-
-      // Instructions before Test Phase (updated to be concise)
-      timeline.push({
-        type: jsPsychInstructions,
-        pages: [
-          `<p>You have completed the study phase for list ${listNumber}.</p>
-          <p>In the test phase, you will see words one at a time.</p>
-          <p>If you studied the word, press <strong>"Old"</strong>.</p>
-          <p>If the word is unstudied, press <strong>"New"</strong>.</p>`
-        ],
-        show_clickable_nav: true,
-        button_label_next: 'Next'
-      });
-
-      // Test Phase (Recognition)
-      let distractorWords = jsPsych.randomization.sampleWithoutReplacement(config.distractorList, config.numDistractorsPerTrial);
-      let testWords = jsPsych.randomization.shuffle(trialWords.concat(distractorWords));
-
-      for (let i = 0; i < testWords.length; i++) {
-        let word = testWords[i];
-        let position = i + 1;
-
-        let testTrial = {
-          type: jsPsychHtmlButtonResponse,
-          stimulus: `<p style="font-size: 48px;">${word}</p>`,
-          choices: ['Old', 'New'],
-          data: {
-            subject: config.subjectID,
-            list: listNumber,
-            trial_type: 'test',
-            position: position,
-            item: word,
-            phase: 'test',
-            correct_response: trialWords.includes(word) ? 'Old' : 'New'
-          },
-          on_finish: function(data) {
-            data.response_label = data.response == 0 ? 'Old' : 'New';
-            data.correct = data.response_label === data.correct_response;
-          }
-        };
-        timeline.push(testTrial);
-      }
 
       // Break between trials or end of experiment message
       if (trial < config.numTrials - 1) {
         let breakScreen = {
           type: jsPsychInstructions,
           pages: [
-            `<p>You have completed list ${listNumber} of ${config.numTrials}.</p><p>When you're ready for the next list, press Next.</p>`
+            `<p>You've completed trial ${listNumber} of ${config.numTrials}.</p><p>When you're ready for the next trial, press Next.</p>`
           ],
           show_clickable_nav: true,
           button_label_next: 'Next'
