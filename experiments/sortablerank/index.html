@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Rank the Items</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+        <script src="jatos.js"></script> 
+        <script>
+            // Set base URL of file paths different for JATOS than other hosting environments
+            const base = document.createElement('base');
+            const jatos_defined = typeof jatos !== 'undefined';
+            base.href = jatos_defined ? '.' : '../../'; 
+            document.head.appendChild(base);
+        </script>
+        <script src="core/jspsych/jspsych.js"></script>
+        <link href="core/jspsych/css/jspsych.css" rel="stylesheet" type="text/css" />
+        <link href="experiments/sortablerank/homophily.css" rel="stylesheet" type="text/css" />
+        <script src="core/jspsych/plugins/plugin-instructions.js"></script>
+        <script src="experiments/sortablerank/jspsych-sortable-rank.js"></script>
+        <script src="core/jspsych/plugins/plugin-html-slider-response.js"></script>
+        <script src="core/jspsych/plugins/plugin-survey-html-form.js"></script>
+        <script src="core/init_experiment.js"></script>
+    </head>
+    <body></body>
+    <script>
+
+        jsPsych = initializeExperiment();
+        const character_images = jsPsych.randomization.shuffle([
+            "experiments/sortablerank/characters/asian_female_18-39.jpg" , "experiments/sortablerank/characters/asian_female_40-59.jpg" , "experiments/sortablerank/characters/asian_male_18-39.jpg" , "experiments/sortablerank/characters/asian_male_40-59.jpg" , "experiments/sortablerank/characters/black_female_18-39.jpg" , "experiments/sortablerank/characters/black_female_40-59.jpg" , "experiments/sortablerank/characters/black_male_18-39.jpg" , "experiments/sortablerank/characters/black_male_40-59.jpg" , "experiments/sortablerank/characters/latino_female_18-39.jpg" , "experiments/sortablerank/characters/latino_female_40-59.jpg" , "experiments/sortablerank/characters/latino_female_60+.jpg" , "experiments/sortablerank/characters/latino_male_18-39.jpg" , "experiments/sortablerank/characters/latino_male_40-59.jpg" , "experiments/sortablerank/characters/latino_male_60+.jpg" , "experiments/sortablerank/characters/white_female_18-39.jpg" , "experiments/sortablerank/characters/white_female_40-59.jpg" , "experiments/sortablerank/characters/white_female_60+.jpg" , "experiments/sortablerank/characters/white_male_18-39.jpg" , "experiments/sortablerank/characters/white_male_40-59.jpg" , "experiments/sortablerank/characters/white_male_60+.jpg" , "experiments/sortablerank/characters/asian_female_60+.png" , "experiments/sortablerank/characters/asian_male_60+.png" , "experiments/sortablerank/characters/black_female_60+.png" , "experiments/sortablerank/characters/black_male_60+.png"
+            ]);
+
+        const age_confirmation = {
+            type: jsPsychInstructions,
+            pages: [
+            `<div style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
+                    <p>Hello! Thank you for participating in this study.</p>
+                    <p>Your participation is for research and is entirely voluntary.</p>
+                    <p>The study should take under 10 minutes to complete. The general purpose of this study is to better understand social grouping behavior. The complete purpose of the study will be explained after it is concluded. Contact information will be provided at the end for any further questions or clarifications.</p>
+                    If you would like to participate in this study, please confirm that you are eighteen years of age or older.</p>
+                </div>`,
+            ],
+            show_clickable_nav: true,
+            allow_backward: false,
+            button_label_next: 'I am 18 years of age or older',
+        }
+
+        const instructions = {
+            type: jsPsychInstructions,
+            pages: [
+                `<div style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
+                    <p>Thank you for participating in this research study. Please enter your information on the next page and read the instructions that follow. Some details about this study may not be known until the study is completed.</p>
+                </div>`
+            ],
+            show_clickable_nav: true,
+            allow_backward: false,
+            button_label_next: 'Next',
+        }
+
+        const demographic_questions = {
+            type: jsPsychSurveyHtmlForm,
+            preamble: '<h2>Demographic Information</h2>',
+            html: `
+                <div class="form-container">
+                <!-- Racial Identity -->
+                <div class="form-row">
+                    <label for="race">Racial Identity</label>
+                    <select id="race" name="race" required>
+                    <option value="">Choose option</option>
+                    <option value="South Asian">South Asian</option>
+                    <option value="East/Southeast Asian">East/Southeast Asian</option>
+                    <option value="Black">Black</option>
+                    <option value="White">White</option>
+                    <option value="Hispanic/Latine/Latinx">Hispanic/Latine/Latinx</option>
+                    <option value="Indigenous">Indigenous</option>
+                    <option value="Multiracial">Multiracial</option>
+                    <option value="Other">Other</option>
+                    </select>
+                </div>
+                
+                <!-- Gender -->
+                <div class="form-row">
+                    <label>Gender</label>
+                    <div class="radio-group">
+                    <label><input type="radio" name="gender" value="man" required> Man</label>
+                    <label><input type="radio" name="gender" value="woman"> Woman</label>
+                    <label><input type="radio" name="gender" value="non-binary"> Non-Binary</label>
+                    <label><input type="radio" name="gender" value="other"> Other</label>
+                    </div>
+                </div>
+                
+                <!-- Age -->
+                <div class="form-row">
+                    <label for="age">Age</label>
+                    <input type="text" id="age" name="age" required>
+                </div>
+                
+                <!-- College Education -->
+                <div class="form-group-full">
+                    <label>Have you completed or are you currently pursuing a college education?</label>
+                    <div class="radio-group">
+                    <label><input type="radio" name="college" value="yes" required> Yes</label>
+                    <label><input type="radio" name="college" value="no"> No</label>
+                    </div>
+                </div>
+                </div>
+            `,
+            button_label: 'Next',
+            on_finish: function(data) {
+                console.log(data.response); // Log the form data for debugging
+            }
+        };
+
+        const competitiveness_selfrating = {
+            type: jsPsychHtmlSliderResponse,
+            stimulus: '<h2>Rating</h2><p>On a scale from 1–10, how typically successful are you in competitive environments?</p>',
+            labels: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],  // Labels for the slider values
+            slider_start: 5,  // Start in the middle by default
+            min: 0,  // Slider minimum value
+            max: 10,  // Slider maximum value
+            step: 1,  // Increment step
+            slider_width: 500,  // Width of the slider
+            require_movement: true,  // Participant must move the slider
+            button_label: 'Next',  // Button label
+        };
+
+        // Function to generate the HTML for each character
+        function generateCharacterHTML(imagePath) {
+            const filename = imagePath.split('/').pop(); // Get the filename from the path
+            const parts = filename.split('_'); // Split by underscores
+            const race = parts[0]; // First part is race
+            const sex = parts[1];  // Second part is sex
+            const age = parts[2].replace('.jpg', '').replace('.png', '');
+
+            return `
+                <img src="${imagePath}" alt="Character ${race} ${sex}">
+                <div>
+                    <p>Race: ${capitalizeFirstLetter(race)}</p>
+                    <p>Sex: ${capitalizeFirstLetter(sex)}</p>
+                    <p>Age: ${age}</p>
+                </div>
+            `;
+        }
+
+        // Helper function to capitalize the first letter
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        const rank_trial_items = character_images.map(generateCharacterHTML);
+
+        const rank_trial = { 
+            type: jsPsychSortableRank,
+            instructions: '<div style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;"><h2>Team Selection</h2><p>You are about to play a competitive team game. In this game, you will work with a team to design and deliver a concise elevator pitch to an investment company as part of an innovation competition. An opposing team will also deliver a pitch to the investment company, directly competing with you for the money. Before the game begins, you will have the opportunity to select both your team and the opponent team. It is imperative that you select the most skilled and capable characters for your team to maximize your chances of winning. Fifteen characters are presented to you. Please choose seven teammates in order of preference; rank the character you want most on your team first. The lowest ranked eight players will automatically be sorted into the opposing team.</p></div>',
+            items: rank_trial_items,
+            labels: character_images,
+            animation_duration: 150,
+            on_finish: function(data) {
+                console.log(data.response); // Log the form data for debugging
+            }
+        };
+
+        const debriefing = {
+            type: jsPsychSurveyHtmlForm,
+            preamble: '<h2>Game?</h2>',
+            html: `
+                    <p>Thank you for selecting your team. There is no game!</p>
+                    <p>Did anyone tell you that there was no game prior to you completing the task?</p>
+                    <div style="padding: 10px; background-color: #fff;">
+                        <select id="deception" name="deception" required>
+                        <option value="">Choose option</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                        </select>
+
+                </div>
+            `,
+            button_label: 'Next',
+            on_finish: function(data) {
+                console.log(data.response); // Log the form data for debugging
+            }
+        };
+
+        const finished = {
+            type: jsPsychInstructions,
+            pages: [
+            `<div style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
+                <p>Thank you for your participation! Your data will help us better understand social grouping behavior in competitive and non-competitive environments. Share this study with your friends and family! <b>We request you do not tell others there is no game as that may alter their responses and compromise the integrity of the study.</b></p>
+                <p>Feel free to contact us at <a href="mailto:shreyas.teegala@vanderbilt.edu">shreyas.teegala@vanderbilt.edu</a> or <a href="mailto:milind.muthiah@vanderbilt.edu">milind.muthiah@vanderbilt.edu</a> with any questions or follow-ups. For additional information about your rights as a participant in this study, or to discuss problems, concerns, and questions, please feel free to contact the Institutional Review Board Office at (615) 322-2918 or toll free at (866) 224-8273.</p>
+            </div>`,
+            ],
+            show_clickable_nav: false,
+            allow_backward: false,
+        }
+
+        // initializes experiment different for JATOS than other hosting environments
+        const timeline = [age_confirmation, instructions, demographic_questions, competitiveness_selfrating, rank_trial, debriefing, finished];
+        jsPsych.run(timeline);
+    </script>
+</html>

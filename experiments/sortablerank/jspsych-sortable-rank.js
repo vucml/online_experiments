@@ -8,7 +8,13 @@ const jsPsychSortableRank = (function(jspsych) {
         type: jspsych.ParameterType.ARRAY,
         pretty_name: 'Items',
         default: [],
-        description: 'Array of objects, each representing an item with image URL and details.'
+        description: 'Array of HTML strings or elements to be rendered as items.'
+      },
+      labels: {
+        type: jspsych.ParameterType.ARRAY,
+        pretty_name: 'Labels',
+        default: [],
+        description: 'Array of labels (e.g., image filenames) corresponding to each item.'
       },
       instructions: {
         type: jspsych.ParameterType.STRING,
@@ -31,6 +37,12 @@ const jsPsychSortableRank = (function(jspsych) {
     }
 
     trial(displayElement, trial) {
+      // Validate that labels array matches items array length
+      if (trial.labels.length !== trial.items.length) {
+        console.error('The length of the labels array does not match the length of the items array.');
+        return;
+      }
+
       // Clear display element
       displayElement.innerHTML = '';
 
@@ -41,16 +53,11 @@ const jsPsychSortableRank = (function(jspsych) {
 
       // Create the list that will be sortable
       let listHtml = `<ul id="sortable-list" class="sortable-list">`;
-      trial.items.forEach((item, index) => {
+      trial.items.forEach((itemHtml, index) => {
         listHtml += `
           <li class="sortable-item" data-id="${index}">
             <span class="rank-number">${index + 1}</span>
-            <img src="${item.imageUrl}" alt="Character ${index + 1}" />
-            <div>
-              <p>Race: ${item.race}</p>
-              <p>Sex: ${item.sex}</p>
-              <p>Age: ${item.age}</p>
-            </div>
+            ${itemHtml} <!-- Render HTML passed from the experiment -->
           </li>
         `;
       });
@@ -81,8 +88,6 @@ const jsPsychSortableRank = (function(jspsych) {
           animation: trial.animation_duration,
           onEnd: function(evt) {
             updateRankNumbers(); // Update the rank numbers after each sort
-            const order = sortable.toArray(); // Get new order after drag and drop
-            console.log('New order:', order); // Log the new order of the items
           }
         });
 
@@ -93,12 +98,20 @@ const jsPsychSortableRank = (function(jspsych) {
       updateRankNumbers();
 
       // End trial button
-      displayElement.innerHTML += '<button id="end-trial-btn">Submit</button>';
+      displayElement.innerHTML += '<p><button id="end-trial-btn">Submit</button></p>';
       document.getElementById('end-trial-btn').addEventListener('click', () => {
-        const rankedOrder = sortable ? sortable.toArray() : []; // Capture the ranked order of items
+        const rankedOrder = sortable ? sortable.toArray() : []; // Capture the ranked order of items as IDs
+
+        // Log and save both the ranked order, labels, and corresponding item content
         const trialData = {
-          ranked_order: rankedOrder
+          ranked_order: rankedOrder.map(id => ({
+            index: id,  // The id of the item (which corresponds to the original index)
+            label: trial.labels[id],  // Include the label (e.g., filename) for each item
+            content: trial.items[id]  // Save the content of each item based on the index
+          }))
         };
+
+        console.log('Trial Data:', trialData); // Log the trial data for debugging
 
         // End trial and store data
         this.jsPsych.finishTrial(trialData);

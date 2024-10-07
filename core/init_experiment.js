@@ -1,4 +1,4 @@
-function initializeExperiment(timeline) {
+function initializeExperiment() {
   // Prepare jsPsych initialization options
   let jsPsychInitOptions = {};
 
