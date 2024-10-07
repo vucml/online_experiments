@@ -107,7 +107,7 @@
             `,
             button_label: 'Next',
             on_finish: function(data) {
-                console.log(data.response); // Log the form data for debugging
+                console.log(data.response);
             }
         };
 
@@ -124,7 +124,6 @@
             button_label: 'Next',  // Button label
         };
 
-        // Function to generate the HTML for each character
         function generateCharacterHTML(imagePath) {
             const filename = imagePath.split('/').pop(); // Get the filename from the path
             const parts = filename.split('_'); // Split by underscores
@@ -147,7 +146,6 @@
             `;
         }
 
-        // Helper function to capitalize the first letter
         function capitalizeFirstLetter(string) {
             return string.charAt(0).toUpperCase() + string.slice(1);
         }
