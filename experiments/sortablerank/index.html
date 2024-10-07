@@ -33,7 +33,7 @@
         const age_confirmation = {
             type: jsPsychInstructions,
             pages: [
-            `<div style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
+            `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
                     <p>Hello! Thank you for participating in this study.</p>
                     <p>Your participation is for research and is entirely voluntary.</p>
                     <p>The study should take under 10 minutes to complete. The general purpose of this study is to better understand social grouping behavior. The complete purpose of the study will be explained after it is concluded. Contact information will be provided at the end for any further questions or clarifications.</p>
@@ -48,7 +48,7 @@
         const instructions = {
             type: jsPsychInstructions,
             pages: [
-                `<div style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
+                `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
                     <p>Thank you for participating in this research study. Please enter your information on the next page and read the instructions that follow. Some details about this study may not be known until the study is completed.</p>
                 </div>`
             ],
@@ -156,7 +156,7 @@
 
         const rank_trial = { 
             type: jsPsychSortableRank,
-            instructions: '<div style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;"><h2>Team Selection</h2><p>You are about to play a competitive team game. In this game, you will work with a team to design and deliver a concise elevator pitch to an investment company as part of an innovation competition. An opposing team will also deliver a pitch to the investment company, directly competing with you for the money. Before the game begins, you will have the opportunity to select both your team and the opponent team. It is imperative that you select the most skilled and capable characters for your team to maximize your chances of winning. Fifteen characters are presented to you. Please choose seven teammates in order of preference; rank the character you want most on your team first. The lowest ranked eight players will automatically be sorted into the opposing team.</p></div>',
+            instructions: '<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;"><h2>Team Selection</h2><p>You are about to play a competitive team game. In this game, you will work with a team to design and deliver a concise elevator pitch to an investment company as part of an innovation competition. An opposing team will also deliver a pitch to the investment company, directly competing with you for the money. Before the game begins, you will have the opportunity to select both your team and the opponent team. It is imperative that you select the most skilled and capable characters for your team to maximize your chances of winning. Fifteen characters are presented to you. Please choose seven teammates in order of preference; rank the character you want most on your team first. The lowest ranked eight players will automatically be sorted into the opposing team.</p></div>',
             items: rank_trial_items,
             labels: character_images,
             animation_duration: 150,
@@ -169,6 +169,7 @@
             type: jsPsychSurveyHtmlForm,
             preamble: '<h2>Game?</h2>',
             html: `
+                <div class="form-container">
                     <p>Thank you for selecting your team. There is no game!</p>
                     <p>Did anyone tell you that there was no game prior to you completing the task?</p>
                     <div style="padding: 10px; background-color: #fff;">
@@ -177,7 +178,7 @@
                         <option value="yes">Yes</option>
                         <option value="no">No</option>
                         </select>
-
+                        </div>
                 </div>
             `,
             button_label: 'Next',
@@ -189,7 +190,7 @@
         const finished = {
             type: jsPsychInstructions,
             pages: [
-            `<div style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
+            `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
                 <p>Thank you for your participation! Your data will help us better understand social grouping behavior in competitive and non-competitive environments. Share this study with your friends and family! <b>We request you do not tell others there is no game as that may alter their responses and compromise the integrity of the study.</b></p>
                 <p>Feel free to contact us at <a href="mailto:shreyas.teegala@vanderbilt.edu">shreyas.teegala@vanderbilt.edu</a> or <a href="mailto:milind.muthiah@vanderbilt.edu">milind.muthiah@vanderbilt.edu</a> with any questions or follow-ups. For additional information about your rights as a participant in this study, or to discuss problems, concerns, and questions, please feel free to contact the Institutional Review Board Office at (615) 322-2918 or toll free at (866) 224-8273.</p>
             </div>`,
