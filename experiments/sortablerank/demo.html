@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Rank the Items</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+        <script src="jatos.js"></script> 
+        <script>
+            // Set base URL of file paths different for JATOS than other hosting environments
+            const base = document.createElement('base');
+            const jatos_defined = typeof jatos !== 'undefined';
+            console.log(jatos_defined);
+            base.href = jatos_defined ? '.' : '../../'; 
+            document.head.appendChild(base);
+        </script>
+        <script src="core/jspsych/jspsych.js"></script>
+        <script src="core/jspsych/custom-plugins/jspsych-sortable-rank.js"></script>
+        <link href="core/jspsych/css/jspsych.css" rel="stylesheet" type="text/css" />
+        <script src="core/init_experiment.js"></script>
+        <style>
+            /* Basic styles for the sortable items */
+            .sortable-list {
+                list-style-type: none;
+                padding: 0;
+                margin: 0;
+            }
+    
+            .sortable-item {
+                display: flex;
+                align-items: center;
+                padding: 10px;
+                margin: 10px 0;
+                background-color: #f9f9f9;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                cursor: grab;
+            }
+    
+            .sortable-item img {
+                height: 100px;
+                width: auto;
+                margin-right: 20px;
+            }
+    
+            .sortable-item p {
+                margin: 0;
+            }
+    
+            .rank-number {
+                font-weight: bold;
+                margin-right: 20px;
+                font-size: 18px;
+            }
+        </style>
+    </head>
+    <body></body>
+    <script>
+        // Define the trial using the sortable-rank plugin
+        const rank_trial = { 
+            type: jsPsychSortableRank, // Custom plugin
+            instructions: 'Drag and drop the characters to rank them.',
+            items: [
+                { imageUrl: 'https://raw.githubusercontent.com/githubpsyche/jspsych2150/main/img/1.gif', race: 'White', sex: 'Female', age: '18-39' },
+                { imageUrl: 'https://raw.githubusercontent.com/githubpsyche/jspsych2150/main/img/2.gif', race: 'Black', sex: 'Male', age: '18-39' },
+                { imageUrl: 'https://raw.githubusercontent.com/githubpsyche/jspsych2150/main/img/3.gif', race: 'Asian', sex: 'Female', age: '18-39' }
+                // Add more characters as needed
+            ],
+            animation_duration: 150 // Control the drag animation speed
+        };
+
+        const timeline = [rank_trial];
+
+        // initializes experiment different for JATOS than other hosting environments
+        jsPsych = initializeExperiment(timeline);
+        jsPsych.run(timeline);
+    </script>
+</html>
