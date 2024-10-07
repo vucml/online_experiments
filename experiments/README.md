@@ -2,7 +2,7 @@
 
 ## Basics
 - **[Press Any Key! Experiment](http://vucml.github.io/online_experiments/experiments/basics/index.html)**. Participants press any key and the experiment ends.
-- 
+
 ## PSY2150
 - **[Free Recall Experiment](http://vucml.github.io/online_experiments/experiments/2150/free_recall.html)**. Participants study a list of words and then recall as many as they can within a time limit.
 - **[Recognition Memory Experiment](http://vucml.github.io/online_experiments/experiments/2150/recognition.html)**. Participants study a list of words and then are tested on their recognition of previously seen (old) words versus new words.
@@ -21,4 +21,4 @@ Notes:
 
 ## Sortable Rank
 
-- **[Sortable Rank Experiment](http://vucml.github.io/online_experiments/experiments/sortable_rank/index.html)**. Participants rank a list of characters in order of preference for a hypothetical team.
+- **[Sortable Rank Experiment](http://vucml.github.io/online_experiments/experiments/sortablerank/index.html)**. Participants rank a list of characters in order of preference for a hypothetical team.
