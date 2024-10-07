@@ -1,86 +1,135 @@
 .sortable-list {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
 }
 
 .sortable-item {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    margin: 10px 0;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    cursor: grab;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  margin: 10px 0;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  cursor: grab;
 }
 
 .sortable-item img {
-    height: 100px;
-    width: auto;
-    margin-right: 20px;
+  height: 100px;
+  width: auto;
+  margin-right: 20px;
 }
 
 .sortable-item p {
-    margin: 0;
+  margin: 0;
 }
 
 .rank-number {
-    font-weight: bold;
-    margin-right: 20px;
-    font-size: 18px;
+  font-weight: bold;
+  margin-right: 20px;
+  font-size: 18px;
 }
 
-
 .form-container {
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 12px;
-    border: 2px solid #ccc;
-    width: 100%;
-    max-width: 800px;
-    margin: auto;
-  }
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 12px;
+  border: 2px solid #ccc;
+  width: 100%;
+  max-width: 800px;
+  margin: auto;
+}
+
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.form-row label {
+  font-weight: bold;
+  width: 30%;
+  text-align: left;
+}
+
+.form-row select,
+.form-row input[type="text"] {
+  width: 60%;
+}
+
+.form-row .radio-group {
+  display: flex;
+  justify-content: flex-start;
+  gap: 15px;
+  width: 60%;
+}
+
+.radio-group label {
+  display: flex;
+  align-items: center;
+  margin-right: 15px;
+}
+
+.form-group-full {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.form-group-full label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-group-full .radio-group {
+  display: flex;
+  justify-content: flex-start;
+  gap: 15px;
+}
+
+/* --- Media Queries for Responsive Design --- */
+
+@media (max-width: 600px) {
   .form-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center; /* Ensures vertical alignment */
-    width: 100%;
-    margin-bottom: 15px;
+      flex-direction: column;
+      align-items: flex-start;
   }
+
   .form-row label {
-    font-weight: bold;
-    width: 30%;
-    text-align: left;
+      width: 100%;
+      margin-bottom: 5px;
   }
+
   .form-row select,
   .form-row input[type="text"] {
-    width: 60%;
+      width: 100%;
   }
+
   .form-row .radio-group {
-    display: flex;
-    justify-content: flex-start;
-    gap: 15px;
-    width: 60%;
+      width: 100%;
+      flex-direction: column;
+      align-items: flex-start;
   }
-  .radio-group label {
-    display: flex;
-    align-items: center;
-    margin-right: 15px;
+
+  .sortable-item {
+      flex-direction: column;
+      align-items: flex-start;
   }
-  .form-group-full {
-    width: 100%;
-    margin-bottom: 15px;
+
+  .sortable-item img {
+      margin-right: 0;
+      margin-bottom: 10px;
+      height: auto;
+      width: 100%; /* Make images responsive */
   }
-  .form-group-full label {
-    font-weight: bold;
-    display: block;
-    margin-bottom: 5px;
+
+  .rank-number {
+      font-size: 16px;
+      margin-bottom: 10px;
   }
-  .form-group-full .radio-group {
-    display: flex;
-    justify-content: flex-start;
-    gap: 15px;
-  }
+}
