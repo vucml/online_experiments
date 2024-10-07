@@ -18,3 +18,7 @@ Notes:
 - Bonus logic need updating.
 - Launch configuration for debugging needs to be updated to use Live Server extension. Otherwise CORS issues will prevent loading of stimuli.
 - Duration until a recall cue expires needs to be set. Currently 60 seconds per event...
+
+## Sortable Rank
+
+- **[Sortable Rank Experiment](http://vucml.github.io/online_experiments/experiments/sortable_rank/index.html)**. Participants rank a list of characters in order of preference for a hypothetical team.
