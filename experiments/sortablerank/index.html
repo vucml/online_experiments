@@ -27,7 +27,7 @@
 
         jsPsych = initializeExperiment();
         const character_images = jsPsych.randomization.shuffle([
-            "experiments/sortablerank/characters/asian_female_18-39.jpg" , "experiments/sortablerank/characters/asian_female_40-59.jpg" , "experiments/sortablerank/characters/asian_male_18-39.jpg" , "experiments/sortablerank/characters/asian_male_40-59.jpg" , "experiments/sortablerank/characters/black_female_18-39.jpg" , "experiments/sortablerank/characters/black_female_40-59.jpg" , "experiments/sortablerank/characters/black_male_18-39.jpg" , "experiments/sortablerank/characters/black_male_40-59.jpg" , "experiments/sortablerank/characters/latino_female_18-39.jpg" , "experiments/sortablerank/characters/latino_female_40-59.jpg" , "experiments/sortablerank/characters/latino_female_60+.jpg" , "experiments/sortablerank/characters/latino_male_18-39.jpg" , "experiments/sortablerank/characters/latino_male_40-59.jpg" , "experiments/sortablerank/characters/latino_male_60+.jpg" , "experiments/sortablerank/characters/white_female_18-39.jpg" , "experiments/sortablerank/characters/white_female_40-59.jpg" , "experiments/sortablerank/characters/white_female_60+.jpg" , "experiments/sortablerank/characters/white_male_18-39.jpg" , "experiments/sortablerank/characters/white_male_40-59.jpg" , "experiments/sortablerank/characters/white_male_60+.jpg" , "experiments/sortablerank/characters/asian_female_60+.png" , "experiments/sortablerank/characters/asian_male_60+.png" , "experiments/sortablerank/characters/black_female_60+.png" , "experiments/sortablerank/characters/black_male_60+.png"
+           "experiments/sortablerank/characters/asian_female_18-39.jpg" , "experiments/sortablerank/characters/asian_female_40-59.jpg" , "experiments/sortablerank/characters/asian_male_18-39.jpg" , "experiments/sortablerank/characters/asian_male_40-59.jpg" , "experiments/sortablerank/characters/black_female_18-39.jpg" , "experiments/sortablerank/characters/black_female_40-59.jpg" , "experiments/sortablerank/characters/black_male_18-39.jpg" , "experiments/sortablerank/characters/black_male_40-59.jpg" , "experiments/sortablerank/characters/latino_female_18-39.jpg" , "experiments/sortablerank/characters/latino_female_40-59.jpg" , "experiments/sortablerank/characters/latino_female_60.jpg" , "experiments/sortablerank/characters/latino_male_18-39.jpg" , "experiments/sortablerank/characters/latino_male_40-59.jpg" , "experiments/sortablerank/characters/latino_male_60.jpg" , "experiments/sortablerank/characters/white_female_18-39.jpg" , "experiments/sortablerank/characters/white_female_40-59.jpg" , "experiments/sortablerank/characters/white_female_60.jpg" , "experiments/sortablerank/characters/white_male_18-39.jpg" , "experiments/sortablerank/characters/white_male_40-59.jpg" , "experiments/sortablerank/characters/white_male_60.jpg" , "experiments/sortablerank/characters/asian_female_60.png" , "experiments/sortablerank/characters/asian_male_60.png" , "experiments/sortablerank/characters/black_female_60.png" , "experiments/sortablerank/characters/black_male_60.png"
             ]);
 
         const age_confirmation = {
@@ -130,7 +130,12 @@
             const parts = filename.split('_'); // Split by underscores
             const race = parts[0]; // First part is race
             const sex = parts[1];  // Second part is sex
-            const age = parts[2].replace('.jpg', '').replace('.png', '');
+            let age = parts[2].replace('.jpg', '').replace('.png', '');
+
+            // If age ends with '60', append a plus sign for display
+            if (age === '60') {
+                age += '+';
+            }
 
             return `
                 <img src="${imagePath}" alt="Character ${race} ${sex}">
@@ -189,7 +194,8 @@
                 <p>Feel free to contact us at <a href="mailto:shreyas.teegala@vanderbilt.edu">shreyas.teegala@vanderbilt.edu</a> or <a href="mailto:milind.muthiah@vanderbilt.edu">milind.muthiah@vanderbilt.edu</a> with any questions or follow-ups. For additional information about your rights as a participant in this study, or to discuss problems, concerns, and questions, please feel free to contact the Institutional Review Board Office at (615) 322-2918 or toll free at (866) 224-8273.</p>
             </div>`,
             ],
-            show_clickable_nav: false,
+            show_clickable_nav: true,
+            button_label_next: 'Finish',
             allow_backward: false,
         }
 
