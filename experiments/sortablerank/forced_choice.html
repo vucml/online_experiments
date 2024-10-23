@@ -187,6 +187,21 @@
         button_label: 'Next',
     };
 
+    // New instructions before forced choice trials
+    const instructions_forced_choice = {
+        type: jsPsychInstructions,
+        pages: [
+            `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
+                <h2>Team Selection - Pairwise Choices</h2>
+                <p>You are about to play a competitive team game. In this game, you will work with a team to design and deliver a concise elevator pitch to an investment company as part of an innovation competition. An opposing team will also deliver a pitch to the investment company, directly competing with you for the money.</p>
+                <p>Before the game begins, you will have the opportunity to select both your team and the opponent team. In the following screens, you will be presented with pairs of characters. Please choose the character you prefer for your team in each pair.</p>
+            </div>`
+        ],
+        show_clickable_nav: true,
+        allow_backward: false,
+        button_label_next: 'Start',
+    };
+
     function generateCharacterHTML(imagePath) {
         const filename = imagePath.split('/').pop();
         const parts = filename.split('_');
@@ -361,10 +376,24 @@
         return sortedItems;
     }
 
+    // Instructions before the ranking trial
+    const instructions_ranking = {
+        type: jsPsychInstructions,
+        pages: [
+            `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
+                <h2>Team Selection - Ranking</h2>
+                <p>Based on your previous choices, we have provided an initial ranking of characters for your team. Please review this ranking and adjust it as needed to reflect your preferences. Rank the character you want most on your team first. The lowest ranked eight players will automatically be sorted into the opposing team.</p>
+            </div>`
+        ],
+        show_clickable_nav: true,
+        allow_backward: false,
+        button_label_next: 'Continue',
+    };
+
     // Define the ranking trial
     const rank_trial = {
         type: jsPsychSortableRank,
-        instructions: '<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;"><h2>Team Selection</h2><p>You are about to play a competitive team game. In this game, you will work with a team to design and deliver a concise elevator pitch to an investment company as part of an innovation competition. An opposing team will also deliver a pitch to the investment company, directly competing with you for the money. Before the game begins, you will have the opportunity to select both your team and the opponent team. It is imperative that you select the most skilled and capable characters for your team to maximize your chances of winning. Fifteen characters are presented to you. Please choose seven teammates in order of preference; rank the character you want most on your team first. The lowest ranked eight players will automatically be sorted into the opposing team.</p></div>',
+        instructions: '', // Instructions are provided in the previous trial
         items: function() {
             const copelandRanking = computeCopelandRanking();
             const sortedItems = prepareRankingItems(copelandRanking);
@@ -424,7 +453,9 @@
         instructions,
         demographic_questions,
         competitiveness_selfrating,
+        instructions_forced_choice, // New instructions before forced choice trials
         ...choice_trials,
+        instructions_ranking, // Instructions before the ranking trial
         rank_trial,
         debriefing,
         finished
