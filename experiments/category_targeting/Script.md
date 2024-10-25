@@ -1,6 +1,6 @@
 # Key points to emphasize as an experimenter
 
-Experiment URL: https://jatos.mindprobe.eu/publix/run?code=MLMSkyogoKb
+Experiment URL: https://jatos.mindprobe.eu/publix/run?code=tNSfcMJX8m9
 
 Demographic Survey URL: https://redcap.vanderbilt.edu/surveys/?s=C7FEAHWLTY4CLXRK
 
@@ -22,8 +22,9 @@ How to progress when experimenter check-in is prompted: Right Arrow Key
     -   Give them a little background:
         -    "We are interested in how people store and recall items from memory. You will be presented with a list of items. At the end of each list, there will be a recall period. Sometimes you will be asked to recall an item from a particular category, other times you will be asked to recall items in any order."
         -    "When you are asked to recall an item, it is important that you just type the item itself, and not the category label presented with it."
-        -    "You will type your responses into the computer and press ENTER to submit each response. You'll have a full minute to to remember study items. Sometimes a study item will come to you after several seconds, so keep trying until the end of the minute."
-        -    "We use a simple string matching algorithm to score your responses, so small typos will usually not affect your score. However, we ask that you try to type your responses into the computer as close to the presented text as you can. If you do make major typos, you can press BACKSPACE to undo individual characters or ENTER to clear your text."
+        -    "After you type a given item, you'll press ENTER to submit it. Do your best with spelling, but don't worry too much about minor spelling errors. If you do make major typos, you can press BACKSPACE to undo individual characters."
+        -    "We use a simple string matching algorithm to score your responses, so small typos will usually not affect your score. However, we ask that you try to type your responses into the computer as close to the presented text as you can. If you do make major typos, you can press BACKSPACE to undo individual characters."
+        -    "For each retrieval, you will be given up to 15 seconds to remember the matching study item. If you can't remember an item that fits a prompt, take some time to think, and make your best guess before moving on. Sometimes the item will come to you after several seconds!"
         -    "You will be given feedback on your performance after each list. And at the end of the experiment, you'll be informed of a bonus payment based on your performance of up to $10."
         -    "You will be allowed to take a short break between each study and recall period. And between each study and recall period, you'll be allowed to take a short break. You will be asked to complete a few questionnaires at the end of the study. The study will take about 1 hour to complete. Do you have any questions before we get started?"
 
