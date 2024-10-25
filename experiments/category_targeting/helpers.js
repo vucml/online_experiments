@@ -85,10 +85,18 @@ function getTrialRecalls(data) {
   const last_presentation_index = trial_data.map(entry => entry.trial_type).lastIndexOf("item-presentation");
 
   // Collect all "free-recall" entries after the last "item-presentation"
-  const trial_recalls = trial_data.filter((entry, idx) => idx > last_presentation_index && entry.trial_type === "free-recall");
+  const trial_recalls = trial_data.filter((entry, idx) => 
+    idx > last_presentation_index && entry.trial_type === "free-recall"
+  );
 
   // Flatten the array of recall words into a single array of strings
-  return trial_recalls.flatMap(recall => recall.recall_words);
+  // Return an empty string if recall_words is missing or empty for each free-recall event
+  return trial_recalls.map(recall => {
+    if (!recall.recall_words || recall.recall_words.length === 0) {
+      return "";  // If recall_words is empty or undefined, return an empty string
+    }
+    return recall.recall_words;  // Otherwise, return the recall_words as is
+  }).flat();  // Flatten in case recall_words is an array (e.g., multiple words)
 }
 
 // Needs update before we can use this again due to possibility of 
@@ -116,9 +124,15 @@ function getAllRecalls(data) {
     const trial_recalls = trial_data
       .slice(pres_idx + 1, next_pres_idx)  // All events after the presentation until the next one
       .filter(entry => entry.trial_type === "free-recall")
-      .map(recall => recall.recall_words);
-    
-    return trial_recalls;
+      .map(recall => {
+        // If recall_words is missing or empty, return an empty string
+        if (!recall.recall_words || recall.recall_words.length === 0) {
+          return "";  // Return an empty string for missing or empty recall_words
+        }
+        return recall.recall_words;  // Otherwise, return recall_words as is
+      });
+
+    return trial_recalls.flat();  // Flatten in case recall_words contains multiple words
   });
 
   return grouped_recalls;
@@ -259,7 +273,7 @@ function getTotalPerformance(data, threshold = 2) {
   return totalMatchCount;
 }
 
-function calculateBonus(data, category_targets, threshold = 2, bonusPerTrial = 0.06, target_bonus_multiple = 5, maximumBonus = 10.0) {
+function calculateBonus(data, category_targets, threshold = 2, bonusPerTrial = 0.05, target_bonus_multiple = 5, maximumBonus = 10.0) {
   const targetPerformance = getTotalTargetSuccess(data, category_targets, threshold);  // Successes for cued targets
   const basePerformance = getTotalPerformance(data, threshold) - targetPerformance;    // Non-cued recalls
   const base_bonus = basePerformance * bonusPerTrial;
