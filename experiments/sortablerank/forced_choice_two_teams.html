@@ -150,6 +150,8 @@
         "experiments/sortablerank/characters/black_male_60.png"
     ];
 
+    const participant_image = "experiments/sortablerank/user.png";
+
     // Ensure character_count is not greater than the number of available characters
     if (character_count > all_character_images.length) {
         throw new Error("character_count is greater than the number of available characters.");
@@ -157,11 +159,10 @@
 
 
     // Calculate the required number of items for Team A (floor(character_count / 2))
-    const required_items_team_a = Math.floor(character_count / 2);
+    const required_items_team_a = Math.floor(character_count / 2) + 1;
 
     // Create a dynamic error message based on the required number of items
-    const error_message = `You must assign ${required_items_team_a} players to your team before proceeding.`;
-
+    const error_message = `You must pick exactly ${required_items_team_a} players for your team before you can proceed.`;
 
     // Sample character_count characters from all_character_images without replacement
     let character_images = jsPsych.randomization.sampleWithoutReplacement(all_character_images, character_count);
@@ -322,6 +323,15 @@
         `;
     }
 
+    function generateParticipantHTML(imagePath) {
+        return `
+            <img src="${imagePath}" alt="Participant">
+            <div>
+                <p><strong>You (Leader)</strong></p>
+            </div>
+        `;
+    }
+
     function capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
@@ -416,7 +426,7 @@ function rearrangeTrials(pairs) {
 
         const trial = {
             type: jsPsychHtmlButtonResponse,
-            enable_button_after: 1000,
+            // enable_button_after: 1000,
             stimulus: '<div class="trial-container">' +
                         '<div class="character-container">' + left_html + '</div>' +
                         '<div class="character-container">' + right_html + '</div>' +
@@ -473,13 +483,20 @@ function rearrangeTrials(pairs) {
 
     // Prepare items for the ranking trial
     function prepareRankingItems(copelandRanking) {
-        // Extract the HTML representations in the order of the computed ranking
         const sortedItems = copelandRanking.map(item => ({
-            html: character_html[item.index],
+            html: generateCharacterHTML(character_images[item.index]),
             label: character_images[item.index]
         }));
+
+        // Prepend the participant as the first item (rank 1)
+        sortedItems.unshift({
+            html: generateParticipantHTML(participant_image),
+            label: participant_image
+        });
+
         return sortedItems;
     }
+
 
     // Instructions before the ranking trial
     const instructions_ranking = {
@@ -516,7 +533,7 @@ function rearrangeTrials(pairs) {
         animation_duration: 150,
         required_items_team_a: required_items_team_a, // Dynamically set based on floor(character_count / 2)
         error_message: error_message, // Dynamic error message
-        team_labels: ['Your Teammates', 'Opposing Team'],
+        team_labels: ['Your Team', 'Opposing Team'],
         on_finish: function(data) {
             console.log(data.response); // Log the form data for debugging
         }

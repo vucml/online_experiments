@@ -45,6 +45,12 @@ const jsPsychTwoTeamSortableRank = (function(jspsych) {
         pretty_name: 'Error Message',
         default: 'Please assign the required number of items to Your Team before proceeding.',
         description: 'The error message to display when the participant tries to submit without the required number of items in Team A.'
+      },
+      lock_first_item: {
+        type: jspsych.ParameterType.BOOL,
+        pretty_name: 'Lock First Item',
+        default: true,
+        description: 'If true, the first item will be non-draggable.'
       }
     }
   };
@@ -69,10 +75,15 @@ const jsPsychTwoTeamSortableRank = (function(jspsych) {
         displayElement.innerHTML += `<p>${trial.instructions}</p>`;
       }
 
-      // Split items into two teams based on their index
-      const half = Math.floor(trial.items.length / 2);
-      const teamAItems = trial.items.slice(0, half);
-      const teamBItems = trial.items.slice(half);
+      // Adjust logic to handle odd number of items:
+      const teamASize = Math.floor(trial.items.length / 2); // Team A gets fewer items if odd
+      const teamBSize = trial.items.length - teamASize; // Team B gets the rest of the items
+
+      const teamAItems = trial.items.slice(0, teamASize);
+      const teamBItems = trial.items.slice(teamASize);
+
+      // Keep track of the overall index
+      let itemIndex = 0;
 
       // Create the two grid containers for teams
       let teamsHtml = `
@@ -80,23 +91,35 @@ const jsPsychTwoTeamSortableRank = (function(jspsych) {
           <div class="team-column">
             <h3>${trial.team_labels[0]}</h3>
             <div id="team-a-grid" class="sortable-grid team-grid">
-              ${teamAItems.map((itemHtml, index) => `
-                <div class="sortable-item" data-id="${index}">
-                  <span class="rank-number"></span>
-                  ${itemHtml}
-                </div>
-              `).join('')}
+              ${teamAItems.map((itemHtml, index) => {
+                const isFiltered = trial.lock_first_item && itemIndex === 0;
+                const filteredClass = isFiltered ? ' filtered' : '';
+                const html = `
+                  <div class="sortable-item${filteredClass}" data-id="${itemIndex}">
+                    <span class="rank-number"></span>
+                    ${itemHtml}
+                  </div>
+                `;
+                itemIndex++;
+                return html;
+              }).join('')}
             </div>
           </div>
           <div class="team-column">
             <h3>${trial.team_labels[1]}</h3>
             <div id="team-b-grid" class="sortable-grid team-grid">
-              ${teamBItems.map((itemHtml, index) => `
-                <div class="sortable-item" data-id="${index + half}">
-                  <span class="rank-number"></span>
-                  ${itemHtml}
-                </div>
-              `).join('')}
+              ${teamBItems.map((itemHtml, index) => {
+                const isFiltered = trial.lock_first_item && itemIndex === 0;
+                const filteredClass = isFiltered ? ' filtered' : '';
+                const html = `
+                  <div class="sortable-item${filteredClass}" data-id="${itemIndex}">
+                    <span class="rank-number"></span>
+                    ${itemHtml}
+                  </div>
+                `;
+                itemIndex++;
+                return html;
+              }).join('')}
             </div>
           </div>
         </div>
@@ -136,18 +159,16 @@ const jsPsychTwoTeamSortableRank = (function(jspsych) {
           onRemove: updateRankNumbers,
           onUpdate: updateRankNumbers,
           onSort: updateRankNumbers,
-          // Set the sorting in grid mode
           sort: true,
-          // Define the grid layout
           multiDrag: false,
           swapThreshold: 0.65,
-          // Enable grid layout by specifying the chosenClass and fallbackClass
           chosenClass: 'chosen',
           ghostClass: 'ghost',
+          filter: '.filtered', // Items with class 'filtered' are not draggable
         };
 
-        const sortableA = new Sortable(teamAGrid, { ...options, direction: 'horizontal' });
-        const sortableB = new Sortable(teamBGrid, { ...options, direction: 'horizontal' });
+        const sortableA = new Sortable(teamAGrid, options);
+        const sortableB = new Sortable(teamBGrid, options);
 
         // Initial rank numbers
         updateRankNumbers();
@@ -162,7 +183,7 @@ const jsPsychTwoTeamSortableRank = (function(jspsych) {
         const teamAItems = Array.from(document.querySelectorAll('#team-a-grid .sortable-item')).map(item => item.getAttribute('data-id'));
         const teamBItems = Array.from(document.querySelectorAll('#team-b-grid .sortable-item')).map(item => item.getAttribute('data-id'));
 
-        // **New Validation Check**
+        // Validation check for required items in Team A
         if (trial.required_items_team_a !== null && teamAItems.length !== trial.required_items_team_a) {
           alert(trial.error_message);
           return; // Do not proceed if the condition is not met
@@ -172,20 +193,23 @@ const jsPsychTwoTeamSortableRank = (function(jspsych) {
         const allItems = Array.from(document.querySelectorAll('.sortable-item'));
         const rankedOrder = allItems.map(item => item.getAttribute('data-id'));
 
+        const teamAItemIds = teamAItems.map(id => parseInt(id));
+        const teamBItemIds = teamBItems.map(id => parseInt(id));
+
         const trialData = {
           ranked_order: rankedOrder.map((id, index) => ({
             rank: index + 1,
-            index: id,
+            index: parseInt(id),
             label: trial.labels[id],
             content: trial.items[id],
-            team: teamAItems.includes(id) ? trial.team_labels[0] : trial.team_labels[1]
+            team: teamAItemIds.includes(parseInt(id)) ? trial.team_labels[0] : trial.team_labels[1]
           })),
-          team_a: teamAItems.map(id => ({
+          team_a: teamAItemIds.map(id => ({
             index: id,
             label: trial.labels[id],
             content: trial.items[id]
           })),
-          team_b: teamBItems.map(id => ({
+          team_b: teamBItemIds.map(id => ({
             index: id,
             label: trial.labels[id],
             content: trial.items[id]
