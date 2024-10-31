@@ -23,6 +23,7 @@
     <script src="core/jspsych/plugins/plugin-html-keyboard-response.js"></script>
     <!-- Include the jsPsychSortableRank plugin -->
     <script src="experiments/sortablerank/jspsych-two-team-sortable-rank.js"></script>
+    <script src="experiments/sortablerank/character_images.js"></script>
     <script src="core/init_experiment.js"></script>
     <style>
         /* Styles for the 2AFC trials */
@@ -39,8 +40,8 @@
         }
         .character-container img {
             object-fit: contain;
-            width: 150px;
-            height: 200px;
+            width: 300px;
+            height: 400px;
         }
         /* Styles for the ranking trial */
         .sortable-container {
@@ -49,7 +50,7 @@
             justify-content: center;
         }
         .sortable-item img {
-            width: 100px;
+            width: 200px;
             height: 150px;
             object-fit: contain;
         }
@@ -122,41 +123,7 @@
     // Set the trial count here (0 means use all possible combinations)
     const trial_count = 0; // Adjust as needed
     const character_count = 9; // Adjust as needed
-
-    const all_character_images = [
-        "experiments/sortablerank/characters/asian_female_18-39.jpg", 
-        "experiments/sortablerank/characters/asian_female_40-59.jpg", 
-        "experiments/sortablerank/characters/asian_male_18-39.jpg", 
-        "experiments/sortablerank/characters/asian_male_40-59.jpg", 
-        "experiments/sortablerank/characters/black_female_18-39.jpg", 
-        "experiments/sortablerank/characters/black_female_40-59.jpg", 
-        "experiments/sortablerank/characters/black_male_18-39.jpg", 
-        "experiments/sortablerank/characters/black_male_40-59.jpg", 
-        "experiments/sortablerank/characters/latino_female_18-39.jpg", 
-        "experiments/sortablerank/characters/latino_female_40-59.jpg", 
-        "experiments/sortablerank/characters/latino_female_60.jpg", 
-        "experiments/sortablerank/characters/latino_male_18-39.jpg", 
-        "experiments/sortablerank/characters/latino_male_40-59.jpg", 
-        "experiments/sortablerank/characters/latino_male_60.jpg", 
-        "experiments/sortablerank/characters/white_female_18-39.jpg", 
-        "experiments/sortablerank/characters/white_female_40-59.jpg", 
-        "experiments/sortablerank/characters/white_female_60.jpg", 
-        "experiments/sortablerank/characters/white_male_18-39.jpg", 
-        "experiments/sortablerank/characters/white_male_40-59.jpg", 
-        "experiments/sortablerank/characters/white_male_60.jpg", 
-        "experiments/sortablerank/characters/asian_female_60.png", 
-        "experiments/sortablerank/characters/asian_male_60.png", 
-        "experiments/sortablerank/characters/black_female_60.png", 
-        "experiments/sortablerank/characters/black_male_60.png"
-    ];
-
     const participant_image = "experiments/sortablerank/user.png";
-
-    // Ensure character_count is not greater than the number of available characters
-    if (character_count > all_character_images.length) {
-        throw new Error("character_count is greater than the number of available characters.");
-    }
-
 
     // Calculate the required number of items for Team A (floor(character_count / 2))
     const required_items_team_a = Math.floor(character_count / 2) + 1;
@@ -164,8 +131,31 @@
     // Create a dynamic error message based on the required number of items
     const error_message = `You must pick exactly ${required_items_team_a} players for your team before you can proceed.`;
 
-    // Sample character_count characters from all_character_images without replacement
-    let character_images = jsPsych.randomization.sampleWithoutReplacement(all_character_images, character_count);
+    // Sample character_count characters from unique demographic combos without replacement
+    const selectedDemographics = new Set(); // Track unique demographics
+
+    function sampleCharacterImage() {
+        const demographics = Object.keys(characterImages);
+        
+        // Find a unique demographic that hasn't been selected yet
+        let randomKey;
+        do {
+            randomKey = demographics[Math.floor(Math.random() * demographics.length)];
+        } while (selectedDemographics.has(randomKey) && selectedDemographics.size < demographics.length);
+
+        selectedDemographics.add(randomKey); // Mark demographic as selected
+        
+        // Get the list of images for this demographic combination
+        const imageList = characterImages[randomKey];
+        
+        // Randomly select an image from the list
+        return imageList[Math.floor(Math.random() * imageList.length)];
+    }
+
+    // Reset the selectedDemographics set if we need to sample again later
+
+    // Sample character images for the trial
+    const character_images = Array.from({ length: character_count }, sampleCharacterImage);
 
     const age_confirmation = {
         type: jsPsychInstructions,
@@ -208,7 +198,7 @@
                         <option value="East/Southeast Asian">East/Southeast Asian</option>
                         <option value="Black">Black</option>
                         <option value="White">White</option>
-                        <option value="Hispanic/Latine/Latinx">Hispanic/Latine/Latinx</option>
+                        <option value="Hispanic/Latine/Latinx">Hispanic/Latino</option>
                         <option value="Indigenous">Indigenous</option>
                         <option value="Multiracial">Multiracial</option>
                         <option value="Other">Other</option>
@@ -275,7 +265,7 @@
             </div>`,
             `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
                 <h2>Team Selection - Pairwise Preferences</h2>
-                <p>For privacy reasons, each participant in the player lobby, including yourself, has been assigned a unique, AI-generated icon based on their demographics.</p><p> On the following screens, you will see pairs of players in the queue; please choose the player you would prefer to have on your team from each pair.</p>
+                <p>For privacy reasons, each participant in the player lobby, including yourself, has been assigned a unique, generated icon based on their demographics.</p><p> On the following screens, you will see pairs of players in the queue; please choose the player you would prefer to have on your team from each pair.</p>
             </div>`
         ],
         show_clickable_nav: true,
@@ -302,22 +292,35 @@
         trial_duration: 3000
     };
 
-    function generateCharacterHTML(imagePath) {
-        const filename = imagePath.split('/').pop();
-        const parts = filename.split('_');
-        const race = parts[0];
-        const sex = parts[1];
-        let age = parts[2].replace('.jpg', '').replace('.png', '');
+    function capitalizeEachWord(string) {
+        return string
+        .replace(/-/g, " ") // Replace remaining hyphens with spaces
+        .split(" ")
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ")
+        .replace(' Or ', "/") // Replace "-or-" with "/"
+    }
 
-        if (age === '60' || age === '60.jpg' || age === '60.png') {
-            age = '60+';
-        }
+    function generateCharacterHTML(imagePath) {
+        const pathParts = imagePath.split('/');
+
+        // Extract the demographic folder name (e.g., "Age_<24_female_asian")
+        const demographicFolder = pathParts[pathParts.length - 2];
+        const filename = pathParts[pathParts.length - 1];
+        const filenameParts = filename.split('_');
+        const ageParts = filenameParts[4].split('.');
+
+        // Parse demographic details from the folder name
+        const demographicParts = demographicFolder.split('_');
+        const age = ageParts[0];
+        const sex = demographicParts[2];  // e.g., "female"
+        const race = demographicParts[3]; // e.g., "asian" (already lowercase and hyphenated if needed)
 
         return `
             <img src="${imagePath}" alt="Character ${race} ${sex}">
             <div>
-                <p>Race: ${capitalizeFirstLetter(race)}</p>
-                <p>Sex: ${capitalizeFirstLetter(sex)}</p>
+                <p>Race: ${capitalizeEachWord(race)}</p>
+                <p>Sex: ${capitalizeEachWord(sex)}</p>
                 <p>Age: ${age}</p>
             </div>
         `;
@@ -426,7 +429,7 @@ function rearrangeTrials(pairs) {
 
         const trial = {
             type: jsPsychHtmlButtonResponse,
-            // enable_button_after: 1000,
+            // enable_button_after: 500,
             stimulus: '<div class="trial-container">' +
                         '<div class="character-container">' + left_html + '</div>' +
                         '<div class="character-container">' + right_html + '</div>' +
@@ -576,13 +579,13 @@ function rearrangeTrials(pairs) {
 
     // Build the timeline
     const timeline = [
-        age_confirmation,
-        instructions,
-        demographic_questions,
-        competitiveness_selfrating,
-        loading,
-        instructions_forced_choice, // New instructions before forced choice trials
-        lobby_loading,
+        // age_confirmation,
+        // instructions,
+        // demographic_questions,
+        // competitiveness_selfrating,
+        // loading,
+        // instructions_forced_choice, // New instructions before forced choice trials
+        // lobby_loading,
         ...choice_trials,
         instructions_ranking, // New instructions before ranking trial
         rank_trial,
