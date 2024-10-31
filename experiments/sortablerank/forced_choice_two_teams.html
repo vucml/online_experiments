@@ -429,7 +429,7 @@ function rearrangeTrials(pairs) {
 
         const trial = {
             type: jsPsychHtmlButtonResponse,
-            // enable_button_after: 500,
+            enable_button_after: 500,
             stimulus: '<div class="trial-container">' +
                         '<div class="character-container">' + left_html + '</div>' +
                         '<div class="character-container">' + right_html + '</div>' +
@@ -579,13 +579,13 @@ function rearrangeTrials(pairs) {
 
     // Build the timeline
     const timeline = [
-        // age_confirmation,
-        // instructions,
-        // demographic_questions,
-        // competitiveness_selfrating,
-        // loading,
-        // instructions_forced_choice, // New instructions before forced choice trials
-        // lobby_loading,
+        age_confirmation,
+        instructions,
+        demographic_questions,
+        competitiveness_selfrating,
+        loading,
+        instructions_forced_choice, // New instructions before forced choice trials
+        lobby_loading,
         ...choice_trials,
         instructions_ranking, // New instructions before ranking trial
         rank_trial,
