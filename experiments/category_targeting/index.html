@@ -137,13 +137,14 @@
         for (let i = 0; i < trial_count; i++) {
 
             // Configure Study Events:
-            // TODO: account for variable list length (coded as 0 in pres_itemids)
-            let presentation_stimuli = []
+            let presentation_stimuli = [];
             for (let j = 0; j < subject_presentations[i].length; j++) {
-                presentation_stimuli.push(stimulus_pool[subject_presentations[i][j] - 1]);
+                if (subject_presentations[i][j] !== 0) {
+                    presentation_stimuli.push(stimulus_pool[subject_presentations[i][j] - 1]);
+                }
             }
             console.log(i + 'th trial presentation_stimuli: ' + presentation_stimuli);
-
+            
             let presentation_categories = []
             if ('category_path' in config) {
             for (let j = 0; j < subject_presentations[i].length; j++) {
