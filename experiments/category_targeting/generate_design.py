@@ -582,6 +582,9 @@ if __name__ == "__main__":
         "trees",
         "vegetables",
         "weather terms",
+        "flowers",
+        "military titles",
+        "beverages",
     ]
     labels = [label.upper() for label in labels]
 
