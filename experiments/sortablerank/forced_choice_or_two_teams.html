@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Experiment</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+    <script src="jatos.js"></script> 
+    <script>
+        // Set base URL of file paths different for JATOS than other hosting environments
+        const base = document.createElement('base');
+        const jatos_defined = typeof jatos !== 'undefined';
+        base.href = jatos_defined ? '.' : '../../'; 
+        document.head.appendChild(base);
+    </script>
+    <script src="core/jspsych/jspsych.js"></script>
+    <link href="core/jspsych/css/jspsych.css" rel="stylesheet" type="text/css" />
+    <link href="experiments/sortablerank/homophily.css" rel="stylesheet" type="text/css" />
+    <script src="core/jspsych/plugins/plugin-instructions.js"></script>
+    <script src="core/jspsych/plugins/plugin-html-slider-response.js"></script>
+    <script src="core/jspsych/plugins/plugin-survey-html-form.js"></script>
+    <!-- <script src="core/jspsych/plugins/plugin-html-button-response.js"></script> -->
+    <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.2.0"></script>
+    <script src="core/jspsych/plugins/plugin-html-keyboard-response.js"></script>
+    <!-- Include the jsPsychSortableRank plugin -->
+    <script src="experiments/sortablerank/jspsych-two-team-sortable-rank.js"></script>
+    <script src="experiments/sortablerank/character_images.js"></script>
+    <script src="core/init_experiment.js"></script>
+    <style>
+        /* Styles for the 2AFC trials */
+        .trial-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .character-container {
+            border: 1px solid #ccc;
+            padding: 10px;
+            width: 45%;
+            text-align: center;
+        }
+        .character-container img {
+            object-fit: contain;
+            width: 300px;
+            height: 400px;
+        }
+        /* Styles for the ranking trial */
+        .sortable-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .sortable-item img {
+            width: 200px;
+            height: 150px;
+            object-fit: contain;
+        }
+        /* Styles for the two-team ranking trial */
+        .teams-container {
+            display: flex;
+            justify-content: center; /* Center the team columns */
+            align-items: flex-start;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            margin: 0 auto; /* Center the container */
+        }
+        .team-column {
+            box-sizing: border-box;
+            margin: 0 20px; /* Horizontal margin between columns */
+            /* No fixed width; column width adjusts to content */
+        }
+        .team-column h3 {
+            text-align: center; /* Center the team labels */
+        }
+        .team-list {
+            border: 1px solid #ccc;
+            min-height: 400px; /* Increased height to accommodate more items */
+            padding: 10px;
+            list-style-type: none;
+            background-color: #f9f9f9;
+            /* max-height: 600px; Optional: Set a max height and enable scrolling if needed */
+            /* overflow-y: auto; Enable vertical scrolling if content exceeds max-height */
+        }
+        .sortable-item {
+            margin: 5px 0;
+            padding: 5px;
+            cursor: grab;
+            background-color: #fff;
+            border: 1px solid #ccc;
+        }
+        .team-grid, .team-list {
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #f9f9f9;
+            overflow-y: auto;
+        }
+
+        .sortable-item {
+            position: relative;
+            margin: 5px 0; /* Vertical margin between items */
+            padding: 5px 10px 5px 60px; /* Adjust padding-left for rank numbers */
+            cursor: grab;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            width: auto; /* Width determined by content */
+            box-sizing: border-box;
+        }
+
+        .rank-number {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: bold;
+            width: 40px; /* Adjust width if necessary */
+            text-align: right;
+        }
+    </style>
+</head>
+<body></body>
+<script>
+
+    jsPsych = initializeExperiment();
+
+    condition = jsPsych.randomization.sampleBernoulli(0.5)
+    randomized_order = jsPsych.randomization.sampleWithoutReplacement([0, 1], 1)[0];
+    casual_instructions = [
+        `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
+            <h2>Team Selection - Pairwise Preferences</h2>
+            <p>You are about to participate in a team activity focused on improving a local community space. Your team will develop ideas and plans to enhance the local park, aiming to make it a better place for everyone. This is an opportunity to collaborate, share ideas, and contribute positively to your community in a relaxed setting.</p>
+        </div>`,
+        `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
+            <h2>Team Selection - Pairwise Preferences</h2>
+            <p>You have been randomly selected as the team leader. Before the game begins, you will have the opportunity to select your team members; select those whom you believe will make the collaboration enjoyable and productive. Your least preferred players will form another team working on similar plans.</p>
+        </div>`,
+        `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
+            <h2>Team Selection - Pairwise Preferences</h2>
+            <p>For privacy reasons, each participant in the player lobby, including yourself, has been assigned a unique, generated icon based on their demographics.</p><p> On the following screens, you will see pairs of players in the queue; please choose the player you would prefer to have on your team from each pair.</p>
+        </div>`
+    ]
+    casual_final_rank_instructions = `
+            <p>You are almost finished selecting for team for a team activity focused on improving a local community space. Your team will develop ideas and plans to enhance the local park, aiming to make it a better place for everyone. This is an opportunity to collaborate, share ideas, and contribute positively to your community in a relaxed setting.</p>
+            `
+    competitive_instructions = [
+        `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
+            <h2>Team Selection - Pairwise Preferences</h2>
+            <p>You are about to participate in a team competition focused on improving a local community space. Your team must develop an innovative and impactful proposal to enhance the local park, competing directly against another team for a substantial grant from the city council. The team with the best proposal will receive funding for implementing their ideas.</p>
+        </div>`,
+        `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
+            <h2>Team Selection - Pairwise Preferences</h2>
+            <p>You have been randomly selected as the team leader. Before the game begins, you will have the opportunity to select your team members; select those whom you believe will maximize your team's chances of winning the grant. Your least preferred players will form the rival team.</p>
+        </div>`,
+        `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
+            <h2>Team Selection - Pairwise Preferences</h2>
+            <p>For privacy reasons, each participant in the player lobby, including yourself, has been assigned a unique, generated icon based on their demographics.</p><p> On the following screens, you will see pairs of players in the queue; please choose the player you would prefer to have on your team from each pair.</p>
+        </div>`
+    ]
+    competitive_final_rank_instructions = `
+            <p>You are almost finished selecting for team for a team competition focused on improving a local community space. Your team must develop an innovative and impactful proposal to enhance the local park, competing directly against another team for a substantial grant from the city council. The team with the best proposal will receive funding for implementing their ideas.</p>
+            `
+
+    competitive_opposing_team_name = "Opposing Team"
+    casual_opposing_team_name = "Other Team"
+
+    // Set the trial count here (0 means use all possible combinations)
+    const trial_count = 0; // Adjust as needed
+    const character_count = 9; // Adjust as needed
+    const participant_image = "experiments/sortablerank/user.png";
+
+    // Calculate the required number of items for Team A (floor(character_count / 2))
+    const required_items_team_a = Math.floor(character_count / 2) + 1;
+
+    // Create a dynamic error message based on the required number of items
+    const error_message = `You must pick exactly ${required_items_team_a} players for your team before you can proceed.`;
+
+    // Sample character_count characters from unique demographic combos without replacement
+    const selectedDemographics = new Set(); // Track unique demographics
+    const selectedCharacters = new Set(); // Track unique characters
+
+    function sampleCharacterImage() {
+        const demographics = Object.keys(characterImages);
+        
+        // Find a unique demographic that hasn't been selected yet
+        let randomKey;
+        do {
+            randomKey = demographics[Math.floor(Math.random() * demographics.length)];
+        } while ((selectedDemographics.has(randomKey) && selectedDemographics.size < demographics.length) || selectedCharacters.has(randomKey));
+
+        selectedDemographics.add(randomKey); // Mark demographic as selected
+        selectedCharacters.add(randomKey); // Mark character as selected
+        
+        // Get the list of images for this demographic combination
+        const imageList = characterImages[randomKey];
+        
+        // Randomly select an image from the list
+        return imageList[Math.floor(Math.random() * imageList.length)];
+    }
+
+    // Reset the selectedDemographics set if we need to sample again later
+
+    // Sample character images for the trial
+    const choice_character_images = Array.from({ length: character_count }, sampleCharacterImage);
+    const ranked_character_images = Array.from({ length: character_count }, sampleCharacterImage);
+
+    const age_confirmation = {
+        type: jsPsychInstructions,
+        pages: [
+            `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
+                <p>Hello! Thank you for participating in this study.</p>
+                <p>Your participation is for research and is entirely voluntary.</p>
+                <p>The study should take under 10 minutes to complete. The general purpose of this study is to better understand social grouping behavior. The complete purpose of the study will be explained after it is concluded. Contact information will be provided at the end for any further questions or clarifications.</p>
+                <p>If you would like to participate in this study, please confirm that you are eighteen years of age or older.</p>
+            </div>`
+        ],
+        show_clickable_nav: true,
+        allow_backward: false,
+        button_label_next: 'I am 18 years of age or older',
+        data: { condition: condition, ordering: randomized_order }
+    };
+
+    const instructions = {
+        type: jsPsychInstructions,
+        pages: [
+            `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
+                <p>Thank you for participating in this research study. Please enter your information on the next page and read the instructions that follow. Some details about this study may not be known until the study is completed.</p>
+            </div>`
+        ],
+        show_clickable_nav: true,
+        allow_backward: false,
+        button_label_next: 'Next',
+    };
+
+    const demographic_questions = {
+        type: jsPsychSurveyHtmlForm,
+        preamble: '<h2>Demographic Information</h2>',
+        html: `
+            <div class="form-container">
+                <!-- Racial Identity -->
+                <div class="form-row">
+                    <label for="race">Racial Identity</label>
+                    <select id="race" name="race" required>
+                        <option value="">Choose option</option>
+                        <option value="South Asian">South Asian</option>
+                        <option value="East/Southeast Asian">East/Southeast Asian</option>
+                        <option value="Black">Black</option>
+                        <option value="White">White</option>
+                        <option value="Hispanic/Latine/Latinx">Hispanic/Latino</option>
+                        <option value="Indigenous">Indigenous</option>
+                        <option value="Multiracial">Multiracial</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                
+                <!-- Gender -->
+                <div class="form-row">
+                    <label>Gender</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="gender" value="man" required> Man</label>
+                        <label><input type="radio" name="gender" value="woman"> Woman</label>
+                        <label><input type="radio" name="gender" value="non-binary"> Non-Binary</label>
+                        <label><input type="radio" name="gender" value="other"> Other</label>
+                    </div>
+                </div>
+                
+                <!-- Age -->
+                <div class="form-row">
+                    <label for="age">Age</label>
+                    <input type="text" id="age" name="age" required>
+                </div>
+                
+                <!-- College Education -->
+                <div class="form-group-full">
+                    <label>Have you completed or are you currently pursuing a college education?</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="college" value="yes" required> Yes</label>
+                        <label><input type="radio" name="college" value="no"> No</label>
+                    </div>
+                </div>
+            </div>
+        `,
+        button_label: 'Next',
+        on_finish: function(data) {
+            console.log(data.response);
+        }
+    };
+
+    const competitiveness_selfrating = {
+        type: jsPsychHtmlSliderResponse,
+        stimulus: '<h2>Rating</h2><p>On a scale from 1–10, how typically successful are you in competitive environments?</p>',
+        labels: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+        slider_start: 5,
+        min: 0,
+        max: 10,
+        step: 1,
+        slider_width: 500,
+        require_movement: true,
+        button_label: 'Next',
+    };
+
+    // New instructions before forced choice trials
+    const instructions_forced_choice = {
+        type: jsPsychInstructions,
+        pages: condition ? competitive_instructions : casual_instructions,
+        show_clickable_nav: true,
+        allow_backward: true,
+        button_label_next: 'Next',
+        button_label_previous: 'Previous',
+        data: { condition: condition }
+    };
+
+    // loading screen for immersion
+    const loading = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: `
+        <p style="font-size: 20px;">Loading...</p>
+        <img src="experiments/sortablerank/loading.gif" style="width: 100px; height: 100px;">`,
+        trial_duration: 1000
+    };
+
+
+    const lobby_loading = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: `
+        <p style="font-size: 20px;">One moment. We are sorting you into a lobby.</p>
+        <img src="experiments/sortablerank/loading.gif" style="width: 100px; height: 100px;">`,
+        trial_duration: 3000
+    };
+
+    function capitalizeEachWord(string) {
+        return string
+        .replace(/-/g, " ") // Replace remaining hyphens with spaces
+        .split(" ")
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ")
+        .replace(' Or ', "/") // Replace "-or-" with "/"
+    }
+
+    function generateCharacterHTML(imagePath) {
+        const pathParts = imagePath.split('/');
+
+        // Extract the demographic folder name (e.g., "Age_<24_female_asian")
+        const demographicFolder = pathParts[pathParts.length - 2];
+        const filename = pathParts[pathParts.length - 1];
+        const filenameParts = filename.split('_');
+        const ageParts = filenameParts[4].split('.');
+
+        // Parse demographic details from the folder name
+        const demographicParts = demographicFolder.split('_');
+        const age = ageParts[0];
+        const sex = demographicParts[2];  // e.g., "female"
+        const race = demographicParts[3]; // e.g., "asian" (already lowercase and hyphenated if needed)
+
+        return `
+            <img src="${imagePath}" alt="Character ${race} ${sex}">
+            <div>
+                <p>Race: ${capitalizeEachWord(race)}</p>
+                <p>Sex: ${capitalizeEachWord(sex)}</p>
+                <p>Age: ${age}</p>
+            </div>
+        `;
+    }
+
+    function generateParticipantHTML(imagePath) {
+        return `
+            <img src="${imagePath}" alt="Participant">
+            <div>
+                <p><strong>You (Leader)</strong></p>
+            </div>
+        `;
+    }
+
+    function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    const choice_character_html = choice_character_images.map(generateCharacterHTML);
+    const ranked_character_html = ranked_character_images.map(generateCharacterHTML);
+
+    // Generate all possible pairs without self-comparisons
+    function generateAllPairs(arrayLength) {
+        const pairs = [];
+        for (let i = 0; i < arrayLength; i++) {
+            for (let j = i + 1; j < arrayLength; j++) {
+                pairs.push([i, j]);
+            }
+        }
+        return pairs;
+    }
+
+    let all_pairs = generateAllPairs(choice_character_images.length);
+
+    // Shuffle the pairs
+    all_pairs = jsPsych.randomization.shuffle(all_pairs);
+
+    // If trial_count > 0, select that many pairs
+    if (trial_count > 0 && trial_count < all_pairs.length) {
+        all_pairs = all_pairs.slice(0, trial_count);
+    }
+
+    // Function to rearrange trials to avoid consecutive repeats
+// Function to rearrange trials to avoid consecutive repeats
+function rearrangeTrials(pairs) {
+    const rearranged = [];
+    let lastUsedCharacters = []; // Tracks characters used in the last trial
+
+    while (pairs.length > 0) {
+        let found = false;
+        for (let i = 0; i < pairs.length; i++) {
+            const pair = pairs[i];
+            const [charA, charB] = pair;
+            const lastPair = rearranged[rearranged.length - 1];
+
+            // Check for self-comparison
+            if (charA === charB) {
+                continue; // Skip self-comparisons
+            }
+
+            // Check if the pair doesn't repeat any character from the last used ones
+            if (!lastUsedCharacters.includes(charA) && !lastUsedCharacters.includes(charB)) {
+                rearranged.push(pair);
+                pairs.splice(i, 1);
+
+                // Update the last used characters to avoid consecutive repeats
+                lastUsedCharacters = [charA, charB];
+
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            // If no suitable pair is found, reshuffle the remaining pairs
+            pairs = jsPsych.randomization.shuffle(pairs);
+            const pair = pairs.shift();
+
+            // Ensure the reshuffled pair is not a self-comparison
+            if (pair && pair[0] !== pair[1]) {
+                rearranged.push(pair);
+                lastUsedCharacters = [pair[0], pair[1]];
+            }
+        }
+    }
+
+    return rearranged;
+}
+
+    // Rearrange trials to avoid consecutive repeats and self-comparisons
+    all_pairs = rearrangeTrials(all_pairs);
+
+    // Create the trials
+    const choice_trials = [];
+
+    for (let k = 0; k < all_pairs.length; k++) {
+        const i = all_pairs[k][0];
+        const j = all_pairs[k][1];
+
+        // Ensure i !== j to prevent self-comparisons
+        if (i === j) {
+            continue; // Skip this pair
+        }
+
+        const left_html = choice_character_html[i];
+        const right_html = choice_character_html[j];
+
+        const trial = {
+            type: jsPsychHtmlButtonResponse,
+            enable_button_after: 500,
+            stimulus: '<div class="trial-container">' +
+                        '<div class="character-container">' + left_html + '</div>' +
+                        '<div class="character-container">' + right_html + '</div>' +
+                      '</div>',
+            choices: ['Left', 'Right'],
+            prompt: '<p>Please choose the player that you prefer for your team.</p>',
+            data: {
+                left_index: i,
+                right_index: j,
+                left_image: choice_character_images[i],
+                right_image: choice_character_images[j]
+            },
+            on_finish: function(data) {
+                data.choice = data.response === 0 ? 'left' : 'right';
+                data.winner = data.choice === 'left' ? data.left_index : data.right_index;
+                data.loser = data.choice === 'left' ? data.right_index : data.left_index;
+            }
+        };
+
+        choice_trials.push(trial);
+    }
+
+    // Instructions before the ranking trial
+    const instructions_ranking = {
+        type: jsPsychInstructions,
+        pages: [
+        `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
+            <h2>Team Selection - Final Ranking</h2>` + (condition ? competitive_final_rank_instructions : casual_final_rank_instructions) + `
+            <p>Based on your choices, we have provided an initial sorting of players into your team and the ` + (condition ? ` ${competitive_opposing_team_name}` : ` ${casual_opposing_team_name}`) + `. Please review this sorting and adjust rankings as needed to finalize your team.</p>
+            <p><strong>Please rank the players based on your relative preferences, ranking them from most preferred to least preferred. The rank numbers indicate your preferences, continuing across both teams.</strong></p>
+            <p>Your most preferred player should be at the top of "Your Team" with rank 1st, and your least preferred character should be at the bottom of "` + (condition ? ` ${competitive_opposing_team_name}` : ` ${casual_opposing_team_name}`) + `" with the highest rank number.</p>
+        </div>`
+        ],
+        show_clickable_nav: true,
+        allow_backward: false,
+        button_label_next: 'Continue',
+        data : {condition: condition}
+    };
+
+    // Define the ranking trial
+    const rank_trial = {
+        type: jsPsychTwoTeamSortableRank,
+        instructions: `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">` + (condition ? competitive_final_rank_instructions : casual_final_rank_instructions) + `<p>Please review this sorting and adjust rankings as needed to finalize your team.</p></div>`,
+        items: [generateParticipantHTML(participant_image), ...ranked_character_html],
+        labels: [participant_image, ...ranked_character_images],
+        animation_duration: 150,
+        required_items_team_a: required_items_team_a, // Dynamically set based on floor(character_count / 2)
+        error_message: error_message, // Dynamic error message
+        team_labels: ['Your Team', condition ? competitive_opposing_team_name : casual_opposing_team_name],
+        on_finish: function(data) {
+            console.log(data.response); // Log the form data for debugging
+        }
+    };
+
+    const debriefing = {
+        type: jsPsychSurveyHtmlForm,
+        preamble: '<h2>Game?</h2>',
+        html: `
+            <div class="form-container">
+                <p>Thank you for selecting your team. There is no game!</p>
+                <p>Did anyone tell you that there was no game prior to you completing the task?</p>
+                <div style="padding: 10px; background-color: #fff;">
+                    <select id="deception" name="deception" required>
+                        <option value="">Choose option</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+            </div>
+        `,
+        button_label: 'Next',
+        on_finish: function(data) {
+            console.log(data.response);
+        }
+    };
+
+    const finished = {
+        type: jsPsychInstructions,
+        pages: [
+            `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
+                <p>Thank you for your participation! Your data will help us better understand social grouping behavior in competitive and non-competitive environments. Share this study with your friends and family! <b>We request you do not tell others there is no game as that may alter their responses and compromise the integrity of the study.</b></p>
+                <p>Feel free to contact us at <a href="mailto:shreyas.teegala@vanderbilt.edu">shreyas.teegala@vanderbilt.edu</a> or <a href="mailto:milind.muthiah@vanderbilt.edu">milind.muthiah@vanderbilt.edu</a> with any questions or follow-ups. For additional information about your rights as a participant in this study, or to discuss problems, concerns, and questions, please feel free to contact the Institutional Review Board Office at (615) 322-2918 or toll-free at (866) 224-8273.</p>
+            </div>`
+        ],
+        show_clickable_nav: true,
+        button_label_next: 'Finish',
+        allow_backward: false,
+    };
+
+    const choice_trials_block = [
+        instructions_forced_choice,
+        lobby_loading,
+        ...choice_trials,
+    ]
+
+    const ranked_trials_block = [
+        instructions_ranking,
+        lobby_loading,
+        rank_trial
+    ]
+
+    const trials_order = randomized_order === 0 
+    ? [choice_trials_block, ranked_trials_block] 
+    : [ranked_trials_block, choice_trials_block];
+
+    // Build the timeline
+    const timeline = [
+        age_confirmation,
+        instructions,
+        demographic_questions,
+        competitiveness_selfrating,
+        ...trials_order.flat(),
+        debriefing,
+        finished
+    ];
+
+    jsPsych.run(timeline);
+</script>
+</html> 
