@@ -129,11 +129,11 @@
         </div>`,
         `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
             <h2>Team Selection - Pairwise Preferences</h2>
-            <p>You have been randomly selected as the team leader. Before the game begins, you will have the opportunity to select your team members; select those whom you believe will make the collaboration enjoyable and productive. Your least preferred players will form another team working on similar plans.</p>
+            <p>You have been randomly selected as the team leader. Before the game begins, you will have the opportunity to select your preferences for team members in a series of two drafts. Select those whom you believe will make the collaboration enjoyable and productive. Based on your preferences in the drafts, we will create teams such that your most preferred players will form your team, and your least preferred players will form another team working on similar plans.</p>
         </div>`,
         `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
             <h2>Team Selection - Pairwise Preferences</h2>
-            <p>For privacy reasons, each participant in the player lobby, including yourself, has been assigned a unique, generated icon based on their demographics.</p><p> On the following screens, you will see pairs of players in the queue; please choose the player you would prefer to have on your team from each pair.</p>
+            <p>For privacy reasons, each participant in the player lobby, including yourself, has been assigned a unique, generated icon based on their demographics.</p>
         </div>`
     ]
     casual_final_rank_instructions = `
@@ -146,11 +146,11 @@
         </div>`,
         `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
             <h2>Team Selection - Pairwise Preferences</h2>
-            <p>You have been randomly selected as the team leader. Before the game begins, you will have the opportunity to select your team members; select those whom you believe will maximize your team's chances of winning the grant. Your least preferred players will form the rival team.</p>
+            <p>You have been randomly selected as the team leader. Before the game begins, you will have the opportunity to select your preferences for team members in a series of two drafts. Select those whom you believe will maximize your team's chances of winning the grant. Based on your preferences in the drafts, we will create teams such that your most preferred players will form your team, and your least preferred players will form the rival team.</p>
         </div>`,
         `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
             <h2>Team Selection - Pairwise Preferences</h2>
-            <p>For privacy reasons, each participant in the player lobby, including yourself, has been assigned a unique, generated icon based on their demographics.</p><p> On the following screens, you will see pairs of players in the queue; please choose the player you would prefer to have on your team from each pair.</p>
+            <p>For privacy reasons, each participant in the player lobby, including yourself, has been assigned a unique, generated icon based on their demographics.</p>
         </div>`
     ]
     competitive_final_rank_instructions = `
@@ -523,7 +523,7 @@ function rearrangeTrials(pairs) {
         html: `
             <div class="form-container">
                 <p>Thank you for selecting your team. There is no game!</p>
-                <p>Did anyone tell you that there was no game prior to you completing the task?</p>
+                <p>Did you believe there was going to be a game?</p>
                 <div style="padding: 10px; background-color: #fff;">
                     <select id="deception" name="deception" required>
                         <option value="">Choose option</option>
