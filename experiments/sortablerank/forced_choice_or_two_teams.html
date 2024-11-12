@@ -151,13 +151,13 @@
     casual_pairwise_instructions = [
         `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
             <h2>Team Selection - Pairwise Preferences</h2>
-            <p>For privacy reasons, each participant in the player lobby, including yourself, has been assigned a unique, generated icon based on their demographics.</p><p> On the following screens, you will see pairs of players in the queue; please choose the player you would prefer to have on your team from each pair.</p>
+            <p>For privacy reasons, each participant in the player lobby, including yourself, has been assigned a unique, generated icon based on their demographics.</p><p><strong>On the following screens, you will see pairs of players in the queue; please choose the player you would prefer to have on your team from each pair.</strong></p>
         </div>`
     ]
     competitive_pairwise_instructions = [
         `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
             <h2>Team Selection - Pairwise Preferences</h2>`+ (condition ? competitive_rank_instructions : casual_rank_instructions) + `
-            <p>For privacy reasons, each participant in the player lobby, including yourself, has been assigned a unique, generated icon based on their demographics.</p><p> On the following screens, you will see pairs of players in the queue; please choose the player you would prefer to have on your team from each pair.</p>
+            <p>For privacy reasons, each participant in the player lobby, including yourself, has been assigned a unique, generated icon based on their demographics.</p><p><strong>On the following screens, you will see pairs of players in the queue; please choose the player you would prefer to have on your team from each pair.</strong></p>
         </div>`
     ]
 
@@ -504,7 +504,7 @@ function rearrangeTrials(pairs) {
         type: jsPsychInstructions,
         pages: [
         `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
-            <h2>Team Selection - Final Ranking</h2>` + (condition ? competitive_rank_instructions : casual_rank_instructions) + `
+            <h2>Team Selection - Player Ranking</h2>` + (condition ? competitive_rank_instructions : casual_rank_instructions) + `
             <p><strong>Please rank the players based on your relative preferences, ranking them from most preferred to least preferred. The rank numbers indicate your preferences, continuing across both teams.</strong></p>
             <p>Your most preferred player should be at the top of "Your Team" with rank 1st, and your least preferred character should be at the bottom of "` + (condition ? ` ${competitive_opposing_team_name}` : ` ${casual_opposing_team_name}`) + `" with the highest rank number.</p>
         </div>`
