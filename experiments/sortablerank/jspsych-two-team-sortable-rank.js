@@ -1,8 +1,8 @@
-const jsPsychTwoTeamSortableRank = (function(jspsych) {
+const jsPsychSortableRank = (function(jspsych) {
   'use strict';
 
   const info = {
-    name: 'two-team-sortable-rank',
+    name: 'sortable-rank',
     parameters: {
       items: {
         type: jspsych.ParameterType.ARRAY,
@@ -31,8 +31,8 @@ const jsPsychTwoTeamSortableRank = (function(jspsych) {
       team_labels: {
         type: jspsych.ParameterType.ARRAY,
         pretty_name: 'Team Labels',
-        default: ['Team A', 'Team B'],
-        description: 'Labels for the two teams.'
+        default: ['Team A', 'Unsorted Items', 'Team B'],
+        description: 'Labels for the left, middle, and right columns.'
       },
       required_items_team_a: {
         type: jspsych.ParameterType.INT,
@@ -46,16 +46,22 @@ const jsPsychTwoTeamSortableRank = (function(jspsych) {
         default: 'Please assign the required number of items to Your Team before proceeding.',
         description: 'The error message to display when the participant tries to submit without the required number of items in Team A.'
       },
+      unsorted_items_error_message: {
+        type: jspsych.ParameterType.STRING,
+        pretty_name: 'Unsorted Items Error Message',
+        default: 'Please assign all items to a team before proceeding.',
+        description: 'The error message to display when there are unsorted items upon submission.'
+      },
       lock_first_item: {
         type: jspsych.ParameterType.BOOL,
         pretty_name: 'Lock First Item',
         default: true,
-        description: 'If true, the first item will be non-draggable.'
+        description: 'If true, the first item will be non-draggable and placed in Team A.'
       }
     }
   };
 
-  class TwoTeamSortableRankPlugin {
+  class SortableRankPlugin {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
     }
@@ -67,163 +73,253 @@ const jsPsychTwoTeamSortableRank = (function(jspsych) {
         return;
       }
 
+      // Validate that team_labels has exactly three labels
+      if (!Array.isArray(trial.team_labels) || trial.team_labels.length !== 3) {
+        console.error('team_labels must be an array of three labels for the left, middle, and right columns.');
+        return;
+      }
+
       // Clear display element
       displayElement.innerHTML = '';
 
       // Display instructions
       if (trial.instructions) {
-        displayElement.innerHTML += `<p>${trial.instructions}</p>`;
+        const instructionsEl = document.createElement('p');
+        instructionsEl.innerHTML = trial.instructions;
+        displayElement.appendChild(instructionsEl);
       }
 
-      // Adjust logic to handle odd number of items:
-      const teamASize = Math.floor(trial.items.length / 2); // Team A gets fewer items if odd
-      const teamBSize = trial.items.length - teamASize; // Team B gets the rest of the items
+      // Create container for the columns
+      const containerDiv = document.createElement('div');
+      containerDiv.className = 'sortable-container';
 
-      const teamAItems = trial.items.slice(0, teamASize);
-      const teamBItems = trial.items.slice(teamASize);
+      // Left column
+      const leftColumn = document.createElement('div');
+      leftColumn.className = 'sortable-column';
+      const leftHeader = document.createElement('h3');
+      leftHeader.textContent = trial.team_labels[0];
+      const leftList = document.createElement('ul');
+      leftList.id = 'team-left';
+      leftList.className = 'sortable-list';
+      leftColumn.appendChild(leftHeader);
+      leftColumn.appendChild(leftList);
 
-      // Keep track of the overall index
-      let itemIndex = 0;
+      // Middle column (unsorted items)
+      const middleColumn = document.createElement('div');
+      middleColumn.className = 'sortable-column';
+      const middleHeader = document.createElement('h3');
+      middleHeader.textContent = trial.team_labels[1];
+      const middleList = document.createElement('ul');
+      middleList.id = 'unsorted-items';
+      middleList.className = 'sortable-list';
+      middleColumn.appendChild(middleHeader);
+      middleColumn.appendChild(middleList);
 
-      // Create the two grid containers for teams
-      let teamsHtml = `
-        <div class="teams-container">
-          <div class="team-column">
-            <h3>${trial.team_labels[0]}</h3>
-            <div id="team-a-grid" class="sortable-grid team-grid">
-              ${teamAItems.map((itemHtml, index) => {
-                const isFiltered = trial.lock_first_item && itemIndex === 0;
-                const filteredClass = isFiltered ? ' filtered' : '';
-                const html = `
-                  <div class="sortable-item${filteredClass}" data-id="${itemIndex}">
-                    <span class="rank-number"></span>
-                    ${itemHtml}
-                  </div>
-                `;
-                itemIndex++;
-                return html;
-              }).join('')}
-            </div>
-          </div>
-          <div class="team-column">
-            <h3>${trial.team_labels[1]}</h3>
-            <div id="team-b-grid" class="sortable-grid team-grid">
-              ${teamBItems.map((itemHtml, index) => {
-                const isFiltered = trial.lock_first_item && itemIndex === 0;
-                const filteredClass = isFiltered ? ' filtered' : '';
-                const html = `
-                  <div class="sortable-item${filteredClass}" data-id="${itemIndex}">
-                    <span class="rank-number"></span>
-                    ${itemHtml}
-                  </div>
-                `;
-                itemIndex++;
-                return html;
-              }).join('')}
-            </div>
-          </div>
-        </div>
-      `;
-      displayElement.innerHTML += teamsHtml;
+      // Right column
+      const rightColumn = document.createElement('div');
+      rightColumn.className = 'sortable-column';
+      const rightHeader = document.createElement('h3');
+      rightHeader.textContent = trial.team_labels[2];
+      const rightList = document.createElement('ul');
+      rightList.id = 'team-right';
+      rightList.className = 'sortable-list';
+      rightColumn.appendChild(rightHeader);
+      rightColumn.appendChild(rightList);
 
-      // Function to update rank numbers across both teams
+      // Append columns to container
+      containerDiv.appendChild(leftColumn);
+      containerDiv.appendChild(middleColumn);
+      containerDiv.appendChild(rightColumn);
+
+      displayElement.appendChild(containerDiv);
+
+      // Add items to lists
+      // If lock_first_item is true, initialize it in Team A
+      if (trial.lock_first_item) {
+        const lockedItem = this.createItemElement(0, trial.items[0], true);
+        leftList.appendChild(lockedItem);
+      }
+
+      // Initialize the middle column with the rest of the items
+      trial.items.forEach((itemHtml, index) => {
+        if (trial.lock_first_item && index === 0) return; // Skip the first item if locked
+
+        const itemElement = this.createItemElement(index, itemHtml, false);
+        middleList.appendChild(itemElement);
+      });
+
+      // Add CSS styles (with ID check to prevent duplicates)
+      if (!document.getElementById('sortable-rank-styles')) {
+        const style = document.createElement('style');
+        style.type = 'text/css';
+        style.id = 'sortable-rank-styles';
+        style.innerHTML = `
+          .sortable-container {
+            display: flex;
+            justify-content: space-between;
+          }
+          .sortable-column {
+            width: 32%;
+            box-sizing: border-box;
+          }
+          .sortable-list {
+            min-height: 200px;
+            border: 1px solid #ccc;
+            padding: 5px;
+            list-style-type: none;
+          }
+          .sortable-item {
+            margin: 5px;
+            padding: 5px;
+            border: 1px solid #aaa;
+            background-color: #f9f9f9;
+            cursor: move;
+            display: flex;
+            align-items: center;
+          }
+          .sortable-item.locked-item {
+            background-color: #e0e0e0;
+            cursor: default;
+          }
+          .sortable-item.locked-item .lock-icon {
+            margin-right: 5px;
+          }
+          .rank-number {
+            font-weight: bold;
+            margin-right: 5px;
+          }
+        `;
+        document.head.appendChild(style);
+      }
+
+      // Function to update global rank numbers only for sorted items
       function updateRankNumbers() {
-        const allItems = document.querySelectorAll('.sortable-item');
-        allItems.forEach((item, index) => {
-          const rankNumberElement = item.querySelector('.rank-number');
-          rankNumberElement.textContent = `${index + 1}${getOrdinalSuffix(index + 1)} `;
+        let globalRank = 1;
+        [leftList, rightList].forEach(list => {
+          const items = list.querySelectorAll('.sortable-item');
+          items.forEach(item => {
+            const rankNumberEl = item.querySelector('.rank-number');
+            rankNumberEl.textContent = globalRank++;
+          });
+        });
+
+        // Clear rank for items in the unsorted list
+        middleList.querySelectorAll('.sortable-item .rank-number').forEach(el => {
+          el.textContent = '';
         });
       }
 
-      // Helper function to get ordinal suffix (e.g., "1st", "2nd")
-      function getOrdinalSuffix(n) {
-        const s = ["th", "st", "nd", "rd"],
-              v = n % 100;
-        return s[(v - 20) % 10] || s[v] || s[0];
-      }
-
-      // Initialize Sortable.js for both grids
+      // Initialize Sortable.js for each list after ensuring the DOM is ready
       setTimeout(() => {
-        const teamAGrid = document.getElementById('team-a-grid');
-        const teamBGrid = document.getElementById('team-b-grid');
+        const sortableOptions = {
+          group: {
+            name: 'shared',
+            pull: function(to, from, dragEl) {
+              return !dragEl.classList.contains('locked-item');
+            },
+            put: true
+          },
+          animation: trial.animation_duration,
+          onEnd: function() {
+            updateRankNumbers();
+          }
+        };
 
-        if (!teamAGrid || !teamBGrid) {
-          console.error('Team grid elements not found!');
+        // Apply sortable to each list
+        [middleList, leftList, rightList].forEach(list => {
+          new Sortable(list, sortableOptions);
+        });
+      }, 100); // Wait 100ms to ensure DOM is ready
+
+      // Initial rank numbers
+      updateRankNumbers();
+
+      // End trial button
+      const endTrialBtn = document.createElement('button');
+      endTrialBtn.id = 'end-trial-btn';
+      endTrialBtn.textContent = 'Submit';
+      displayElement.appendChild(endTrialBtn);
+
+      // Event listener for end trial button
+      endTrialBtn.addEventListener('click', () => {
+        // Collect the items from each list
+        const getListData = (list) => {
+          const items = Array.from(list.querySelectorAll('.sortable-item'));
+          return items.map(item => {
+            const idAttr = item.getAttribute('data-id');
+            if (idAttr === 'locked') {
+              return { index: 'locked', label: 'locked', content: item.innerHTML };
+            }
+            const id = parseInt(idAttr, 10);
+            return { index: id, label: trial.labels[id], content: trial.items[id] };
+          });
+        };
+
+        const unsortedItems = getListData(middleList);
+        const teamLeftItems = getListData(leftList);
+        const teamRightItems = getListData(rightList);
+
+        // Validation: Check that there are no unsorted items
+        if (unsortedItems.length > 0) {
+          alert(trial.unsorted_items_error_message);
           return;
         }
 
-        const options = {
-          group: 'shared', // Enable items to be moved between grids
-          animation: trial.animation_duration,
-          onAdd: updateRankNumbers,
-          onRemove: updateRankNumbers,
-          onUpdate: updateRankNumbers,
-          onSort: updateRankNumbers,
-          sort: true,
-          multiDrag: false,
-          swapThreshold: 0.65,
-          chosenClass: 'chosen',
-          ghostClass: 'ghost',
-          filter: '.filtered', // Items with class 'filtered' are not draggable
-        };
-
-        const sortableA = new Sortable(teamAGrid, options);
-        const sortableB = new Sortable(teamBGrid, options);
-
-        // Initial rank numbers
-        updateRankNumbers();
-
-        console.log('Sortable.js initialized for both grids.');
-      }, 100); // Wait 100ms to ensure DOM is ready
-
-      // End trial button
-      displayElement.innerHTML += '<p><button id="end-trial-btn">Submit</button></p>';
-      document.getElementById('end-trial-btn').addEventListener('click', () => {
-        // Get the items in each team
-        const teamAItems = Array.from(document.querySelectorAll('#team-a-grid .sortable-item')).map(item => item.getAttribute('data-id'));
-        const teamBItems = Array.from(document.querySelectorAll('#team-b-grid .sortable-item')).map(item => item.getAttribute('data-id'));
-
-        // Validation check for required items in Team A
-        if (trial.required_items_team_a !== null && teamAItems.length !== trial.required_items_team_a) {
-          alert(trial.error_message);
-          return; // Do not proceed if the condition is not met
+        // Validation: Check required_items_team_a
+        if (trial.required_items_team_a !== null) {
+          const numItemsInTeamA = teamLeftItems.length;
+          if (numItemsInTeamA !== trial.required_items_team_a) {
+            alert(trial.error_message);
+            return;
+          }
         }
 
         // Prepare trial data
-        const allItems = Array.from(document.querySelectorAll('.sortable-item'));
-        const rankedOrder = allItems.map(item => item.getAttribute('data-id'));
-
-        const teamAItemIds = teamAItems.map(id => parseInt(id));
-        const teamBItemIds = teamBItems.map(id => parseInt(id));
-
         const trialData = {
-          ranked_order: rankedOrder.map((id, index) => ({
-            rank: index + 1,
-            index: parseInt(id),
-            label: trial.labels[id],
-            content: trial.items[id],
-            team: teamAItemIds.includes(parseInt(id)) ? trial.team_labels[0] : trial.team_labels[1]
-          })),
-          team_a: teamAItemIds.map(id => ({
-            index: id,
-            label: trial.labels[id],
-            content: trial.items[id]
-          })),
-          team_b: teamBItemIds.map(id => ({
-            index: id,
-            label: trial.labels[id],
-            content: trial.items[id]
-          }))
+          unsorted_items: unsortedItems,
+          team_left_items: teamLeftItems,
+          team_right_items: teamRightItems
         };
-
-        console.log('Trial Data:', trialData); // Log the trial data for debugging
 
         // End trial and store data
         this.jsPsych.finishTrial(trialData);
       });
     }
+
+    // Helper function to create item element
+    createItemElement(index, itemHtml, isLocked) {
+      const li = document.createElement('li');
+      li.className = 'sortable-item';
+      if (isLocked) {
+        li.classList.add('locked-item');
+        li.setAttribute('data-id', 'locked');
+      } else {
+        li.setAttribute('data-id', index);
+      }
+
+      // Rank number (initially empty for unsorted items)
+      const rankNumber = document.createElement('span');
+      rankNumber.className = 'rank-number';
+      rankNumber.textContent = ''; // No rank displayed initially
+      li.appendChild(rankNumber);
+
+      // Lock icon if locked
+      if (isLocked) {
+        const lockIcon = document.createElement('span');
+        lockIcon.className = 'lock-icon';
+        lockIcon.textContent = '🔒';
+        li.appendChild(lockIcon);
+      }
+
+      // Item content
+      const contentDiv = document.createElement('div');
+      contentDiv.innerHTML = itemHtml;
+      li.appendChild(contentDiv);
+
+      return li;
+    }
   }
 
-  TwoTeamSortableRankPlugin.info = info;
-  return TwoTeamSortableRankPlugin;
+  SortableRankPlugin.info = info;
+  return SortableRankPlugin;
 })(jsPsychModule);

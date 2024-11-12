@@ -124,38 +124,43 @@
     randomized_order = jsPsych.randomization.sampleWithoutReplacement([0, 1], 1)[0];
     casual_instructions = [
         `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
-            <h2>Team Selection - Pairwise Preferences</h2>
+            <h2>Casual Team Activity</h2>
             <p>You are about to participate in a team activity focused on improving a local community space. Your team will develop ideas and plans to enhance the local park, aiming to make it a better place for everyone. This is an opportunity to collaborate, share ideas, and contribute positively to your community in a relaxed setting.</p>
         </div>`,
         `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
-            <h2>Team Selection - Pairwise Preferences</h2>
+            <h2>Casual Team Activity</h2>
             <p>You have been randomly selected as the team leader. Before the game begins, you will have the opportunity to select your team members; select those whom you believe will make the collaboration enjoyable and productive. Your least preferred players will form another team working on similar plans.</p>
         </div>`,
-        `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
-            <h2>Team Selection - Pairwise Preferences</h2>
-            <p>For privacy reasons, each participant in the player lobby, including yourself, has been assigned a unique, generated icon based on their demographics.</p><p> On the following screens, you will see pairs of players in the queue; please choose the player you would prefer to have on your team from each pair.</p>
-        </div>`
     ]
-    casual_final_rank_instructions = `
-            <p>You are almost finished selecting for team for a team activity focused on improving a local community space. Your team will develop ideas and plans to enhance the local park, aiming to make it a better place for everyone. This is an opportunity to collaborate, share ideas, and contribute positively to your community in a relaxed setting.</p>
-            `
     competitive_instructions = [
         `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
-            <h2>Team Selection - Pairwise Preferences</h2>
+                        <h2>Competitive Team Activity</h2>
             <p>You are about to participate in a team competition focused on improving a local community space. Your team must develop an innovative and impactful proposal to enhance the local park, competing directly against another team for a substantial grant from the city council. The team with the best proposal will receive funding for implementing their ideas.</p>
         </div>`,
         `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
-            <h2>Team Selection - Pairwise Preferences</h2>
+                        <h2>Competitive Team Activity</h2>
             <p>You have been randomly selected as the team leader. Before the game begins, you will have the opportunity to select your team members; select those whom you believe will maximize your team's chances of winning the grant. Your least preferred players will form the rival team.</p>
         </div>`,
+    ]
+    casual_rank_instructions = `
+            <p>You are selecting a team for a team activity focused on improving a local community space. Your team will develop ideas and plans to enhance the local park, aiming to make it a better place for everyone. This is an opportunity to collaborate, share ideas, and contribute positively to your community in a relaxed setting.</p>
+            `
+    competitive_rank_instructions = `
+            <p>You are selecting a team for a team competition focused on improving a local community space. Your team must develop an innovative and impactful proposal to enhance the local park, competing directly against another team for a substantial grant from the city council. The team with the best proposal will receive funding for implementing their ideas.</p>
+            `
+    casual_pairwise_instructions = [
         `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
             <h2>Team Selection - Pairwise Preferences</h2>
             <p>For privacy reasons, each participant in the player lobby, including yourself, has been assigned a unique, generated icon based on their demographics.</p><p> On the following screens, you will see pairs of players in the queue; please choose the player you would prefer to have on your team from each pair.</p>
         </div>`
     ]
-    competitive_final_rank_instructions = `
-            <p>You are almost finished selecting for team for a team competition focused on improving a local community space. Your team must develop an innovative and impactful proposal to enhance the local park, competing directly against another team for a substantial grant from the city council. The team with the best proposal will receive funding for implementing their ideas.</p>
-            `
+    competitive_pairwise_instructions = [
+        `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
+            <h2>Team Selection - Pairwise Preferences</h2>`+ (condition ? competitive_rank_instructions : casual_rank_instructions) + `
+            <p>For privacy reasons, each participant in the player lobby, including yourself, has been assigned a unique, generated icon based on their demographics.</p><p> On the following screens, you will see pairs of players in the queue; please choose the player you would prefer to have on your team from each pair.</p>
+        </div>`
+    ]
+
 
     competitive_opposing_team_name = "Opposing Team"
     casual_opposing_team_name = "Other Team"
@@ -295,10 +300,19 @@
         button_label: 'Next',
     };
 
+    const instructions_general = {
+        type: jsPsychInstructions,
+        pages: condition ? competitive_instructions : casual_instructions,
+        show_clickable_nav: true,
+        allow_backward: false,
+        button_label_next: 'Next',
+        data: { condition: condition }
+    };
+
     // New instructions before forced choice trials
     const instructions_forced_choice = {
         type: jsPsychInstructions,
-        pages: condition ? competitive_instructions : casual_instructions,
+        pages: condition ? competitive_pairwise_instructions : casual_pairwise_instructions,
         show_clickable_nav: true,
         allow_backward: true,
         button_label_next: 'Next',
@@ -490,8 +504,7 @@ function rearrangeTrials(pairs) {
         type: jsPsychInstructions,
         pages: [
         `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
-            <h2>Team Selection - Final Ranking</h2>` + (condition ? competitive_final_rank_instructions : casual_final_rank_instructions) + `
-            <p>Based on your choices, we have provided an initial sorting of players into your team and the ` + (condition ? ` ${competitive_opposing_team_name}` : ` ${casual_opposing_team_name}`) + `. Please review this sorting and adjust rankings as needed to finalize your team.</p>
+            <h2>Team Selection - Final Ranking</h2>` + (condition ? competitive_rank_instructions : casual_rank_instructions) + `
             <p><strong>Please rank the players based on your relative preferences, ranking them from most preferred to least preferred. The rank numbers indicate your preferences, continuing across both teams.</strong></p>
             <p>Your most preferred player should be at the top of "Your Team" with rank 1st, and your least preferred character should be at the bottom of "` + (condition ? ` ${competitive_opposing_team_name}` : ` ${casual_opposing_team_name}`) + `" with the highest rank number.</p>
         </div>`
@@ -504,14 +517,14 @@ function rearrangeTrials(pairs) {
 
     // Define the ranking trial
     const rank_trial = {
-        type: jsPsychTwoTeamSortableRank,
-        instructions: `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">` + (condition ? competitive_final_rank_instructions : casual_final_rank_instructions) + `<p>Please review this sorting and adjust rankings as needed to finalize your team.</p></div>`,
+        type: jsPsychSortableRank,
+        instructions: `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">` + (condition ? competitive_rank_instructions : casual_rank_instructions) + `<p>Please review this sorting and adjust rankings as needed to finalize your team.</p></div>`,
         items: [generateParticipantHTML(participant_image), ...ranked_character_html],
         labels: [participant_image, ...ranked_character_images],
         animation_duration: 150,
         required_items_team_a: required_items_team_a, // Dynamically set based on floor(character_count / 2)
         error_message: error_message, // Dynamic error message
-        team_labels: ['Your Team', condition ? competitive_opposing_team_name : casual_opposing_team_name],
+        team_labels: ['Your Team', 'Unsorted', condition ? competitive_opposing_team_name : casual_opposing_team_name],
         on_finish: function(data) {
             console.log(data.response); // Log the form data for debugging
         }
@@ -567,6 +580,7 @@ function rearrangeTrials(pairs) {
     const trials_order = randomized_order === 0 
     ? [choice_trials_block, ranked_trials_block] 
     : [ranked_trials_block, choice_trials_block];
+    // const trials_order = [ranked_trials_block, choice_trials_block];
 
     // Build the timeline
     const timeline = [
@@ -574,6 +588,7 @@ function rearrangeTrials(pairs) {
         instructions,
         demographic_questions,
         competitiveness_selfrating,
+        instructions_general,
         ...trials_order.flat(),
         debriefing,
         finished
