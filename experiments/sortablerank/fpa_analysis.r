@@ -4,7 +4,7 @@ library(ggplot2)
 library(tidyr)
 
 # Load the data
-data <- read.csv("fpa_data.csv")
+data <- read.csv("/Users/jordangunn/jatos/study_assets_root/online_experiments/experiments/sortablerank/second_pass_data.csv")
 
 # Step 1: Calculate the counts of each shared feature level for each subject and retain condition
 feature_counts <- data %>%
@@ -83,5 +83,6 @@ ggplot(average_ratios, aes(x = shared_feature_level, y = mean_ratio, color = con
   geom_line() +
   geom_point() +
   labs(x = "Number of Shared Features", y = "Average Selection Ratio", 
-       title = "Homophily Check: Average Selection Ratio by Shared Features and Condition") +
-  theme_minimal()
+       title = "Homophily Check: Average Selection Ratio by Shared Features and Condition")
+  # theme_minimal()
+ggsave("/Users/jordangunn/jatos/study_assets_root/online_experiments/experiments/sortablerank/figures/homophily_check.png")

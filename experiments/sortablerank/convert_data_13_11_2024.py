@@ -1,3 +1,20 @@
+# -*- coding: utf-8 -*-
+# ---
+# jupyter:
+#   jupytext:
+#     cell_metadata_filter: -all
+#     custom_cell_magics: kql
+#     text_representation:
+#       extension: .py
+#       format_name: percent
+#       format_version: '1.3'
+#       jupytext_version: 1.11.2
+#   kernelspec:
+#     display_name: online_experiments
+#     language: python
+#     name: python3
+# ---
+
 # %%
 
 import json
@@ -40,12 +57,16 @@ def retrieve_conditions(participants_data: list[list[dict]]) -> list[str]:
     """
     conditions = []
     for participant_data in participants_data:
-        condition = [
-            "Competitive" if (entry["ranked_order"][-1]["team"] == "Opposing Team") else "Casual"
-            for entry in participant_data
-            if entry.get("trial_type") == "two-team-sortable-rank"
-        ]
-        conditions.append(condition[0])
+        condition = next(
+            (
+                ["Casual", "Competitive"][entry["condition"]]
+                for entry in participant_data
+                if entry.get("condition", None) is not None
+            ),
+            None,
+        )
+        assert condition is not None, "Condition not found for participant"
+        conditions.append(condition)
     return conditions
 
 
@@ -121,12 +142,38 @@ def retrieve_final_ranking(participants_data: list[list[dict]]) -> list[list[str
     """
     final_rankings = []
     for participant_data in participants_data:
-        final_ranking = [
-            entry["ranked_order"]
-            for entry in participant_data
-            if entry.get("trial_type") == "two-team-sortable-rank"
-        ]
-        final_rankings.append(final_ranking)
+        final_ranking = []
+        for entry in participant_data:
+            if entry.get("trial_type") == "sortable-rank":
+                rank = 1
+                for character in entry["team_left_items"]:
+                    # if character["label"] == "locked":
+                    #     continue
+                    final_ranking.append(
+                        {
+                            "label": character["label"],
+                            "content": character["content"],
+                            "team": "Your Team",
+                            "rank": rank,
+                            "index": character["index"],
+                        }
+                    )
+                    rank += 1
+
+                for character in entry["team_right_items"]:
+                    final_ranking.append(
+                        {
+                            "label": character["label"],
+                            "content": character["content"],
+                            "team": "Other Team",
+                            "rank": rank,
+                            "index": character["index"],
+                        }
+                    )
+                    rank += 1
+
+                final_rankings.append(final_ranking)
+                break
     return final_rankings
 
 
@@ -240,7 +287,7 @@ def convert_gender(gender: str) -> str:
 
 # %%
 
-jatos_data_path = "experiments/sortablerank/Team_Building_2_11_4.jsonl"
+jatos_data_path = "experiments/sortablerank/Team_Building_13_11_2024.jsonl"
 
 data = load_jsonl(jatos_data_path)
 final_rankings = retrieve_final_ranking(data)
@@ -273,8 +320,8 @@ merged = {
 for i in range(len(data)):
     subject_id = i + 1
     condition = conditions[i]
-    subject_rankings = final_rankings[i][0]
-    subject_selfrating = subject_selfratings[i]
+    subject_rankings = final_rankings[i]
+    subject_selfrating = subject_selfratings[i][0]
     subject_deception = subject_deceptions[i]
     subject_race, subject_gender, subject_age, subject_college = subject_demographics[i]
 
@@ -381,5 +428,5 @@ g.set_xlabel('Shared Features')
 g.set_xticks([0, 1, 2, 3]);
 # %%
 
-data.to_csv('experiments/sortablerank/data.csv', index=False)
+data.to_csv('experiments/sortablerank/second_pass_data.csv', index=False)
 # %%
