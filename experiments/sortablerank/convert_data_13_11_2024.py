@@ -147,8 +147,8 @@ def retrieve_final_ranking(participants_data: list[list[dict]]) -> list[list[str
             if entry.get("trial_type") == "sortable-rank":
                 rank = 1
                 for character in entry["team_left_items"]:
-                    # if character["label"] == "locked":
-                    #     continue
+                    if character["label"] == "locked":
+                        continue
                     final_ranking.append(
                         {
                             "label": character["label"],
