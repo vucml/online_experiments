@@ -1,0 +1,397 @@
+subject,task_type,ordering,output,chosen,condition,subject_race,subject_age,subject_gender,character_race,character_age,character_gender,subj_college,self_ability,awareness,shared_features
+1,full_ranking,1,1,True,Casual,South Asian,18-24,Man,South Asian,32-38,Man,yes,5,yes,2
+1,full_ranking,1,2,True,Casual,South Asian,18-24,Man,East/Southeast Asian,25-31,Man,yes,5,yes,1
+1,full_ranking,1,3,True,Casual,South Asian,18-24,Man,East/Southeast Asian,45+,Man,yes,5,yes,1
+1,full_ranking,1,4,True,Casual,South Asian,18-24,Man,East/Southeast Asian,25-31,Woman,yes,5,yes,0
+1,full_ranking,1,5,False,Casual,South Asian,18-24,Man,White,32-38,Woman,yes,5,yes,0
+1,full_ranking,1,6,False,Casual,South Asian,18-24,Man,Latino,18-24,Woman,yes,5,yes,1
+1,full_ranking,1,7,False,Casual,South Asian,18-24,Man,Latino,25-31,Man,yes,5,yes,1
+1,full_ranking,1,8,False,Casual,South Asian,18-24,Man,Latino,39-45,Man,yes,5,yes,1
+1,full_ranking,1,9,False,Casual,South Asian,18-24,Man,Latino,39-45,Woman,yes,5,yes,0
+1,choice_ranking,1,1,True,Casual,South Asian,18-24,Man,South Asian,32-38,Man,yes,5,yes,2
+1,choice_ranking,1,2,True,Casual,South Asian,18-24,Man,East/Southeast Asian,25-31,Woman,yes,5,yes,0
+1,choice_ranking,1,3,True,Casual,South Asian,18-24,Man,East/Southeast Asian,25-31,Man,yes,5,yes,1
+1,choice_ranking,1,4,True,Casual,South Asian,18-24,Man,Latino,39-45,Woman,yes,5,yes,0
+1,choice_ranking,1,5,False,Casual,South Asian,18-24,Man,Latino,39-45,Man,yes,5,yes,1
+1,choice_ranking,1,6,False,Casual,South Asian,18-24,Man,White,32-38,Woman,yes,5,yes,0
+1,choice_ranking,1,7,False,Casual,South Asian,18-24,Man,East/Southeast Asian,45+,Man,yes,5,yes,1
+1,choice_ranking,1,8,False,Casual,South Asian,18-24,Man,Latino,18-24,Woman,yes,5,yes,1
+1,choice_ranking,1,9,False,Casual,South Asian,18-24,Man,Latino,25-31,Man,yes,5,yes,1
+2,full_ranking,1,1,True,Casual,East/Southeast Asian,32-38,Man,South Asian,32-38,Man,no,9,yes,2
+2,full_ranking,1,2,True,Casual,East/Southeast Asian,32-38,Man,Latino,32-38,Man,no,9,yes,2
+2,full_ranking,1,3,True,Casual,East/Southeast Asian,32-38,Man,White,25-31,Woman,no,9,yes,0
+2,full_ranking,1,4,True,Casual,East/Southeast Asian,32-38,Man,White,18-24,Woman,no,9,yes,0
+2,full_ranking,1,5,False,Casual,East/Southeast Asian,32-38,Man,Latino,25-31,Man,no,9,yes,1
+2,full_ranking,1,6,False,Casual,East/Southeast Asian,32-38,Man,South Asian,39-45,Man,no,9,yes,1
+2,full_ranking,1,7,False,Casual,East/Southeast Asian,32-38,Man,South Asian,25-31,Man,no,9,yes,1
+2,full_ranking,1,8,False,Casual,East/Southeast Asian,32-38,Man,Black,32-38,Man,no,9,yes,2
+2,full_ranking,1,9,False,Casual,East/Southeast Asian,32-38,Man,East/Southeast Asian,25-31,Woman,no,9,yes,1
+2,choice_ranking,1,1,True,Casual,East/Southeast Asian,32-38,Man,Black,32-38,Man,no,9,yes,2
+2,choice_ranking,1,2,True,Casual,East/Southeast Asian,32-38,Man,Latino,32-38,Man,no,9,yes,2
+2,choice_ranking,1,3,True,Casual,East/Southeast Asian,32-38,Man,Latino,25-31,Man,no,9,yes,1
+2,choice_ranking,1,4,True,Casual,East/Southeast Asian,32-38,Man,South Asian,32-38,Man,no,9,yes,2
+2,choice_ranking,1,5,False,Casual,East/Southeast Asian,32-38,Man,White,18-24,Woman,no,9,yes,0
+2,choice_ranking,1,6,False,Casual,East/Southeast Asian,32-38,Man,White,25-31,Woman,no,9,yes,0
+2,choice_ranking,1,7,False,Casual,East/Southeast Asian,32-38,Man,East/Southeast Asian,25-31,Woman,no,9,yes,1
+2,choice_ranking,1,8,False,Casual,East/Southeast Asian,32-38,Man,South Asian,39-45,Man,no,9,yes,1
+2,choice_ranking,1,9,False,Casual,East/Southeast Asian,32-38,Man,South Asian,25-31,Man,no,9,yes,1
+3,full_ranking,0,1,True,Casual,White,32-38,Man,White,25-31,Man,yes,8,yes,2
+3,full_ranking,0,2,True,Casual,White,32-38,Man,East/Southeast Asian,18-24,Woman,yes,8,yes,0
+3,full_ranking,0,3,True,Casual,White,32-38,Man,South Asian,18-24,Man,yes,8,yes,1
+3,full_ranking,0,4,True,Casual,White,32-38,Man,Black,32-38,Woman,yes,8,yes,1
+3,full_ranking,0,5,False,Casual,White,32-38,Man,South Asian,32-38,Man,yes,8,yes,2
+3,full_ranking,0,6,False,Casual,White,32-38,Man,White,18-24,Woman,yes,8,yes,1
+3,full_ranking,0,7,False,Casual,White,32-38,Man,South Asian,25-31,Man,yes,8,yes,1
+3,full_ranking,0,8,False,Casual,White,32-38,Man,South Asian,45+,Woman,yes,8,yes,0
+3,full_ranking,0,9,False,Casual,White,32-38,Man,East/Southeast Asian,18-24,Man,yes,8,yes,1
+3,choice_ranking,0,1,True,Casual,White,32-38,Man,South Asian,25-31,Man,yes,8,yes,1
+3,choice_ranking,0,2,True,Casual,White,32-38,Man,South Asian,32-38,Man,yes,8,yes,2
+3,choice_ranking,0,3,True,Casual,White,32-38,Man,East/Southeast Asian,18-24,Woman,yes,8,yes,0
+3,choice_ranking,0,4,True,Casual,White,32-38,Man,South Asian,45+,Woman,yes,8,yes,0
+3,choice_ranking,0,5,False,Casual,White,32-38,Man,East/Southeast Asian,18-24,Man,yes,8,yes,1
+3,choice_ranking,0,6,False,Casual,White,32-38,Man,Black,32-38,Woman,yes,8,yes,1
+3,choice_ranking,0,7,False,Casual,White,32-38,Man,White,18-24,Woman,yes,8,yes,1
+3,choice_ranking,0,8,False,Casual,White,32-38,Man,White,25-31,Man,yes,8,yes,2
+3,choice_ranking,0,9,False,Casual,White,32-38,Man,South Asian,18-24,Man,yes,8,yes,1
+4,full_ranking,1,1,True,Casual,White,32-38,Woman,East/Southeast Asian,18-24,Woman,yes,9,yes,1
+4,full_ranking,1,2,True,Casual,White,32-38,Woman,White,18-24,Man,yes,9,yes,1
+4,full_ranking,1,3,True,Casual,White,32-38,Woman,Latino,39-45,Man,yes,9,yes,0
+4,full_ranking,1,4,True,Casual,White,32-38,Woman,South Asian,32-38,Woman,yes,9,yes,2
+4,full_ranking,1,5,False,Casual,White,32-38,Woman,East/Southeast Asian,45+,Man,yes,9,yes,0
+4,full_ranking,1,6,False,Casual,White,32-38,Woman,White,18-24,Woman,yes,9,yes,2
+4,full_ranking,1,7,False,Casual,White,32-38,Woman,Black,25-31,Woman,yes,9,yes,1
+4,full_ranking,1,8,False,Casual,White,32-38,Woman,East/Southeast Asian,18-24,Woman,yes,9,yes,1
+4,full_ranking,1,9,False,Casual,White,32-38,Woman,White,25-31,Man,yes,9,yes,1
+4,choice_ranking,1,1,True,Casual,White,32-38,Woman,White,18-24,Man,yes,9,yes,1
+4,choice_ranking,1,2,True,Casual,White,32-38,Woman,Latino,39-45,Man,yes,9,yes,0
+4,choice_ranking,1,3,True,Casual,White,32-38,Woman,White,25-31,Man,yes,9,yes,1
+4,choice_ranking,1,4,True,Casual,White,32-38,Woman,East/Southeast Asian,18-24,Woman,yes,9,yes,1
+4,choice_ranking,1,5,False,Casual,White,32-38,Woman,Black,25-31,Woman,yes,9,yes,1
+4,choice_ranking,1,6,False,Casual,White,32-38,Woman,East/Southeast Asian,45+,Man,yes,9,yes,0
+4,choice_ranking,1,7,False,Casual,White,32-38,Woman,East/Southeast Asian,18-24,Woman,yes,9,yes,1
+4,choice_ranking,1,8,False,Casual,White,32-38,Woman,White,18-24,Woman,yes,9,yes,2
+4,choice_ranking,1,9,False,Casual,White,32-38,Woman,South Asian,32-38,Woman,yes,9,yes,2
+5,full_ranking,1,1,True,Competitive,White,32-38,Man,East/Southeast Asian,39-45,Woman,yes,8,yes,0
+5,full_ranking,1,2,True,Competitive,White,32-38,Man,Black,18-24,Woman,yes,8,yes,0
+5,full_ranking,1,3,True,Competitive,White,32-38,Man,South Asian,18-24,Man,yes,8,yes,1
+5,full_ranking,1,4,True,Competitive,White,32-38,Man,Latino,39-45,Man,yes,8,yes,1
+5,full_ranking,1,5,False,Competitive,White,32-38,Man,Latino,25-31,Woman,yes,8,yes,0
+5,full_ranking,1,6,False,Competitive,White,32-38,Man,South Asian,25-31,Man,yes,8,yes,1
+5,full_ranking,1,7,False,Competitive,White,32-38,Man,East/Southeast Asian,18-24,Man,yes,8,yes,1
+5,full_ranking,1,8,False,Competitive,White,32-38,Man,Black,25-31,Woman,yes,8,yes,0
+5,full_ranking,1,9,False,Competitive,White,32-38,Man,Latino,32-38,Woman,yes,8,yes,1
+5,choice_ranking,1,1,True,Competitive,White,32-38,Man,East/Southeast Asian,39-45,Woman,yes,8,yes,0
+5,choice_ranking,1,2,True,Competitive,White,32-38,Man,East/Southeast Asian,18-24,Man,yes,8,yes,1
+5,choice_ranking,1,3,True,Competitive,White,32-38,Man,South Asian,25-31,Man,yes,8,yes,1
+5,choice_ranking,1,4,True,Competitive,White,32-38,Man,Latino,25-31,Woman,yes,8,yes,0
+5,choice_ranking,1,5,False,Competitive,White,32-38,Man,Latino,32-38,Woman,yes,8,yes,1
+5,choice_ranking,1,6,False,Competitive,White,32-38,Man,Black,25-31,Woman,yes,8,yes,0
+5,choice_ranking,1,7,False,Competitive,White,32-38,Man,Latino,39-45,Man,yes,8,yes,1
+5,choice_ranking,1,8,False,Competitive,White,32-38,Man,South Asian,18-24,Man,yes,8,yes,1
+5,choice_ranking,1,9,False,Competitive,White,32-38,Man,Black,18-24,Woman,yes,8,yes,0
+6,full_ranking,0,1,True,Competitive,White,32-38,Man,White,39-45,Woman,yes,7,yes,1
+6,full_ranking,0,2,True,Competitive,White,32-38,Man,South Asian,32-38,Woman,yes,7,yes,1
+6,full_ranking,0,3,True,Competitive,White,32-38,Man,White,25-31,Woman,yes,7,yes,1
+6,full_ranking,0,4,True,Competitive,White,32-38,Man,White,25-31,Man,yes,7,yes,2
+6,full_ranking,0,5,False,Competitive,White,32-38,Man,Latino,32-38,Man,yes,7,yes,2
+6,full_ranking,0,6,False,Competitive,White,32-38,Man,Black,45+,Woman,yes,7,yes,0
+6,full_ranking,0,7,False,Competitive,White,32-38,Man,South Asian,45+,Woman,yes,7,yes,0
+6,full_ranking,0,8,False,Competitive,White,32-38,Man,Black,32-38,Man,yes,7,yes,2
+6,full_ranking,0,9,False,Competitive,White,32-38,Man,Black,25-31,Man,yes,7,yes,1
+6,choice_ranking,0,1,True,Competitive,White,32-38,Man,Black,25-31,Man,yes,7,yes,1
+6,choice_ranking,0,2,True,Competitive,White,32-38,Man,Latino,32-38,Man,yes,7,yes,2
+6,choice_ranking,0,3,True,Competitive,White,32-38,Man,South Asian,45+,Woman,yes,7,yes,0
+6,choice_ranking,0,4,True,Competitive,White,32-38,Man,White,25-31,Man,yes,7,yes,2
+6,choice_ranking,0,5,False,Competitive,White,32-38,Man,South Asian,32-38,Woman,yes,7,yes,1
+6,choice_ranking,0,6,False,Competitive,White,32-38,Man,Black,45+,Woman,yes,7,yes,0
+6,choice_ranking,0,7,False,Competitive,White,32-38,Man,Black,32-38,Man,yes,7,yes,2
+6,choice_ranking,0,8,False,Competitive,White,32-38,Man,White,39-45,Woman,yes,7,yes,1
+6,choice_ranking,0,9,False,Competitive,White,32-38,Man,White,25-31,Woman,yes,7,yes,1
+7,full_ranking,1,1,True,Casual,White,32-38,Woman,White,39-45,Woman,yes,10,yes,2
+7,full_ranking,1,2,True,Casual,White,32-38,Woman,White,18-24,Woman,yes,10,yes,2
+7,full_ranking,1,3,True,Casual,White,32-38,Woman,East/Southeast Asian,18-24,Man,yes,10,yes,0
+7,full_ranking,1,4,True,Casual,White,32-38,Woman,South Asian,32-38,Woman,yes,10,yes,2
+7,full_ranking,1,5,False,Casual,White,32-38,Woman,East/Southeast Asian,18-24,Woman,yes,10,yes,1
+7,full_ranking,1,6,False,Casual,White,32-38,Woman,East/Southeast Asian,45+,Woman,yes,10,yes,1
+7,full_ranking,1,7,False,Casual,White,32-38,Woman,Black,18-24,Man,yes,10,yes,0
+7,full_ranking,1,8,False,Casual,White,32-38,Woman,Black,18-24,Woman,yes,10,yes,1
+7,full_ranking,1,9,False,Casual,White,32-38,Woman,South Asian,18-24,Woman,yes,10,yes,1
+7,choice_ranking,1,1,True,Casual,White,32-38,Woman,East/Southeast Asian,45+,Woman,yes,10,yes,1
+7,choice_ranking,1,2,True,Casual,White,32-38,Woman,East/Southeast Asian,18-24,Man,yes,10,yes,0
+7,choice_ranking,1,3,True,Casual,White,32-38,Woman,South Asian,32-38,Woman,yes,10,yes,2
+7,choice_ranking,1,4,True,Casual,White,32-38,Woman,White,39-45,Woman,yes,10,yes,2
+7,choice_ranking,1,5,False,Casual,White,32-38,Woman,East/Southeast Asian,18-24,Woman,yes,10,yes,1
+7,choice_ranking,1,6,False,Casual,White,32-38,Woman,Black,18-24,Man,yes,10,yes,0
+7,choice_ranking,1,7,False,Casual,White,32-38,Woman,South Asian,18-24,Woman,yes,10,yes,1
+7,choice_ranking,1,8,False,Casual,White,32-38,Woman,White,18-24,Woman,yes,10,yes,2
+7,choice_ranking,1,9,False,Casual,White,32-38,Woman,Black,18-24,Woman,yes,10,yes,1
+8,full_ranking,0,1,True,Casual,White,32-38,Man,White,39-45,Man,yes,9,yes,2
+8,full_ranking,0,2,True,Casual,White,32-38,Man,East/Southeast Asian,32-38,Woman,yes,9,yes,1
+8,full_ranking,0,3,True,Casual,White,32-38,Man,White,32-38,Man,yes,9,yes,3
+8,full_ranking,0,4,True,Casual,White,32-38,Man,East/Southeast Asian,25-31,Woman,yes,9,yes,0
+8,full_ranking,0,5,False,Casual,White,32-38,Man,Black,32-38,Man,yes,9,yes,2
+8,full_ranking,0,6,False,Casual,White,32-38,Man,Latino,45+,Man,yes,9,yes,1
+8,full_ranking,0,7,False,Casual,White,32-38,Man,Latino,32-38,Woman,yes,9,yes,1
+8,full_ranking,0,8,False,Casual,White,32-38,Man,South Asian,39-45,Woman,yes,9,yes,0
+8,full_ranking,0,9,False,Casual,White,32-38,Man,East/Southeast Asian,18-24,Woman,yes,9,yes,0
+8,choice_ranking,0,1,True,Casual,White,32-38,Man,East/Southeast Asian,32-38,Woman,yes,9,yes,1
+8,choice_ranking,0,2,True,Casual,White,32-38,Man,Latino,45+,Man,yes,9,yes,1
+8,choice_ranking,0,3,True,Casual,White,32-38,Man,White,39-45,Man,yes,9,yes,2
+8,choice_ranking,0,4,True,Casual,White,32-38,Man,East/Southeast Asian,25-31,Woman,yes,9,yes,0
+8,choice_ranking,0,5,False,Casual,White,32-38,Man,White,32-38,Man,yes,9,yes,3
+8,choice_ranking,0,6,False,Casual,White,32-38,Man,Black,32-38,Man,yes,9,yes,2
+8,choice_ranking,0,7,False,Casual,White,32-38,Man,Latino,32-38,Woman,yes,9,yes,1
+8,choice_ranking,0,8,False,Casual,White,32-38,Man,South Asian,39-45,Woman,yes,9,yes,0
+8,choice_ranking,0,9,False,Casual,White,32-38,Man,East/Southeast Asian,18-24,Woman,yes,9,yes,0
+9,full_ranking,1,1,True,Casual,White,32-38,Man,Black,32-38,Woman,yes,7,yes,1
+9,full_ranking,1,2,True,Casual,White,32-38,Man,Latino,45+,Woman,yes,7,yes,0
+9,full_ranking,1,3,True,Casual,White,32-38,Man,South Asian,25-31,Woman,yes,7,yes,0
+9,full_ranking,1,4,True,Casual,White,32-38,Man,Latino,39-45,Man,yes,7,yes,1
+9,full_ranking,1,5,False,Casual,White,32-38,Man,Latino,18-24,Woman,yes,7,yes,0
+9,full_ranking,1,6,False,Casual,White,32-38,Man,White,32-38,Woman,yes,7,yes,2
+9,full_ranking,1,7,False,Casual,White,32-38,Man,South Asian,32-38,Man,yes,7,yes,2
+9,full_ranking,1,8,False,Casual,White,32-38,Man,East/Southeast Asian,32-38,Woman,yes,7,yes,1
+9,full_ranking,1,9,False,Casual,White,32-38,Man,White,25-31,Woman,yes,7,yes,1
+9,choice_ranking,1,1,True,Casual,White,32-38,Man,Latino,39-45,Man,yes,7,yes,1
+9,choice_ranking,1,2,True,Casual,White,32-38,Man,East/Southeast Asian,32-38,Woman,yes,7,yes,1
+9,choice_ranking,1,3,True,Casual,White,32-38,Man,South Asian,25-31,Woman,yes,7,yes,0
+9,choice_ranking,1,4,True,Casual,White,32-38,Man,Latino,18-24,Woman,yes,7,yes,0
+9,choice_ranking,1,5,False,Casual,White,32-38,Man,Latino,45+,Woman,yes,7,yes,0
+9,choice_ranking,1,6,False,Casual,White,32-38,Man,Black,32-38,Woman,yes,7,yes,1
+9,choice_ranking,1,7,False,Casual,White,32-38,Man,White,25-31,Woman,yes,7,yes,1
+9,choice_ranking,1,8,False,Casual,White,32-38,Man,South Asian,32-38,Man,yes,7,yes,2
+9,choice_ranking,1,9,False,Casual,White,32-38,Man,White,32-38,Woman,yes,7,yes,2
+10,full_ranking,0,1,True,Casual,White,32-38,Man,East/Southeast Asian,25-31,Woman,no,9,yes,0
+10,full_ranking,0,2,True,Casual,White,32-38,Man,White,32-38,Woman,no,9,yes,2
+10,full_ranking,0,3,True,Casual,White,32-38,Man,Latino,45+,Woman,no,9,yes,0
+10,full_ranking,0,4,True,Casual,White,32-38,Man,South Asian,25-31,Woman,no,9,yes,0
+10,full_ranking,0,5,False,Casual,White,32-38,Man,South Asian,18-24,Woman,no,9,yes,0
+10,full_ranking,0,6,False,Casual,White,32-38,Man,South Asian,25-31,Man,no,9,yes,1
+10,full_ranking,0,7,False,Casual,White,32-38,Man,Latino,32-38,Man,no,9,yes,2
+10,full_ranking,0,8,False,Casual,White,32-38,Man,Latino,18-24,Man,no,9,yes,1
+10,full_ranking,0,9,False,Casual,White,32-38,Man,East/Southeast Asian,18-24,Man,no,9,yes,1
+10,choice_ranking,0,1,True,Casual,White,32-38,Man,White,32-38,Woman,no,9,yes,2
+10,choice_ranking,0,2,True,Casual,White,32-38,Man,East/Southeast Asian,18-24,Man,no,9,yes,1
+10,choice_ranking,0,3,True,Casual,White,32-38,Man,South Asian,25-31,Man,no,9,yes,1
+10,choice_ranking,0,4,True,Casual,White,32-38,Man,South Asian,18-24,Woman,no,9,yes,0
+10,choice_ranking,0,5,False,Casual,White,32-38,Man,Latino,45+,Woman,no,9,yes,0
+10,choice_ranking,0,6,False,Casual,White,32-38,Man,East/Southeast Asian,25-31,Woman,no,9,yes,0
+10,choice_ranking,0,7,False,Casual,White,32-38,Man,South Asian,25-31,Woman,no,9,yes,0
+10,choice_ranking,0,8,False,Casual,White,32-38,Man,Latino,18-24,Man,no,9,yes,1
+10,choice_ranking,0,9,False,Casual,White,32-38,Man,Latino,32-38,Man,no,9,yes,2
+11,full_ranking,0,1,True,Competitive,White,39-45,Woman,Black,25-31,Woman,yes,6,yes,1
+11,full_ranking,0,2,True,Competitive,White,39-45,Woman,Black,32-38,Woman,yes,6,yes,1
+11,full_ranking,0,3,True,Competitive,White,39-45,Woman,East/Southeast Asian,25-31,Woman,yes,6,yes,1
+11,full_ranking,0,4,True,Competitive,White,39-45,Woman,South Asian,25-31,Woman,yes,6,yes,1
+11,full_ranking,0,5,False,Competitive,White,39-45,Woman,Black,25-31,Man,yes,6,yes,0
+11,full_ranking,0,6,False,Competitive,White,39-45,Woman,Black,18-24,Man,yes,6,yes,0
+11,full_ranking,0,7,False,Competitive,White,39-45,Woman,South Asian,32-38,Woman,yes,6,yes,1
+11,full_ranking,0,8,False,Competitive,White,39-45,Woman,South Asian,18-24,Woman,yes,6,yes,1
+11,full_ranking,0,9,False,Competitive,White,39-45,Woman,Black,45+,Woman,yes,6,yes,1
+11,choice_ranking,0,1,True,Competitive,White,39-45,Woman,Black,25-31,Woman,yes,6,yes,1
+11,choice_ranking,0,2,True,Competitive,White,39-45,Woman,South Asian,18-24,Woman,yes,6,yes,1
+11,choice_ranking,0,3,True,Competitive,White,39-45,Woman,Black,25-31,Man,yes,6,yes,0
+11,choice_ranking,0,4,True,Competitive,White,39-45,Woman,South Asian,25-31,Woman,yes,6,yes,1
+11,choice_ranking,0,5,False,Competitive,White,39-45,Woman,Black,45+,Woman,yes,6,yes,1
+11,choice_ranking,0,6,False,Competitive,White,39-45,Woman,East/Southeast Asian,25-31,Woman,yes,6,yes,1
+11,choice_ranking,0,7,False,Competitive,White,39-45,Woman,Black,18-24,Man,yes,6,yes,0
+11,choice_ranking,0,8,False,Competitive,White,39-45,Woman,Black,32-38,Woman,yes,6,yes,1
+11,choice_ranking,0,9,False,Competitive,White,39-45,Woman,South Asian,32-38,Woman,yes,6,yes,1
+12,full_ranking,1,1,True,Casual,White,32-38,Man,White,18-24,Woman,yes,8,yes,1
+12,full_ranking,1,2,True,Casual,White,32-38,Man,South Asian,32-38,Woman,yes,8,yes,1
+12,full_ranking,1,3,True,Casual,White,32-38,Man,White,25-31,Man,yes,8,yes,2
+12,full_ranking,1,4,True,Casual,White,32-38,Man,Latino,18-24,Man,yes,8,yes,1
+12,full_ranking,1,5,False,Casual,White,32-38,Man,East/Southeast Asian,39-45,Woman,yes,8,yes,0
+12,full_ranking,1,6,False,Casual,White,32-38,Man,Black,39-45,Woman,yes,8,yes,0
+12,full_ranking,1,7,False,Casual,White,32-38,Man,East/Southeast Asian,32-38,Man,yes,8,yes,2
+12,full_ranking,1,8,False,Casual,White,32-38,Man,East/Southeast Asian,25-31,Man,yes,8,yes,1
+12,full_ranking,1,9,False,Casual,White,32-38,Man,Latino,32-38,Woman,yes,8,yes,1
+12,choice_ranking,1,1,True,Casual,White,32-38,Man,White,18-24,Woman,yes,8,yes,1
+12,choice_ranking,1,2,True,Casual,White,32-38,Man,Black,39-45,Woman,yes,8,yes,0
+12,choice_ranking,1,3,True,Casual,White,32-38,Man,South Asian,32-38,Woman,yes,8,yes,1
+12,choice_ranking,1,4,True,Casual,White,32-38,Man,Latino,18-24,Man,yes,8,yes,1
+12,choice_ranking,1,5,False,Casual,White,32-38,Man,East/Southeast Asian,39-45,Woman,yes,8,yes,0
+12,choice_ranking,1,6,False,Casual,White,32-38,Man,East/Southeast Asian,32-38,Man,yes,8,yes,2
+12,choice_ranking,1,7,False,Casual,White,32-38,Man,White,25-31,Man,yes,8,yes,2
+12,choice_ranking,1,8,False,Casual,White,32-38,Man,East/Southeast Asian,25-31,Man,yes,8,yes,1
+12,choice_ranking,1,9,False,Casual,White,32-38,Man,Latino,32-38,Woman,yes,8,yes,1
+13,full_ranking,0,1,True,Competitive,White,39-45,Man,Black,18-24,Man,yes,6,yes,1
+13,full_ranking,0,2,True,Competitive,White,39-45,Man,Black,25-31,Man,yes,6,yes,1
+13,full_ranking,0,3,True,Competitive,White,39-45,Man,South Asian,25-31,Man,yes,6,yes,1
+13,full_ranking,0,4,True,Competitive,White,39-45,Man,Black,25-31,Woman,yes,6,yes,0
+13,full_ranking,0,5,False,Competitive,White,39-45,Man,Latino,32-38,Man,yes,6,yes,1
+13,full_ranking,0,6,False,Competitive,White,39-45,Man,Latino,18-24,Man,yes,6,yes,1
+13,full_ranking,0,7,False,Competitive,White,39-45,Man,East/Southeast Asian,39-45,Man,yes,6,yes,2
+13,full_ranking,0,8,False,Competitive,White,39-45,Man,White,25-31,Man,yes,6,yes,2
+13,full_ranking,0,9,False,Competitive,White,39-45,Man,East/Southeast Asian,32-38,Woman,yes,6,yes,0
+13,choice_ranking,0,1,True,Competitive,White,39-45,Man,East/Southeast Asian,39-45,Man,yes,6,yes,2
+13,choice_ranking,0,2,True,Competitive,White,39-45,Man,East/Southeast Asian,32-38,Woman,yes,6,yes,0
+13,choice_ranking,0,3,True,Competitive,White,39-45,Man,Black,25-31,Woman,yes,6,yes,0
+13,choice_ranking,0,4,True,Competitive,White,39-45,Man,Latino,18-24,Man,yes,6,yes,1
+13,choice_ranking,0,5,False,Competitive,White,39-45,Man,Latino,32-38,Man,yes,6,yes,1
+13,choice_ranking,0,6,False,Competitive,White,39-45,Man,Black,18-24,Man,yes,6,yes,1
+13,choice_ranking,0,7,False,Competitive,White,39-45,Man,White,25-31,Man,yes,6,yes,2
+13,choice_ranking,0,8,False,Competitive,White,39-45,Man,South Asian,25-31,Man,yes,6,yes,1
+13,choice_ranking,0,9,False,Competitive,White,39-45,Man,Black,25-31,Man,yes,6,yes,1
+14,full_ranking,1,1,True,Competitive,White,32-38,Man,South Asian,25-31,Woman,no,9,yes,0
+14,full_ranking,1,2,True,Competitive,White,32-38,Man,Black,45+,Woman,no,9,yes,0
+14,full_ranking,1,3,True,Competitive,White,32-38,Man,Black,25-31,Man,no,9,yes,1
+14,full_ranking,1,4,True,Competitive,White,32-38,Man,White,25-31,Woman,no,9,yes,1
+14,full_ranking,1,5,False,Competitive,White,32-38,Man,East/Southeast Asian,25-31,Man,no,9,yes,1
+14,full_ranking,1,6,False,Competitive,White,32-38,Man,Black,18-24,Woman,no,9,yes,0
+14,full_ranking,1,7,False,Competitive,White,32-38,Man,South Asian,32-38,Woman,no,9,yes,1
+14,full_ranking,1,8,False,Competitive,White,32-38,Man,East/Southeast Asian,32-38,Woman,no,9,yes,1
+14,full_ranking,1,9,False,Competitive,White,32-38,Man,Latino,18-24,Man,no,9,yes,1
+14,choice_ranking,1,1,True,Competitive,White,32-38,Man,East/Southeast Asian,25-31,Man,no,9,yes,1
+14,choice_ranking,1,2,True,Competitive,White,32-38,Man,South Asian,25-31,Woman,no,9,yes,0
+14,choice_ranking,1,3,True,Competitive,White,32-38,Man,Black,45+,Woman,no,9,yes,0
+14,choice_ranking,1,4,True,Competitive,White,32-38,Man,White,25-31,Woman,no,9,yes,1
+14,choice_ranking,1,5,False,Competitive,White,32-38,Man,East/Southeast Asian,32-38,Woman,no,9,yes,1
+14,choice_ranking,1,6,False,Competitive,White,32-38,Man,Black,25-31,Man,no,9,yes,1
+14,choice_ranking,1,7,False,Competitive,White,32-38,Man,South Asian,32-38,Woman,no,9,yes,1
+14,choice_ranking,1,8,False,Competitive,White,32-38,Man,Latino,18-24,Man,no,9,yes,1
+14,choice_ranking,1,9,False,Competitive,White,32-38,Man,Black,18-24,Woman,no,9,yes,0
+15,full_ranking,1,1,True,Competitive,White,39-45,Man,East/Southeast Asian,39-45,Woman,yes,7,yes,1
+15,full_ranking,1,2,True,Competitive,White,39-45,Man,Latino,18-24,Man,yes,7,yes,1
+15,full_ranking,1,3,True,Competitive,White,39-45,Man,South Asian,32-38,Man,yes,7,yes,1
+15,full_ranking,1,4,True,Competitive,White,39-45,Man,White,25-31,Man,yes,7,yes,2
+15,full_ranking,1,5,False,Competitive,White,39-45,Man,South Asian,25-31,Man,yes,7,yes,1
+15,full_ranking,1,6,False,Competitive,White,39-45,Man,Latino,32-38,Man,yes,7,yes,1
+15,full_ranking,1,7,False,Competitive,White,39-45,Man,Black,32-38,Man,yes,7,yes,1
+15,full_ranking,1,8,False,Competitive,White,39-45,Man,East/Southeast Asian,32-38,Man,yes,7,yes,1
+15,full_ranking,1,9,False,Competitive,White,39-45,Man,White,32-38,Woman,yes,7,yes,1
+15,choice_ranking,1,1,True,Competitive,White,39-45,Man,South Asian,32-38,Man,yes,7,yes,1
+15,choice_ranking,1,2,True,Competitive,White,39-45,Man,Latino,18-24,Man,yes,7,yes,1
+15,choice_ranking,1,3,True,Competitive,White,39-45,Man,Black,32-38,Man,yes,7,yes,1
+15,choice_ranking,1,4,True,Competitive,White,39-45,Man,White,32-38,Woman,yes,7,yes,1
+15,choice_ranking,1,5,False,Competitive,White,39-45,Man,White,25-31,Man,yes,7,yes,2
+15,choice_ranking,1,6,False,Competitive,White,39-45,Man,East/Southeast Asian,32-38,Man,yes,7,yes,1
+15,choice_ranking,1,7,False,Competitive,White,39-45,Man,South Asian,25-31,Man,yes,7,yes,1
+15,choice_ranking,1,8,False,Competitive,White,39-45,Man,East/Southeast Asian,39-45,Woman,yes,7,yes,1
+15,choice_ranking,1,9,False,Competitive,White,39-45,Man,Latino,32-38,Man,yes,7,yes,1
+16,full_ranking,1,1,True,Competitive,White,32-38,Man,South Asian,39-45,Man,yes,7,yes,1
+16,full_ranking,1,2,True,Competitive,White,32-38,Man,Black,39-45,Man,yes,7,yes,1
+16,full_ranking,1,3,True,Competitive,White,32-38,Man,East/Southeast Asian,25-31,Man,yes,7,yes,1
+16,full_ranking,1,4,True,Competitive,White,32-38,Man,Latino,39-45,Woman,yes,7,yes,0
+16,full_ranking,1,5,False,Competitive,White,32-38,Man,White,32-38,Woman,yes,7,yes,2
+16,full_ranking,1,6,False,Competitive,White,32-38,Man,East/Southeast Asian,39-45,Woman,yes,7,yes,0
+16,full_ranking,1,7,False,Competitive,White,32-38,Man,Latino,18-24,Woman,yes,7,yes,0
+16,full_ranking,1,8,False,Competitive,White,32-38,Man,White,39-45,Woman,yes,7,yes,1
+16,full_ranking,1,9,False,Competitive,White,32-38,Man,Latino,32-38,Man,yes,7,yes,2
+16,choice_ranking,1,1,True,Competitive,White,32-38,Man,White,39-45,Woman,yes,7,yes,1
+16,choice_ranking,1,2,True,Competitive,White,32-38,Man,Latino,39-45,Woman,yes,7,yes,0
+16,choice_ranking,1,3,True,Competitive,White,32-38,Man,East/Southeast Asian,39-45,Woman,yes,7,yes,0
+16,choice_ranking,1,4,True,Competitive,White,32-38,Man,East/Southeast Asian,25-31,Man,yes,7,yes,1
+16,choice_ranking,1,5,False,Competitive,White,32-38,Man,South Asian,39-45,Man,yes,7,yes,1
+16,choice_ranking,1,6,False,Competitive,White,32-38,Man,Latino,32-38,Man,yes,7,yes,2
+16,choice_ranking,1,7,False,Competitive,White,32-38,Man,Latino,18-24,Woman,yes,7,yes,0
+16,choice_ranking,1,8,False,Competitive,White,32-38,Man,Black,39-45,Man,yes,7,yes,1
+16,choice_ranking,1,9,False,Competitive,White,32-38,Man,White,32-38,Woman,yes,7,yes,2
+17,full_ranking,1,1,True,Competitive,White,32-38,Man,East/Southeast Asian,39-45,Man,no,10,yes,1
+17,full_ranking,1,2,True,Competitive,White,32-38,Man,Latino,39-45,Woman,no,10,yes,0
+17,full_ranking,1,3,True,Competitive,White,32-38,Man,East/Southeast Asian,25-31,Man,no,10,yes,1
+17,full_ranking,1,4,True,Competitive,White,32-38,Man,East/Southeast Asian,18-24,Man,no,10,yes,1
+17,full_ranking,1,5,False,Competitive,White,32-38,Man,White,39-45,Woman,no,10,yes,1
+17,full_ranking,1,6,False,Competitive,White,32-38,Man,Latino,25-31,Man,no,10,yes,1
+17,full_ranking,1,7,False,Competitive,White,32-38,Man,Latino,39-45,Man,no,10,yes,1
+17,full_ranking,1,8,False,Competitive,White,32-38,Man,East/Southeast Asian,25-31,Woman,no,10,yes,0
+17,full_ranking,1,9,False,Competitive,White,32-38,Man,White,39-45,Man,no,10,yes,2
+17,choice_ranking,1,1,True,Competitive,White,32-38,Man,White,39-45,Woman,no,10,yes,1
+17,choice_ranking,1,2,True,Competitive,White,32-38,Man,East/Southeast Asian,39-45,Man,no,10,yes,1
+17,choice_ranking,1,3,True,Competitive,White,32-38,Man,Latino,39-45,Man,no,10,yes,1
+17,choice_ranking,1,4,True,Competitive,White,32-38,Man,East/Southeast Asian,25-31,Man,no,10,yes,1
+17,choice_ranking,1,5,False,Competitive,White,32-38,Man,White,39-45,Man,no,10,yes,2
+17,choice_ranking,1,6,False,Competitive,White,32-38,Man,Latino,39-45,Woman,no,10,yes,0
+17,choice_ranking,1,7,False,Competitive,White,32-38,Man,Latino,25-31,Man,no,10,yes,1
+17,choice_ranking,1,8,False,Competitive,White,32-38,Man,East/Southeast Asian,18-24,Man,no,10,yes,1
+17,choice_ranking,1,9,False,Competitive,White,32-38,Man,East/Southeast Asian,25-31,Woman,no,10,yes,0
+18,full_ranking,0,1,True,Competitive,White,32-38,Woman,South Asian,25-31,Woman,yes,8,yes,1
+18,full_ranking,0,2,True,Competitive,White,32-38,Woman,South Asian,32-38,Man,yes,8,yes,1
+18,full_ranking,0,3,True,Competitive,White,32-38,Woman,White,39-45,Woman,yes,8,yes,2
+18,full_ranking,0,4,True,Competitive,White,32-38,Woman,White,39-45,Man,yes,8,yes,1
+18,full_ranking,0,5,False,Competitive,White,32-38,Woman,East/Southeast Asian,25-31,Woman,yes,8,yes,1
+18,full_ranking,0,6,False,Competitive,White,32-38,Woman,White,32-38,Man,yes,8,yes,2
+18,full_ranking,0,7,False,Competitive,White,32-38,Woman,Latino,18-24,Man,yes,8,yes,0
+18,full_ranking,0,8,False,Competitive,White,32-38,Woman,East/Southeast Asian,18-24,Man,yes,8,yes,0
+18,full_ranking,0,9,False,Competitive,White,32-38,Woman,Latino,39-45,Man,yes,8,yes,0
+18,choice_ranking,0,1,True,Competitive,White,32-38,Woman,White,39-45,Man,yes,8,yes,1
+18,choice_ranking,0,2,True,Competitive,White,32-38,Woman,East/Southeast Asian,25-31,Woman,yes,8,yes,1
+18,choice_ranking,0,3,True,Competitive,White,32-38,Woman,White,39-45,Woman,yes,8,yes,2
+18,choice_ranking,0,4,True,Competitive,White,32-38,Woman,South Asian,25-31,Woman,yes,8,yes,1
+18,choice_ranking,0,5,False,Competitive,White,32-38,Woman,East/Southeast Asian,18-24,Man,yes,8,yes,0
+18,choice_ranking,0,6,False,Competitive,White,32-38,Woman,South Asian,32-38,Man,yes,8,yes,1
+18,choice_ranking,0,7,False,Competitive,White,32-38,Woman,Latino,39-45,Man,yes,8,yes,0
+18,choice_ranking,0,8,False,Competitive,White,32-38,Woman,Latino,18-24,Man,yes,8,yes,0
+18,choice_ranking,0,9,False,Competitive,White,32-38,Woman,White,32-38,Man,yes,8,yes,2
+19,full_ranking,0,1,True,Competitive,White,25-31,Man,East/Southeast Asian,39-45,Woman,yes,7,yes,0
+19,full_ranking,0,2,True,Competitive,White,25-31,Man,Latino,45+,Woman,yes,7,yes,0
+19,full_ranking,0,3,True,Competitive,White,25-31,Man,East/Southeast Asian,25-31,Man,yes,7,yes,2
+19,full_ranking,0,4,True,Competitive,White,25-31,Man,South Asian,39-45,Woman,yes,7,yes,0
+19,full_ranking,0,5,False,Competitive,White,25-31,Man,Black,32-38,Woman,yes,7,yes,0
+19,full_ranking,0,6,False,Competitive,White,25-31,Man,Latino,39-45,Man,yes,7,yes,1
+19,full_ranking,0,7,False,Competitive,White,25-31,Man,Latino,32-38,Woman,yes,7,yes,0
+19,full_ranking,0,8,False,Competitive,White,25-31,Man,Latino,25-31,Man,yes,7,yes,2
+19,full_ranking,0,9,False,Competitive,White,25-31,Man,East/Southeast Asian,39-45,Man,yes,7,yes,1
+19,choice_ranking,0,1,True,Competitive,White,25-31,Man,Latino,45+,Woman,yes,7,yes,0
+19,choice_ranking,0,2,True,Competitive,White,25-31,Man,East/Southeast Asian,25-31,Man,yes,7,yes,2
+19,choice_ranking,0,3,True,Competitive,White,25-31,Man,Latino,25-31,Man,yes,7,yes,2
+19,choice_ranking,0,4,True,Competitive,White,25-31,Man,Latino,39-45,Man,yes,7,yes,1
+19,choice_ranking,0,5,False,Competitive,White,25-31,Man,Black,32-38,Woman,yes,7,yes,0
+19,choice_ranking,0,6,False,Competitive,White,25-31,Man,East/Southeast Asian,39-45,Man,yes,7,yes,1
+19,choice_ranking,0,7,False,Competitive,White,25-31,Man,South Asian,39-45,Woman,yes,7,yes,0
+19,choice_ranking,0,8,False,Competitive,White,25-31,Man,Latino,32-38,Woman,yes,7,yes,0
+19,choice_ranking,0,9,False,Competitive,White,25-31,Man,East/Southeast Asian,39-45,Woman,yes,7,yes,0
+20,full_ranking,1,1,True,Competitive,White,32-38,Man,White,39-45,Man,yes,9,yes,2
+20,full_ranking,1,2,True,Competitive,White,32-38,Man,East/Southeast Asian,25-31,Man,yes,9,yes,1
+20,full_ranking,1,3,True,Competitive,White,32-38,Man,Latino,32-38,Woman,yes,9,yes,1
+20,full_ranking,1,4,True,Competitive,White,32-38,Man,Latino,39-45,Woman,yes,9,yes,0
+20,full_ranking,1,5,False,Competitive,White,32-38,Man,East/Southeast Asian,45+,Man,yes,9,yes,1
+20,full_ranking,1,6,False,Competitive,White,32-38,Man,South Asian,25-31,Man,yes,9,yes,1
+20,full_ranking,1,7,False,Competitive,White,32-38,Man,Black,25-31,Man,yes,9,yes,1
+20,full_ranking,1,8,False,Competitive,White,32-38,Man,Latino,25-31,Woman,yes,9,yes,0
+20,full_ranking,1,9,False,Competitive,White,32-38,Man,Latino,18-24,Woman,yes,9,yes,0
+20,choice_ranking,1,1,True,Competitive,White,32-38,Man,Latino,39-45,Woman,yes,9,yes,0
+20,choice_ranking,1,2,True,Competitive,White,32-38,Man,South Asian,25-31,Man,yes,9,yes,1
+20,choice_ranking,1,3,True,Competitive,White,32-38,Man,East/Southeast Asian,45+,Man,yes,9,yes,1
+20,choice_ranking,1,4,True,Competitive,White,32-38,Man,White,39-45,Man,yes,9,yes,2
+20,choice_ranking,1,5,False,Competitive,White,32-38,Man,Latino,32-38,Woman,yes,9,yes,1
+20,choice_ranking,1,6,False,Competitive,White,32-38,Man,East/Southeast Asian,25-31,Man,yes,9,yes,1
+20,choice_ranking,1,7,False,Competitive,White,32-38,Man,Black,25-31,Man,yes,9,yes,1
+20,choice_ranking,1,8,False,Competitive,White,32-38,Man,Latino,25-31,Woman,yes,9,yes,0
+20,choice_ranking,1,9,False,Competitive,White,32-38,Man,Latino,18-24,Woman,yes,9,yes,0
+21,full_ranking,0,1,True,Casual,White,32-38,Man,Latino,18-24,Man,yes,8,yes,1
+21,full_ranking,0,2,True,Casual,White,32-38,Man,Black,18-24,Woman,yes,8,yes,0
+21,full_ranking,0,3,True,Casual,White,32-38,Man,East/Southeast Asian,32-38,Man,yes,8,yes,2
+21,full_ranking,0,4,True,Casual,White,32-38,Man,Latino,39-45,Woman,yes,8,yes,0
+21,full_ranking,0,5,False,Casual,White,32-38,Man,East/Southeast Asian,18-24,Woman,yes,8,yes,0
+21,full_ranking,0,6,False,Casual,White,32-38,Man,East/Southeast Asian,18-24,Man,yes,8,yes,1
+21,full_ranking,0,7,False,Casual,White,32-38,Man,Black,32-38,Man,yes,8,yes,2
+21,full_ranking,0,8,False,Casual,White,32-38,Man,Black,32-38,Woman,yes,8,yes,1
+21,full_ranking,0,9,False,Casual,White,32-38,Man,South Asian,32-38,Woman,yes,8,yes,1
+21,choice_ranking,0,1,True,Casual,White,32-38,Man,Latino,39-45,Woman,yes,8,yes,0
+21,choice_ranking,0,2,True,Casual,White,32-38,Man,Black,32-38,Woman,yes,8,yes,1
+21,choice_ranking,0,3,True,Casual,White,32-38,Man,Black,18-24,Woman,yes,8,yes,0
+21,choice_ranking,0,4,True,Casual,White,32-38,Man,South Asian,32-38,Woman,yes,8,yes,1
+21,choice_ranking,0,5,False,Casual,White,32-38,Man,Latino,18-24,Man,yes,8,yes,1
+21,choice_ranking,0,6,False,Casual,White,32-38,Man,Black,32-38,Man,yes,8,yes,2
+21,choice_ranking,0,7,False,Casual,White,32-38,Man,East/Southeast Asian,18-24,Woman,yes,8,yes,0
+21,choice_ranking,0,8,False,Casual,White,32-38,Man,East/Southeast Asian,18-24,Man,yes,8,yes,1
+21,choice_ranking,0,9,False,Casual,White,32-38,Man,East/Southeast Asian,32-38,Man,yes,8,yes,2
+22,full_ranking,0,1,True,Casual,White,32-38,Man,White,25-31,Man,yes,10,yes,2
+22,full_ranking,0,2,True,Casual,White,32-38,Man,South Asian,32-38,Man,yes,10,yes,2
+22,full_ranking,0,3,True,Casual,White,32-38,Man,East/Southeast Asian,25-31,Man,yes,10,yes,1
+22,full_ranking,0,4,True,Casual,White,32-38,Man,Latino,32-38,Man,yes,10,yes,2
+22,full_ranking,0,5,False,Casual,White,32-38,Man,South Asian,18-24,Woman,yes,10,yes,0
+22,full_ranking,0,6,False,Casual,White,32-38,Man,East/Southeast Asian,39-45,Woman,yes,10,yes,0
+22,full_ranking,0,7,False,Casual,White,32-38,Man,Black,32-38,Man,yes,10,yes,2
+22,full_ranking,0,8,False,Casual,White,32-38,Man,White,18-24,Man,yes,10,yes,2
+22,full_ranking,0,9,False,Casual,White,32-38,Man,Latino,18-24,Woman,yes,10,yes,0
+22,choice_ranking,0,1,True,Casual,White,32-38,Man,Latino,18-24,Woman,yes,10,yes,0
+22,choice_ranking,0,2,True,Casual,White,32-38,Man,East/Southeast Asian,39-45,Woman,yes,10,yes,0
+22,choice_ranking,0,3,True,Casual,White,32-38,Man,South Asian,32-38,Man,yes,10,yes,2
+22,choice_ranking,0,4,True,Casual,White,32-38,Man,White,18-24,Man,yes,10,yes,2
+22,choice_ranking,0,5,False,Casual,White,32-38,Man,South Asian,18-24,Woman,yes,10,yes,0
+22,choice_ranking,0,6,False,Casual,White,32-38,Man,Latino,32-38,Man,yes,10,yes,2
+22,choice_ranking,0,7,False,Casual,White,32-38,Man,East/Southeast Asian,25-31,Man,yes,10,yes,1
+22,choice_ranking,0,8,False,Casual,White,32-38,Man,Black,32-38,Man,yes,10,yes,2
+22,choice_ranking,0,9,False,Casual,White,32-38,Man,White,25-31,Man,yes,10,yes,2
