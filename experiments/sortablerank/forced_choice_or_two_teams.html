@@ -202,7 +202,7 @@
     // Reset the selectedDemographics set if we need to sample again later
 
     // Sample character images for the trial
-    const choice_character_images = Array.from({ length: character_count }, sampleCharacterImage);
+    // const choice_character_images = Array.from({ length: character_count }, sampleCharacterImage);
     const ranked_character_images = Array.from({ length: character_count }, sampleCharacterImage);
 
     const age_confirmation = {
@@ -326,7 +326,7 @@
         stimulus: `
         <p style="font-size: 20px;">Loading...</p>
         <img src="experiments/sortablerank/loading.gif" style="width: 100px; height: 100px;">`,
-        trial_duration: 1000
+        trial_duration: 2000
     };
 
 
@@ -335,7 +335,7 @@
         stimulus: `
         <p style="font-size: 20px;">One moment. We are sorting you into a lobby.</p>
         <img src="experiments/sortablerank/loading.gif" style="width: 100px; height: 100px;">`,
-        trial_duration: 3000
+        trial_duration: 4000
     };
 
     function capitalizeEachWord(string) {
@@ -385,7 +385,7 @@
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
-    const choice_character_html = choice_character_images.map(generateCharacterHTML);
+    // const choice_character_html = choice_character_images.map(generateCharacterHTML);
     const ranked_character_html = ranked_character_images.map(generateCharacterHTML);
 
     // Generate all possible pairs without self-comparisons
@@ -399,7 +399,7 @@
         return pairs;
     }
 
-    let all_pairs = generateAllPairs(choice_character_images.length);
+    let all_pairs = generateAllPairs(ranked_character_images.length);
 
     // Shuffle the pairs
     all_pairs = jsPsych.randomization.shuffle(all_pairs);
@@ -471,8 +471,8 @@ function rearrangeTrials(pairs) {
             continue; // Skip this pair
         }
 
-        const left_html = choice_character_html[i];
-        const right_html = choice_character_html[j];
+        const left_html = ranked_character_html[i];
+        const right_html = ranked_character_html[j];
 
         const trial = {
             type: jsPsychHtmlButtonResponse,
@@ -486,8 +486,8 @@ function rearrangeTrials(pairs) {
             data: {
                 left_index: i,
                 right_index: j,
-                left_image: choice_character_images[i],
-                right_image: choice_character_images[j]
+                left_image: ranked_character_images[i],
+                right_image: ranked_character_images[j]
             },
             on_finish: function(data) {
                 data.choice = data.response === 0 ? 'left' : 'right';
@@ -567,19 +567,17 @@ function rearrangeTrials(pairs) {
 
     const choice_trials_block = [
         instructions_forced_choice,
-        lobby_loading,
         ...choice_trials,
     ]
 
     const ranked_trials_block = [
         instructions_ranking,
-        lobby_loading,
         rank_trial
     ]
 
     const trials_order = randomized_order === 0 
-    ? [choice_trials_block, ranked_trials_block] 
-    : [ranked_trials_block, choice_trials_block];
+    ? [choice_trials_block, loading, ranked_trials_block] 
+    : [ranked_trials_block, loading, choice_trials_block];
     // const trials_order = [ranked_trials_block, choice_trials_block];
 
     // Build the timeline
@@ -588,7 +586,9 @@ function rearrangeTrials(pairs) {
         instructions,
         demographic_questions,
         competitiveness_selfrating,
+        loading,
         instructions_general,
+        lobby_loading,
         ...trials_order.flat(),
         debriefing,
         finished
