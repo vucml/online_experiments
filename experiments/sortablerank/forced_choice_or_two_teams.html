@@ -18,7 +18,6 @@
     <script src="core/jspsych/plugins/plugin-instructions.js"></script>
     <script src="core/jspsych/plugins/plugin-html-slider-response.js"></script>
     <script src="core/jspsych/plugins/plugin-survey-html-form.js"></script>
-    <!-- <script src="core/jspsych/plugins/plugin-html-button-response.js"></script> -->
     <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.2.0"></script>
     <script src="core/jspsych/plugins/plugin-html-keyboard-response.js"></script>
     <!-- Include the jsPsychSortableRank plugin -->
@@ -120,9 +119,20 @@
 
     jsPsych = initializeExperiment();
 
-    condition = jsPsych.randomization.sampleBernoulli(0.5)
-    randomized_order = jsPsych.randomization.sampleWithoutReplacement([0, 1], 1)[0];
-    casual_instructions = [
+    // Experiment parameters
+    const condition = !!jsPsych.randomization.sampleBernoulli(0.5);
+    const randomized_order = jsPsych.randomization.sampleWithoutReplacement([0, 1], 1)[0];
+    const character_count = 8; // You can adjust this number as needed
+    const trial_count = 0; // (0 means use all possible combinations)
+    const participant_image = "experiments/sortablerank/user.png";
+    const required_items_team_a = Math.floor(character_count / 2) + 1;
+    const error_message = `You must pick exactly ${required_items_team_a} players for your team before you can proceed.`;
+
+    // Define constants for conditions
+    const competitive_opposing_team_name = "Opposing Team";
+    const casual_opposing_team_name = "Other Team";
+
+    const casual_instructions = [
         `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
             <h2>Casual Team Activity</h2>
             <p>You are about to participate in a team activity focused on improving a local community space. Your team will develop ideas and plans to enhance the local park, aiming to make it a better place for everyone. This is an opportunity to collaborate, share ideas, and contribute positively to your community in a relaxed setting.</p>
@@ -132,7 +142,7 @@
             <p>You have been randomly selected as the team leader. Before the game begins, you will have the opportunity to select your preferences for team members in a series of two drafts. Select those whom you believe will make the collaboration enjoyable and productive. Based on your preferences in the drafts, we will create teams such that your most preferred players will form your team, and your least preferred players will form another team working on similar plans.</p>
         </div>`,
     ]
-    competitive_instructions = [
+    const competitive_instructions = [
         `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
                         <h2>Competitive Team Activity</h2>
             <p>You are about to participate in a team competition focused on improving a local community space. Your team must develop an innovative and impactful proposal to enhance the local park, competing directly against another team for a substantial grant from the city council. The team with the best proposal will receive funding for implementing their ideas.</p>
@@ -142,67 +152,156 @@
             <p>You have been randomly selected as the team leader. Before the game begins, you will have the opportunity to select your preferences for team members in a series of two drafts. Select those whom you believe will maximize your team's chances of winning the grant. Based on your preferences in the drafts, we will create teams such that your most preferred players will form your team, and your least preferred players will form the rival team.</p>
         </div>`,
     ]
-    casual_rank_instructions = `
+    const casual_rank_instructions = `
             <p>You are selecting a team for a team activity focused on improving a local community space. Your team will develop ideas and plans to enhance the local park, aiming to make it a better place for everyone. This is an opportunity to collaborate, share ideas, and contribute positively to your community in a relaxed setting.</p>
             `
-    competitive_rank_instructions = `
+    const competitive_rank_instructions = `
             <p>You are selecting a team for a team competition focused on improving a local community space. Your team must develop an innovative and impactful proposal to enhance the local park, competing directly against another team for a substantial grant from the city council. The team with the best proposal will receive funding for implementing their ideas.</p>
             `
-    casual_pairwise_instructions = [
+    const casual_pairwise_instructions = [
         `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
-            <h2>Team Selection - Pairwise Preferences</h2>
+            <h2>Team Selection - Pairwise Preferences</h2>`+ (condition ? competitive_rank_instructions : casual_rank_instructions) + `
             <p>For privacy reasons, each participant in the player lobby, including yourself, has been assigned a unique, generated icon based on their demographics.</p><p><strong>On the following screens, you will see pairs of players in the queue; please choose the player you would prefer to have on your team from each pair.</strong></p>
         </div>`
     ]
-    competitive_pairwise_instructions = [
+    const competitive_pairwise_instructions = [
         `<div class="form-container" style="border-radius: 12px; border: 2px solid #ccc; padding: 20px; background-color: #fff;">
             <h2>Team Selection - Pairwise Preferences</h2>`+ (condition ? competitive_rank_instructions : casual_rank_instructions) + `
             <p>For privacy reasons, each participant in the player lobby, including yourself, has been assigned a unique, generated icon based on their demographics.</p><p><strong>On the following screens, you will see pairs of players in the queue; please choose the player you would prefer to have on your team from each pair.</strong></p>
         </div>`
     ]
 
+    // Helper Functions
+    function sampleCharacterImage() {
 
-    competitive_opposing_team_name = "Opposing Team"
-    casual_opposing_team_name = "Other Team"
+        const demographics = Object.keys(characterImages);
+        const shuffledDemographics = jsPsych.randomization.shuffle(demographics);
 
-    // Set the trial count here (0 means use all possible combinations)
-    const trial_count = 0; // Adjust as needed
-    const character_count = 9; // Adjust as needed
-    const participant_image = "experiments/sortablerank/user.png";
+        for (let i = 0; i < shuffledDemographics.length; i++) {
+            const demographicKey = shuffledDemographics[i];
 
-    // Calculate the required number of items for Team A (floor(character_count / 2))
-    const required_items_team_a = Math.floor(character_count / 2) + 1;
+            // Check if this demographic has already been used
+            if (!selectedDemographics.has(demographicKey) && !selectedCharacters.has(demographicKey)) {
+                selectedDemographics.add(demographicKey);
+                selectedCharacters.add(demographicKey);
+                
+                const imageList = characterImages[demographicKey];
+                return imageList[Math.floor(Math.random() * imageList.length)];
+            }
+        }
 
-    // Create a dynamic error message based on the required number of items
-    const error_message = `You must pick exactly ${required_items_team_a} players for your team before you can proceed.`;
+        // If all demographics are exhausted, return null or handle gracefully
+        console.warn("No unique characters left to sample.");
+        return null;
+    }
+
+    function capitalizeEachWord(string) {
+        return string
+        .replace(/-/g, " ") // Replace remaining hyphens with spaces
+        .split(" ")
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ")
+        .replace(' Or ', "/") // Replace "-or-" with "/"
+    }
+
+    function generateCharacterHTML(imagePath) {
+        const pathParts = imagePath.split('/');
+
+        // Extract the demographic folder name (e.g., "Age_<24_female_asian")
+        const demographicFolder = pathParts[pathParts.length - 2];
+        const filename = pathParts[pathParts.length - 1];
+        const filenameParts = filename.split('_');
+        const ageParts = filenameParts[4].split('.');
+
+        // Parse demographic details from the folder name
+        const demographicParts = demographicFolder.split('_');
+        const age = ageParts[0];
+        const sex = demographicParts[2];  // e.g., "female"
+        const race = demographicParts[3]; // e.g., "asian" (already lowercase and hyphenated if needed)
+
+        return `
+            <img src="${imagePath}" alt="Character ${race} ${sex}">
+            <div>
+                <p>Race: ${capitalizeEachWord(race)}</p>
+                <p>Sex: ${capitalizeEachWord(sex)}</p>
+                <p>Age: ${age}</p>
+            </div>
+        `;
+    }
+
+    function generateParticipantHTML(imagePath) {
+        return `
+            <img src="${imagePath}" alt="Participant">
+            <div>
+                <p><strong>You (Leader)</strong></p>
+            </div>
+        `;
+    }
+
+    function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+        // Generate all possible pairs without self-comparisons
+        function generateAllPairs(arrayLength) {
+        const pairs = [];
+        for (let i = 0; i < arrayLength; i++) {
+            for (let j = i + 1; j < arrayLength; j++) {
+                pairs.push([i, j]);
+            }
+        }
+        return pairs;
+    }
+
+    // Function to rearrange trials to avoid consecutive repeats
+    function rearrangeTrials(pairs) {
+        const rearranged = [];
+        let lastUsedCharacters = []; // Tracks characters used in the last trial
+
+        while (pairs.length > 0) {
+            let found = false;
+            for (let i = 0; i < pairs.length; i++) {
+                const pair = pairs[i];
+                const [charA, charB] = pair;
+                const lastPair = rearranged[rearranged.length - 1];
+
+                // Check for self-comparison
+                if (charA === charB) {
+                    continue; // Skip self-comparisons
+                }
+
+                // Check if the pair doesn't repeat any character from the last used ones
+                if (!lastUsedCharacters.includes(charA) && !lastUsedCharacters.includes(charB)) {
+                    rearranged.push(pair);
+                    pairs.splice(i, 1);
+
+                    // Update the last used characters to avoid consecutive repeats
+                    lastUsedCharacters = [charA, charB];
+
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                // If no suitable pair is found, reshuffle the remaining pairs
+                pairs = jsPsych.randomization.shuffle(pairs);
+                const pair = pairs.shift();
+                rearranged.push(pair);
+                lastUsedCharacters = [pair[0], pair[1]];
+            }
+        }
+
+        return rearranged;
+    }
 
     // Sample character_count characters from unique demographic combos without replacement
     const selectedDemographics = new Set(); // Track unique demographics
     const selectedCharacters = new Set(); // Track unique characters
 
-    function sampleCharacterImage() {
-        const demographics = Object.keys(characterImages);
-        
-        // Find a unique demographic that hasn't been selected yet
-        let randomKey;
-        do {
-            randomKey = demographics[Math.floor(Math.random() * demographics.length)];
-        } while ((selectedDemographics.has(randomKey) && selectedDemographics.size < demographics.length) || selectedCharacters.has(randomKey));
-
-        selectedDemographics.add(randomKey); // Mark demographic as selected
-        selectedCharacters.add(randomKey); // Mark character as selected
-        
-        // Get the list of images for this demographic combination
-        const imageList = characterImages[randomKey];
-        
-        // Randomly select an image from the list
-        return imageList[Math.floor(Math.random() * imageList.length)];
-    }
-
-    // Reset the selectedDemographics set if we need to sample again later
 
     // Sample character images for the trial
-    // const choice_character_images = Array.from({ length: character_count }, sampleCharacterImage);
+    const choice_character_images = Array.from({ length: character_count }, sampleCharacterImage);
     const ranked_character_images = Array.from({ length: character_count }, sampleCharacterImage);
 
     const age_confirmation = {
@@ -283,7 +382,10 @@
         `,
         button_label: 'Next',
         on_finish: function(data) {
-            console.log(data.response);
+            const responses = data.response;
+            participantRace = responses.race;
+            participantGender = responses.gender;
+            participantAge = parseInt(responses.age);
         }
     };
 
@@ -338,68 +440,10 @@
         trial_duration: 4000
     };
 
-    function capitalizeEachWord(string) {
-        return string
-        .replace(/-/g, " ") // Replace remaining hyphens with spaces
-        .split(" ")
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ")
-        .replace(' Or ', "/") // Replace "-or-" with "/"
-    }
-
-    function generateCharacterHTML(imagePath) {
-        const pathParts = imagePath.split('/');
-
-        // Extract the demographic folder name (e.g., "Age_<24_female_asian")
-        const demographicFolder = pathParts[pathParts.length - 2];
-        const filename = pathParts[pathParts.length - 1];
-        const filenameParts = filename.split('_');
-        const ageParts = filenameParts[4].split('.');
-
-        // Parse demographic details from the folder name
-        const demographicParts = demographicFolder.split('_');
-        const age = ageParts[0];
-        const sex = demographicParts[2];  // e.g., "female"
-        const race = demographicParts[3]; // e.g., "asian" (already lowercase and hyphenated if needed)
-
-        return `
-            <img src="${imagePath}" alt="Character ${race} ${sex}">
-            <div>
-                <p>Race: ${capitalizeEachWord(race)}</p>
-                <p>Sex: ${capitalizeEachWord(sex)}</p>
-                <p>Age: ${age}</p>
-            </div>
-        `;
-    }
-
-    function generateParticipantHTML(imagePath) {
-        return `
-            <img src="${imagePath}" alt="Participant">
-            <div>
-                <p><strong>You (Leader)</strong></p>
-            </div>
-        `;
-    }
-
-    function capitalizeFirstLetter(string) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-
     // const choice_character_html = choice_character_images.map(generateCharacterHTML);
     const ranked_character_html = ranked_character_images.map(generateCharacterHTML);
 
-    // Generate all possible pairs without self-comparisons
-    function generateAllPairs(arrayLength) {
-        const pairs = [];
-        for (let i = 0; i < arrayLength; i++) {
-            for (let j = i + 1; j < arrayLength; j++) {
-                pairs.push([i, j]);
-            }
-        }
-        return pairs;
-    }
-
-    let all_pairs = generateAllPairs(ranked_character_images.length);
+    let all_pairs = generateAllPairs(character_count);
 
     // Shuffle the pairs
     all_pairs = jsPsych.randomization.shuffle(all_pairs);
@@ -408,53 +452,6 @@
     if (trial_count > 0 && trial_count < all_pairs.length) {
         all_pairs = all_pairs.slice(0, trial_count);
     }
-
-    // Function to rearrange trials to avoid consecutive repeats
-// Function to rearrange trials to avoid consecutive repeats
-function rearrangeTrials(pairs) {
-    const rearranged = [];
-    let lastUsedCharacters = []; // Tracks characters used in the last trial
-
-    while (pairs.length > 0) {
-        let found = false;
-        for (let i = 0; i < pairs.length; i++) {
-            const pair = pairs[i];
-            const [charA, charB] = pair;
-            const lastPair = rearranged[rearranged.length - 1];
-
-            // Check for self-comparison
-            if (charA === charB) {
-                continue; // Skip self-comparisons
-            }
-
-            // Check if the pair doesn't repeat any character from the last used ones
-            if (!lastUsedCharacters.includes(charA) && !lastUsedCharacters.includes(charB)) {
-                rearranged.push(pair);
-                pairs.splice(i, 1);
-
-                // Update the last used characters to avoid consecutive repeats
-                lastUsedCharacters = [charA, charB];
-
-                found = true;
-                break;
-            }
-        }
-
-        if (!found) {
-            // If no suitable pair is found, reshuffle the remaining pairs
-            pairs = jsPsych.randomization.shuffle(pairs);
-            const pair = pairs.shift();
-
-            // Ensure the reshuffled pair is not a self-comparison
-            if (pair && pair[0] !== pair[1]) {
-                rearranged.push(pair);
-                lastUsedCharacters = [pair[0], pair[1]];
-            }
-        }
-    }
-
-    return rearranged;
-}
 
     // Rearrange trials to avoid consecutive repeats and self-comparisons
     all_pairs = rearrangeTrials(all_pairs);
@@ -468,7 +465,7 @@ function rearrangeTrials(pairs) {
 
         // Ensure i !== j to prevent self-comparisons
         if (i === j) {
-            continue; // Skip this pair
+            continue;
         }
 
         const left_html = ranked_character_html[i];
