@@ -273,7 +273,7 @@ function getTotalPerformance(data, threshold = 2) {
   return totalMatchCount;
 }
 
-function calculateBonus(data, category_targets, threshold = 2, bonusPerTrial = 0.05, target_bonus_multiple = 5, maximumBonus = 10.0) {
+function calculateBonus(data, category_targets, threshold = 2, bonusPerTrial = 0.03125, target_bonus_multiple = 5, maximumBonus = 10.0) {
   const targetPerformance = getTotalTargetSuccess(data, category_targets, threshold);  // Successes for cued targets
   const basePerformance = getTotalPerformance(data, threshold) - targetPerformance;    // Non-cued recalls
   const base_bonus = basePerformance * bonusPerTrial;
