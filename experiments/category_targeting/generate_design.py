@@ -258,8 +258,7 @@ def generate_category_cue_indices(
     spacing: int
 ) -> list[list[int]]:
     """
-    Generate alternating indices for category-cued and free recall events across trials, ensuring that
-    cued items are spaced apart and the usage of indices is balanced.
+    Generate alternating indices for category-cued and free recall events across trials, ensuring that cued items are spaced apart and the usage of indices is balanced.
 
     Args:
         trial_count: The total number of trials.

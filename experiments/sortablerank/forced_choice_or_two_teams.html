@@ -295,6 +295,122 @@
         return rearranged;
     }
 
+    function compareRace(raceA, raceB) {
+        const codes = {
+            "South Asian": 0,
+            "south-asian": 0,
+            "East/Southeast Asian": 1,
+            "east-asian": 1,
+            "Black": 2,
+            "black": 2,
+            "White": 3,
+            "white": 3,
+            "Hispanic/Latine/Latinx": 4,
+            "latino": 4,
+            "Indigenous": 5,
+            "Multiracial": 6,
+            "Other": 7
+        };
+        return codes[raceA.toLowerCase()] === codes[raceB.toLowerCase()];
+    }
+
+    function convertAge(ageInt) {
+        if (ageInt <= 24) return "18-24";
+        else if (ageInt >= 25 && ageInt <= 31) return "25-31";
+        else if (ageInt >= 32 && ageInt <= 38) return "32-38";
+        else if (ageInt >= 39 && ageInt <= 45) return "39-45";
+        else if (ageInt > 45) return "45+";
+        return NaN;
+    }
+
+    function convertRace(race) {
+        const races = ["South Asian", "East/Southeast Asian", "Black", "White", "Latino", "Indigenous", "Multiracial", "Other"];
+        const codes = {
+            "South Asian": 0,
+            "south-asian": 0,
+            "East/Southeast Asian": 1,
+            "east-asian": 1,
+            "Black": 2,
+            "black": 2,
+            "White": 3,
+            "white": 3,
+            "Hispanic/Latine/Latinx": 4,
+            "latino": 4,
+            "Indigenous": 5,
+            "Multiracial": 6,
+            "Other": 7
+        };
+        return races[codes[race.toLowerCase()]];
+    }
+
+    function convertGender(gender) {
+        const genders = ["Man", "Woman", "Non-binary", "Other"];
+        const codes = {
+            "Man": 0,
+            "male": 0,
+            "man": 0,
+            "Woman": 1,
+            "woman": 1,
+            "female": 1,
+            "Non-binary": 2,
+            "Other": 3
+        };
+        return genders[codes[gender.toLowerCase()]];
+    }
+
+    function sampleCharactersBasedOnHomophily(race, gender, age, character_count) {
+        const demographics = Object.keys(characterImages);
+        const shuffledDemographics = jsPsych.randomization.shuffle(demographics);
+
+        const sharedFeatureBuckets = { 0: [], 1: [], 2: [], 3: [] };
+
+        // Helper function to count shared features
+        function countSharedFeatures(demo) {
+            const [demoRace, demoGender, demoAgeGroup] = demo.split("_");
+            let sharedFeatures = 0;
+            sharedFeatures += compareRace(demoRace, race) ? 1 : 0;
+            sharedFeatures += convertGender(demoGender) === convertGender(gender) ? 1 : 0;
+            sharedFeatures += convertAge(parseInt(demoAgeGroup)) === convertAge(parseInt(age)) ? 1 : 0;
+            return sharedFeatures;
+        }
+
+        // Categorize demographics into buckets based on shared features
+        for (let demo of shuffledDemographics) {
+            const sharedFeatures = countSharedFeatures(demo);
+            sharedFeatureBuckets[sharedFeatures].push(demo);
+        }
+
+        const selectedCharacters = [];
+        for (let i = 3; i >= 0; i--) {
+            const requiredCount = Math.floor(character_count / 4) + (i < character_count % 4 ? 1 : 0);
+            const availableCharacters = sharedFeatureBuckets[i];
+
+            while (selectedCharacters.length < character_count && availableCharacters.length > 0) {
+                const randomIndex = Math.floor(Math.random() * availableCharacters.length);
+                const chosenDemo = availableCharacters.splice(randomIndex, 1)[0];
+                const imageList = characterImages[chosenDemo];
+                const randomImage = imageList[Math.floor(Math.random() * imageList.length)];
+                
+                // Extract demographic details for character
+                const characterDemographics = extractRaceGenderAge(chosenDemo);
+                if (characterDemographics.length === 3) {
+                    const [characterRace, characterGender, characterAge] = characterDemographics;
+
+                    // Calculate shared features
+                    let sharedFeatures = 0;
+                    sharedFeatures += compareRace(race, characterRace);
+                    sharedFeatures += convertAge(age) === convertAge(parseInt(characterAge));
+                    sharedFeatures += convertGender(gender) === convertGender(characterGender);
+                    console.log(`Shared features: ${sharedFeatures} with character: ${chosenDemo}`);
+                }
+
+                selectedCharacters.push(randomImage);
+            }
+        }
+
+        return selectedCharacters;
+    }
+
     // Sample character_count characters from unique demographic combos without replacement
     const selectedDemographics = new Set(); // Track unique demographics
     const selectedCharacters = new Set(); // Track unique characters
@@ -382,10 +498,27 @@
         `,
         button_label: 'Next',
         on_finish: function(data) {
-            const responses = data.response;
-            participantRace = responses.race;
-            participantGender = responses.gender;
-            participantAge = parseInt(responses.age);
+            console.log(data.response);
+        }
+    };
+
+    const character_sampling = {
+        type: 'call-function',
+        func: function() {
+            const demographics = jsPsych.data.get().last(1).values()[0].response;
+            const race = demographics.race;
+            const gender = demographics.gender;
+            const age = parseInt(demographics.age);
+
+            const sampledImages = sampleCharactersBasedOnHomophily(race, gender, age, 8);
+
+            jsPsych.data.addProperties({
+                choice_character_images: sampledImages,
+                ranked_character_images: sampledImages
+            });
+
+            console.log("Sampled characters:", sampledImages);
+            console.log("jsPsych data:", jsPsych.data.get().values());
         }
     };
 
@@ -545,7 +678,14 @@
         `,
         button_label: 'Next',
         on_finish: function(data) {
-            console.log(data.response);
+            console.log("Debriefing data:", data.response);
+
+            // Log the character images that were sampled earlier
+            const choiceImages = jsPsych.data.get().values()[0].choice_character_images;
+            const rankedImages = jsPsych.data.get().values()[0].ranked_character_images;
+            console.log("Sampled Choice Images:", choiceImages);
+            console.log("Sampled Ranked Images:", rankedImages);
+            console.log("Full jsPsych Data:", jsPsych.data.get().values());
         }
     };
 
@@ -582,13 +722,14 @@
         age_confirmation,
         instructions,
         demographic_questions,
-        competitiveness_selfrating,
-        loading,
-        instructions_general,
-        lobby_loading,
-        ...trials_order.flat(),
+        character_sampling,
+        // competitiveness_selfrating,
+        // loading,
+        // instructions_general,
+        // lobby_loading,
+        // ...trials_order.flat(),
         debriefing,
-        finished
+        // finished
     ];
 
     jsPsych.run(timeline);
