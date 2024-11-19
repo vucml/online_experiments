@@ -168,28 +168,32 @@
             })
 
             // Configure Recall Events:
-            let trial_category_cues = []
-            for (let recall_index = 0;  recall_index < category_cues[i].length; recall_index++) {
-                let category_cue = '';
-                if ('category_path' in config && category_cues[i][recall_index] > 0) {
-                    category_cue = category_pool[category_cues[i][recall_index] - 1];
-                    trial_category_cues.push(category_cue);
-                }
-
-                timeline.push({
-                    type: jsPsychFreeRecall,
-                    initial_category_cue: category_cue,
-                    response_limit: 1,
-                    maximum_recall_time: 15000,
-                    data: {
-                        "category_target": category_targets[i][recall_index],
-                        "category_target_string": category_target_strings[i][recall_index]
-                    }
-                });
+            let category_cue = '';
+            if ('category_path' in config && category_cues[i][0] > 0) {
+                category_cue = category_pool[category_cues[i][0] - 1];
             }
-            console.log(i + 'th trial category_cues: ' + trial_category_cues);
-            console.log(i + 'th trial category_targets: ' + category_target_strings[i]);
-            console.log('---')
+
+            timeline.push({
+                type: jsPsychFreeRecall,
+                initial_category_cue: category_cue,
+                response_limit: 1,
+                maximum_recall_time: 10000,
+                data: {
+                    "category_target": category_targets[i][0],
+                    "category_target_string": category_target_strings[i][0]
+                }
+            });
+
+            timeline.push({
+                type: jsPsychFreeRecall,
+                // initial_category_cue: category_cue,
+                response_limit: 20,
+                maximum_recall_time: 30000,
+                data: {
+                    "category_target": "",
+                    "category_target_string": ""
+                }
+            });
 
             // Configure End of Trial Events:
             const end_trial_fn = function() {
