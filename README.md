@@ -67,7 +67,9 @@ In Visual Studio Code, you can install extensions that will help you with coding
 
 ## A Bird's Eye View of the Workflow for Creating and Running Experiments
 
-### 1. Initialize JATOS
+### 1. Install and Initialize JATOS
+
+Install [JATOS](https://www.jatos.org/) and initialize by following [these](https://www.jatos.org/Installation.html) instructions.
 
 JATOS is a bit weird when it comes to playing nice with GitHub repositories, so we have to set it up first. The installation instructions for JATOS describe how to start the server and access the web interface; the precise way is specific to your OS. You can find the instructions [here](https://www.jatos.org/Installation.html). 
 
