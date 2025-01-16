@@ -78,8 +78,7 @@
             '<p >After the entire list is presented, you will type as many study items as you can remember.</p><p>Sometimes you will get a prompt that asks for an item from a particular category, and sometimes you will get a prompt that asks for any item.</p><p>Here\'s what those prompts will look like:</p><p></p><p class="instruction-text" style="font-size: 24px; border: solid purple">Recall MUSIC STYLE</p><p style="font-size: 48px;">_</p><p></p><p class="instruction-text" style="font-size: 24px;">Recall ANY ITEM</p><p style="font-size: 48px;">_</p>',
             '<p>Performance Bonus</p><p>You\'ll get a fixed bonus for every item you recall correctly and 5 times as much every time you correctly remember an item with a category cue, adding up to a maximum bonus of $10.</p><p>Category cues are wrapped in a purple border for emphasis:</p><p></p><p class="instruction-text" style="font-size: 24px; border: solid purple">Recall MUSIC STYLE</p><p></p><p>Pay attention to both items and their categories during the study phase so you can maximize your bonus!</p>',
             '<p >After you type a given item, you\'ll press ENTER to submit it.</p><p>Do your best with spelling, but don\'t worry too much about minor spelling errors.</p><p>If you do make major typos, you can press BACKSPACE to undo individual characters.</p>',
-            '<p>You will be given up to 40 seconds to retrieve all study items.</p><p>If you can\'t remember an item that fits a prompt, take some time to think, and make your best guess before moving on.</p><p>Sometimes the item will come to you after several seconds!</p>',
-            '<p >You\'ll get a little break in between trials.</p><p>Take a few seconds, and when you\'re ready for the next trial, press Next.</p>',
+            '<p>You will be given up to 40 seconds to retrieve all study items.</p><p>If you can\'t remember an item that fits a prompt, take some time to think, and make your best guess before moving on.</p><p>Sometimes the item will come to you after several seconds!</p><p>You\'ll get a break between trials.</p>',
             ],
             show_clickable_nav: true,
             key_forward: 'm',
@@ -91,7 +90,7 @@
         const check_in = {
             type: jsPsychInstructions,
             pages:[
-            '<p>END OF INSTRUCTIONS. PLEASE CHECK IN</p><p>Once you\'ve checked in with the experimenter, you\'re ready for a practice trial.</p>',
+            '<p>END OF INSTRUCTIONS. </p><p>Click the right arrow on your keyboard to begin the practice trial.</p>',
             ],
         }
 
@@ -237,7 +236,7 @@
             let end_of_trial_message;
             switch (i) {
                 case 0:
-                    end_of_trial_message = `<p >You've completed the practice trial! Please check in with the experimenter before proceeding to the next trial.</p>`;
+                    end_of_trial_message = `<p >You've completed the practice trial! Please click the right arrow on your keyboard to proceed to the next trial.</p>`;
                     break;
                 case trial_count - 1:
                     end_of_trial_message = `<p >You have completed the experiment. Thank you for your participation!</p>`;
