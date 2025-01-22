@@ -17,12 +17,13 @@
 # %%
 
 # %%
+
 import numpy as np
 import copy
 import itertools
 import random
 import math
-from helpers import load_stimulus_pool, load_data, save_data
+from experiments.category_targeting.helpers import load_stimulus_pool, load_data, save_data
 
 
 # %%
