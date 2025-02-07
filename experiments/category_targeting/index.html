@@ -79,6 +79,18 @@
             '<p>Performance Bonus</p><p>You\'ll get a fixed bonus for every item you recall correctly and 5 times as much every time you correctly remember an item with a category cue, adding up to a maximum bonus of $10.</p><p>Category cues are wrapped in a purple border for emphasis:</p><p></p><p class="instruction-text" style="font-size: 24px; border: solid purple">Recall MUSIC STYLE</p><p></p><p>Pay attention to both items and their categories during the study phase so you can maximize your bonus!</p>',
             '<p >After you type a given item, you\'ll press ENTER to submit it.</p><p>Do your best with spelling, but don\'t worry too much about minor spelling errors.</p><p>If you do make major typos, you can press BACKSPACE to undo individual characters.</p>',
             '<p>You will be given up to 40 seconds to retrieve all study items.</p><p>If you can\'t remember an item that fits a prompt, take some time to think, and make your best guess before moving on.</p><p>Sometimes the item will come to you after several seconds!</p><p>You\'ll get a break between trials.</p>',
+            '<p> Now, we\'ll take you through the layout of a sample trial. First, you will be presented with 6 words and their respective categories. Do your best to remember these.',
+            '<p> <p class="stimulus-category" style="font-size: 24px;">COUNTRY</p><p class="stimulus-word" style="font-size: 48px;">Japan</p>',
+            '<p> <p class="stimulus-category" style="font-size: 24px;">ANIMAL</p><p class="stimulus-word" style="font-size: 48px;">Dog</p>',
+            '<p> <p class="stimulus-category" style="font-size: 24px;">COLOR</p><p class="stimulus-word" style="font-size: 48px;">Red</p>',
+            '<p> <p class="stimulus-category" style="font-size: 24px;">FRUIT</p><p class="stimulus-word" style="font-size: 48px;">Apple</p>',
+            '<p> <p class="stimulus-category" style="font-size: 24px;">SHAPE</p><p class="stimulus-word" style="font-size: 48px;">Circle</p>',
+            '<p> <p class="stimulus-category" style="font-size: 24px;">SPORT</p><p class="stimulus-word" style="font-size: 48px;">Football</p>',
+            '<p>Some trials will begin with a category cue as shown below. You will then do your best to remember and type out the corresponding word.</p> <p class="instruction-text" style="font-size: 24px; border: solid purple">Recall SHAPE</p><p style="font-size: 48px;">_</p>',
+            '<p> If you remembered "Circle," you would be correct! Then, you will be asked to recall any of the remaining 5 items as shown below. You will receive 5 such prompts.</p> <p class="instruction-text" style="font-size: 24px;">Recall ANY ITEM</p><p style="font-size: 48px;">_</p>',
+            '</p> If you remembered "Japan," "Dog," "Red," "Apple," and "Football," you would be correct! </p> Some trials may not have a category cue and present 6 free recall prompts.</p> You will be told how many list items you correctly remembered at the end of each trial. </p> Good luck!</p>'
+            
+
             ],
             show_clickable_nav: true,
             key_forward: 'm',
@@ -88,11 +100,11 @@
         }
 
         const check_in = {
-            type: jsPsychInstructions,
-            pages:[
-            '<p>END OF INSTRUCTIONS. </p><p>Click the right arrow on your keyboard to begin the practice trial.</p>',
-            ],
-        }
+    type: jsPsychInstructions,
+    pages:[
+        '<p>END OF INSTRUCTIONS. Click the right arrow on your keyboard to begin the first trial.</p>',
+    ],
+}
 
         // load data from config.data_path
         console.log('data_path: ' + config.data_path)
@@ -236,7 +248,7 @@
             let end_of_trial_message;
             switch (i) {
                 case 0:
-                    end_of_trial_message = `<p >You've completed the practice trial! Please click the right arrow on your keyboard to proceed to the next trial.</p>`;
+                    end_of_trial_message = `<p >You've completed the first trial! Please click the right arrow on your keyboard to proceed to the next trial.</p>`;
                     break;
                 case trial_count - 1:
                     end_of_trial_message = `<p >You have completed the experiment. Thank you for your participation!</p>`;
