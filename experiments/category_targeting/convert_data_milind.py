@@ -417,7 +417,7 @@ def retrieve_pres_itemids(
 
 # %%
 if __name__ == "__main__":
-    jatos_data_path = "experiments/category_targeting/jatos_results_data_20250210195224.jsonl"
+    jatos_data_path = "experiments/category_targeting/jatos_results_data_20250210215911.jsonl"
     stimulus_pool_path = "experiments/category_targeting/assets/cuefr_pool.txt"
     category_pool_path = "experiments/category_targeting/assets/cuefr_category_pool.txt"
     target_data_path = "experiments/category_targeting/expt_milind.h5"
