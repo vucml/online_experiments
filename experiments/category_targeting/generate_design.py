@@ -538,7 +538,7 @@ if __name__ == "__main__":
     control_proportion = 4 / 10
     cue_count = 1
     total_recalls = 6
-    cue_region_size = 6
+    cue_region_size = 4
     spacing = 2
     target_data_path = "experiments/category_targeting/cuefr.h5"
     target_stimulus_pool_path = "experiments/category_targeting/assets/cuefr_pool.txt"
