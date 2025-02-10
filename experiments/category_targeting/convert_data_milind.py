@@ -1,8 +1,26 @@
+# ---
+# jupyter:
+#   jupytext:
+#     cell_metadata_filter: -all
+#     custom_cell_magics: kql
+#     text_representation:
+#       extension: .py
+#       format_name: percent
+#       format_version: '1.3'
+#       jupytext_version: 1.11.2
+#   kernelspec:
+#     display_name: online_experiments
+#     language: python
+#     name: python3
+# ---
+
+# %%
 import json
 import numpy as np
 from helpers import load_stimulus_pool, load_data, save_data
 
 
+# %%
 def load_jsonl(file_path: str) -> list[list[dict]]:
     """
     Load and parse a file where each line is a JSON-encoded string representing
@@ -25,6 +43,7 @@ def load_jsonl(file_path: str) -> list[list[dict]]:
     return participants_data
 
 
+# %%
 def retrieve_study_items(participants_data: list[list[dict]]) -> list[list[str]]:
     """
     Extracts study items from item-presentation trials across all participants.
@@ -44,6 +63,7 @@ def retrieve_study_items(participants_data: list[list[dict]]) -> list[list[str]]
     return all_study_items
 
 
+# %%
 def retrieve_study_item_categories(
     participants_data, cat_pool
 ) -> tuple[list[list[str]], list[list[int]]]:
@@ -71,6 +91,7 @@ def retrieve_study_item_categories(
     return all_study_categories, all_study_category_indices
 
 
+# %%
 def generate_subject_ids(participants_data: list[list[dict]]) -> list[int]:
     """
     Selects unique subject id from item-presentation trials across all participants.
@@ -91,6 +112,7 @@ def generate_subject_ids(participants_data: list[list[dict]]) -> list[int]:
     return subject_ids
 
 
+# %%
 def retrieve_block_indices(participants_data: list[list[dict]]) -> list[int]:
     """
     Tracks block index over item-presentation trials across all participants.
@@ -111,6 +133,7 @@ def retrieve_block_indices(participants_data: list[list[dict]]) -> list[int]:
     return block_ids
 
 
+# %%
 def retrieve_recall_words(participants_data: list[list[dict]]) -> list[list[str]]:
     """
     Extracts "recall_words" entry from trials across all participants.
@@ -123,13 +146,22 @@ def retrieve_recall_words(participants_data: list[list[dict]]) -> list[list[str]
     """
     all_recall_words = []
     for participant_data in participants_data:
+        trial_index = 0
+        words = []
         for entry in participant_data:
+            if "word_list" in entry:
+                if trial_index > 0:
+                    all_recall_words.append(words)
+                    words = []
+                trial_index += 1
+                continue
             if "recall_words" in entry:
-                words = entry.get("recall_words", [])
-                all_recall_words.append(words)
+                words += entry.get("recall_words", [])
+        all_recall_words.append(words)
     return all_recall_words
 
 
+# %%
 def retrieve_recall_cues(
     participants_data: list[list[dict]], cat_pool: list[str]
 ) -> tuple[list[str], list[int]]:
@@ -148,17 +180,32 @@ def retrieve_recall_cues(
     all_recall_cues = []
     all_recall_cue_indices = []
     for participant_data in participants_data:
+        trial_index = 0
+        recall_cues = []
+        recall_cue_indices = []
         for entry in participant_data:
+            if "word_list" in entry:
+                if trial_index > 0:
+                    all_recall_cues.append(recall_cues)
+                    all_recall_cue_indices.append(recall_cue_indices)
+                    recall_cues = []
+                    recall_cue_indices = []
+                trial_index += 1
+                continue
             if "category_cue" in entry:
                 cue = entry.get("category_cue", "").strip()
-                all_recall_cues.append(cue)
+                recall_cues.append(cue)
                 if cue:
-                    all_recall_cue_indices.append(cat_pool.index(cue) + 1)
+                    recall_cue_indices.append(cat_pool.index(cue) + 1)
                 else:
-                    all_recall_cue_indices.append(0)
+                    recall_cue_indices.append(0)
+        all_recall_cues.append(recall_cues)
+        all_recall_cue_indices.append(recall_cue_indices)
+                
     return all_recall_cues, all_recall_cue_indices
 
 
+# %%
 def pad_lists(lists, minimum_length):
     """
     Pad the input lists with zeros to at least a specified length.
@@ -177,6 +224,7 @@ def pad_lists(lists, minimum_length):
     return padded_lists
 
 
+# %%
 def levenshtein(s1: str, s2: str) -> int:
     """
     Calculate the Levenshtein distance between two strings.
@@ -204,6 +252,7 @@ def levenshtein(s1: str, s2: str) -> int:
     return previous_row[-1]
 
 
+# %%
 def match_recall_word(
     recall_word: str, study_items: list[str], threshold: float
 ) -> int:
@@ -227,6 +276,7 @@ def match_recall_word(
     return best_match["index"] if best_match["distance"] <= threshold else -1
 
 
+# %%
 def retrieve_recall_pres_positions(
     participants_data: list[list[dict]],
     threshold: float,
@@ -263,6 +313,7 @@ def retrieve_recall_pres_positions(
     return all_recall_indices
 
 
+# %%
 def retrieve_recall_pres_ids(
     participants_data: list[list[dict]],
     threshold: float,
@@ -302,6 +353,7 @@ def retrieve_recall_pres_ids(
     return word_pool_indices
 
 
+# %%
 def retrieve_recall_item_categories(
     participants_data: list[list[dict]], cat_pool: list[str], threshold: float, include_intrusions: bool = False
 ) -> tuple[list[list[str]], list[list[int]]]:
@@ -337,6 +389,7 @@ def retrieve_recall_item_categories(
     return all_recall_categories, all_recall_category_indices
 
 
+# %%
 def retrieve_pres_itemids(
     participants_data: list[list[dict]], word_pool: list[str]
 ) -> list[list[int]]:
@@ -362,11 +415,12 @@ def retrieve_pres_itemids(
     return word_pool_indices
 
 
+# %%
 if __name__ == "__main__":
     jatos_data_path = "experiments/category_targeting/jatos_results_data_20250210195224.jsonl"
     stimulus_pool_path = "experiments/category_targeting/assets/cuefr_pool.txt"
     category_pool_path = "experiments/category_targeting/assets/cuefr_category_pool.txt"
-    target_data_path = "experiments/category_targeting/pooled_raw_data.h5"
+    target_data_path = "experiments/category_targeting/expt_milind.h5"
     include_intrusions = False
     distance_threshold = 2
 
@@ -381,6 +435,7 @@ if __name__ == "__main__":
     category_cues, category_ids = retrieve_recall_cues(data, cat_pool)
     recall_item_categories, recall_category_ids = retrieve_recall_item_categories(data, cat_pool, distance_threshold, include_intrusions)
     category_ids = np.array(category_ids)
+
     pres_itemids = np.array(retrieve_pres_itemids(data, word_pool))
     assert np.sum(pres_itemids == 0) == 0, "Variable list length across study lists"
     study_category_ids = np.array(study_category_ids)
@@ -404,6 +459,13 @@ if __name__ == "__main__":
         )
     )
     rec_categoryids = np.array(pad_lists(recall_category_ids, list_length))
+
+    # if category_ids second dimension length is not same as recall_category_ids second dimension length, then pad the category_ids with zeros to match
+    if category_ids.shape[1] != rec_categoryids.shape[1]:
+        reference_array = np.zeros_like(rec_categoryids)
+        reference_array[:, :category_ids.shape[1]] = category_ids
+        category_ids = reference_array
+
 
     for (
         participant_study_items,
@@ -451,16 +513,16 @@ if __name__ == "__main__":
 
     control_condition = category_ids == 0
     targetting_condition = category_ids != 0
-    successful_targetting = np.logical_and(category_ids != 0, category_ids == rec_categoryids[:, 0])
+    successful_targetting = np.logical_and(targetting_condition, category_ids == rec_categoryids)
     three_conditions = targetting_condition.astype(int) + successful_targetting
     print(np.sum(successful_targetting)/np.sum(targetting_condition))
 
     # construct data dict
     result: dict[str, np.ndarray] = {
-        "condition": three_conditions[:, np.newaxis],
-        "target_success": successful_targetting[:, np.newaxis],
+        "condition": three_conditions,
+        "target_success": successful_targetting,
         "listLength": list_lengths[:, np.newaxis],
-        "category_cues": category_ids[:, np.newaxis],
+        "category_cues": category_ids,
         "pres_itemids": pres_itemids,
         "pres_categoryids": study_category_ids,
         "pres_itemnos": np.tile(np.arange(1, list_length + 1), (len(pres_itemids), 1)),
@@ -480,3 +542,5 @@ if __name__ == "__main__":
 
     for key, value in loaded_result.items():
         assert np.ndim(value) == 2
+
+# %%
