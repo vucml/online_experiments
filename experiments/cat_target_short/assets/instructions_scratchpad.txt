@@ -1,0 +1,43 @@
+Scratchpad for participant instructions, at the beginning of the experiment and throughout.
+
+=== (indicates new screen / slide)
+
+Welcome to the experiment!
+
+In this experiment, you'll be asked to study and remember words. 
+
+
+===
+
+<p style="text-align: center; width: 80%; display: inline-block;">During the study period, you will see a series of study items presented one at a time. Each study item will be presented with a category label, like this:</p><p></p><p>MUSIC STYLE</p><p>hip hop</p><p></p><p>Your goal is to remember the study item for a later memory test.</p>
+
+===
+
+After the entire list is presented, you will type as many study items as you can remember. Sometimes you will get a prompt that asks for an item from a particular category, and sometimes you will get a prompt that asks for any item. Here's what those prompts will look like:
+
+Recall MUSIC STYLE
+_
+
+Recall ANY ITEM
+_
+
+===
+
+After you type a given item, you'll press ENTER to submit it. Do your best with spelling, but don't worry too much about minor spelling errors. You will be given a full minute to remember the study items. Sometimes a study item will come to you after several seconds, so keep trying until the end of the minute.
+
+===
+
+If you can't remember an item that fits a given category prompt, you can type "pass" and press ENTER.
+
+===
+
+You'll get a little break in between trials. Take a few seconds, and when you're ready for the next trial, press SPACE. 
+
+OK, you're ready for a practice trial! Press SPACE to start the practice trial.
+
+===
+
+You've completed trial X of N, nice work!
+
+When you're ready for the next trial, press Next.
+
