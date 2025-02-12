@@ -531,13 +531,13 @@ if __name__ == "__main__":
     #
     # also include a 1D array specifying a pres_id whose corresponding category label will be used for cued recall ('category_cue')
 
-    list_length = 16
+    list_length = 6
     subject_count = 300
     trial_count = 20
     control_proportion = 4 / 10
-    cue_count = 3
+    cue_count = 1
     total_recalls = 6
-    cue_region_size = 8
+    cue_region_size = 4
     spacing = 2
     target_data_path = "experiments/category_targeting/cuefr.h5"
     target_stimulus_pool_path = "experiments/category_targeting/assets/cuefr_pool.txt"
