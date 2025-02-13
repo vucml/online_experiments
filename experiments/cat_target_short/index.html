@@ -91,9 +91,7 @@
             '<p> If you type Circle, you would be correct! <p class="instruction-text" style="font-size: 24px; border: solid purple">Recall SHAPE</p><p style="font-size: 48px;">Circle</p>',
             '<p> Then, you will be asked to recall any of the remaining 5 items as shown below. You will receive 5 such prompts.</p> <p class="instruction-text" style="font-size: 24px;">Recall ANY ITEM</p><p style="font-size: 48px;">_</p>',
             '</p> Here, you could recall Japan, Dog, Red, Apple, or Football - all would be correct! <p class="instruction-text" style="font-size: 24px;">Recall ANY ITEM</p><p style="font-size: 48px;">Japan</p>',
-            '</p> <p style="font-size: 24px;">FINAL NOTES</p> Some trials may not have a category cue and present 6 free recall prompts.</p> You will be told how many list items you correctly remembered at the end of each trial. </p> Good luck!</p>'
-            
-
+            '</p> <p style="font-size: 24px;">FINAL NOTES</p> Some trials may not have a category cue and present 6 free recall prompts.</p><p>You will be told how many list items you correctly remembered at the end of each trial.</p><p>Good luck!</p>'
             ],
             show_clickable_nav: true,
             key_forward: 'm',
@@ -281,17 +279,18 @@
             }
         }
         timeline.push({
-            type: jsPsychInstructions,
-            pages: function() {
-            
-            const bonus = calculateBonus(jsPsych.data.getLastTimelineData(), category_target_strings)
-            const message = `You've completed the experiment! items. Your performance bonus is $${bonus}. Your subject ID is ${subjectId}. Please check in with the experimenter to receive your bonus.`
-            return [message];
+            type: jsPsychHtmlButtonResponse,
+            stimulus: function() {
+                const bonus = calculateBonus(jsPsych.data.getLastTimelineData(), category_target_strings);
+                return `You've completed the experiment! Your total performance bonus is $${bonus}. Click "SUBMIT" or wait five seconds to complete the experiment and confirm your bonus. Make sure you proceed to the next page to ensure your bonus is recorded.`;
             },
+            choices: ["SUBMIT"],
+            trial_duration: 5000,
             data: function() {
-            return {"bonus": calculateBonus(jsPsych.data.getLastTimelineData(), category_target_strings)}
-            },
-        });
+                return { bonus: calculateBonus(jsPsych.data.getLastTimelineData(), category_target_strings) };
+            }
+            });
+
 
         // initializes experiment different for JATOS than other hosting environments
         jsPsych = initializeExperiment();
