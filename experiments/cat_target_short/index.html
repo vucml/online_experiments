@@ -21,20 +21,20 @@
         <link href="core/jspsych/css/jspsych.css" rel="stylesheet" type="text/css"></link>
         <link href="core/jspsych/css/lpl-recall-recog-probe.css" rel="stylesheet" type="text/css"></link>
         <script src="core/init_experiment.js"></script>
-        <script type="module" src="experiments/category_targeting/helpers.js"></script>
+        <script type="module" src="experiments/cat_target_short/helpers.js"></script>
     </head>
     <body></body>
     <script type="module">
 
-        import { transpose, unique_entries, getEntriesBySubjectIndex, loadH5Data, loadItemPool, configureSubject, getTrialPerformance, getTotalPerformance, calculateBonus, getTrialTargetSuccess } from "./experiments/category_targeting/helpers.js";
+        import { transpose, unique_entries, getEntriesBySubjectIndex, loadH5Data, loadItemPool, configureSubject, getTrialPerformance, getTotalPerformance, calculateBonus, getTrialTargetSuccess } from "./experiments/cat_target_short/helpers.js";
 
         const using_jatos = typeof jatos !== 'undefined';
 
         // Paths to data and stimuli
         const config = {
-            "data_path": "experiments/category_targeting/cuefr.h5",
-            "stimuli_path": "experiments/category_targeting/assets/cuefr_pool.txt",
-            "category_path": "experiments/category_targeting/assets/cuefr_labels.txt",
+            "data_path": "experiments/cat_target_short/cuefr.h5",
+            "stimuli_path": "experiments/cat_target_short/assets/cuefr_pool.txt",
+            "category_path": "experiments/cat_target_short/assets/cuefr_labels.txt",
         };
 
         // Startup Timeline Events

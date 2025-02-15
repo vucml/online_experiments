@@ -1,4 +1,7 @@
-URL for newest category targeting experiment: https://jatos.mindprobe.eu/publix/run?code=LjMkBBeL5mD
+cat_target_short link: https://jatos.mindprobe.eu/publix/run?code=zc5qiDkWfs0
+
+URL for in person consent form:
+https://redcap.vumc.org/surveys/?s=JLW7M9DNJ8P7MXYT
 
 # online_experiments
 

@@ -539,15 +539,15 @@ if __name__ == "__main__":
     total_recalls = 6
     cue_region_size = 4
     spacing = 2
-    target_data_path = "experiments/category_targeting/cuefr.h5"
-    target_stimulus_pool_path = "experiments/category_targeting/assets/cuefr_pool.txt"
+    target_data_path = "experiments/cat_target_short/cuefr.h5"
+    target_stimulus_pool_path = "experiments/cat_target_short/assets/cuefr_pool.txt"
     target_stimulus_labels_path = (
-        "experiments/category_targeting/assets/cuefr_labels.txt"
+        "experiments/cat_target_short/assets/cuefr_labels.txt"
     )
     target_category_pool_path = (
-        "experiments/category_targeting/assets/cuefr_category_pool.txt"
+        "experiments/cat_target_short/assets/cuefr_category_pool.txt"
     )
-    source_pools_path = "experiments/category_targeting/assets/asymfr"
+    source_pools_path = "experiments/cat_target_short/assets/asymfr"
     total_trials = trial_count * subject_count
 
     # construct stimulus pool across specified category labels
