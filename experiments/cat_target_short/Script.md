@@ -35,7 +35,7 @@ How to progress when experimenter check-in is prompted: Right Arrow Key
     -   We will record consent via online redcap forms.
     -   Script: "When the study starts, you'll be prompted to read and agree to the consent form. This form outlines that there is no risk of harm or injury in this behavioral study, that you may choose to withdraw at any time, and that there will be no audio recordings or video recordings. Proceeding consents you to take part in our study and gives us permission to use your data for our research. Do you have any questions about the consent form?"
     -   "If you have a cell phone with you, we ask that you turn it to silent"
-    -   "The experiment itself will last about 1 hour. You will receive [X credits] or [X] dollars for your participation in this study"
+    -   "The experiment itself will last about 30 minutes. You will receive [X credits] or [X] dollars for your participation in this study"
     -   Seat them in testing room, make sure they're comfortable, etc.
 
 4. **Once seated**; before instructions:
