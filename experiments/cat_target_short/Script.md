@@ -29,7 +29,7 @@ How to progress when experimenter check-in is prompted: Right Arrow Key
         -    "We use a simple string matching algorithm to score your responses, so small typos will usually not affect your score. However, we ask that you try to type your responses into the computer as close to the presented text as you can. If you do make major typos, you can press BACKSPACE to undo individual characters."
         -    "For each trial, you will be given 40 seconds to remember the matching study item. If you can't remember an item that fits a prompt, take some time to think, and make your best guess before moving on. Sometimes the item will come to you after several seconds!"
         -    "You will be given feedback on your performance after each list. And at the end of the experiment, you'll be informed of a bonus payment based on your performance of up to $10."
-        -    "You will be allowed to take a short break between each study and recall period. And between each study and recall period, you'll be allowed to take a short break. You will be asked to complete a few questionnaires at the end of the study. The study will take about 1 hour to complete. Do you have any questions before we get started?"
+        -    "You will be allowed to take a short break between each study and recall period. And between each study and recall period, you'll be allowed to take a short break. You will be asked to complete a few questionnaires at the end of the study. The study will take about 30 minutes to complete. Do you have any questions before we get started?"
 
 3. **Consent** form: 
     -   We will record consent via online redcap forms.
