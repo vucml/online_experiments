@@ -21,20 +21,20 @@
         <link href="core/jspsych/css/jspsych.css" rel="stylesheet" type="text/css"></link>
         <link href="core/jspsych/css/lpl-recall-recog-probe.css" rel="stylesheet" type="text/css"></link>
         <script src="core/init_experiment.js"></script>
-        <script type="module" src="experiments/cat_target_short/helpers.js"></script>
+        <script type="module" src="experiments/block_cat/helpers.js"></script>
     </head>
     <body></body>
     <script type="module">
 
-        import { transpose, unique_entries, getEntriesBySubjectIndex, loadH5Data, loadItemPool, configureSubject, getTrialPerformance, getTotalPerformance, calculateBonus, getTrialTargetSuccess } from "./experiments/cat_target_short/helpers.js";
+        import { transpose, unique_entries, getEntriesBySubjectIndex, loadH5Data, loadItemPool, configureSubject, getTrialPerformance, getTotalPerformance, calculateBonus, getTrialTargetSuccess } from "./experiments/block_cat/helpers.js";
 
         const using_jatos = typeof jatos !== 'undefined';
 
         // Paths to data and stimuli
         const config = {
-            "data_path": "experiments/cat_target_short/cuefr.h5",
-            "stimuli_path": "experiments/cat_target_short/assets/cuefr_pool.txt",
-            "category_path": "experiments/cat_target_short/assets/cuefr_labels.txt",
+            "data_path": "experiments/block_cat/block_cat.h5",
+            "stimuli_path": "experiments/block_cat/assets/cuefr_pool.txt",
+            "category_path": "experiments/block_cat/assets/cuefr_labels.txt",
         };
 
         // Startup Timeline Events
@@ -180,32 +180,19 @@
             })
 
             // Configure Recall Events:
-            let category_cue = '';
-            if ('category_path' in config && category_cues[i][0] > 0) {
-                category_cue = category_pool[category_cues[i][0] - 1];
-            }
-
-            timeline.push({
+            for (let j = 0; j < category_cues[i].length; j++) {
+                let category_cue = category_pool[category_cues[i][j] - 1];
+                timeline.push({
                 type: jsPsychFreeRecall,
                 initial_category_cue: category_cue,
                 response_limit: 1,
-                maximum_recall_time: 10000,
+                maximum_recall_time: 5000,
                 data: {
-                    "category_target": category_targets[i][0],
-                    "category_target_string": category_target_strings[i][0]
+                    "category_target": category_targets[i][j],
+                    "category_target_string": category_target_strings[i][j],
                 }
             });
-
-            timeline.push({
-                type: jsPsychFreeRecall,
-                // initial_category_cue: category_cue,
-                response_limit: 20,
-                maximum_recall_time: 30000,
-                data: {
-                    "category_target": "",
-                    "category_target_string": ""
-                }
-            });
+            }
 
             // Configure End of Trial Events:
             const end_trial_fn = function() {

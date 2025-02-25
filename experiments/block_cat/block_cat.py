@@ -15,45 +15,12 @@
 # ---
 
 # %%
-import numpy as np
 import copy
 import itertools
 import random
-import math
-from helpers import load_stimulus_pool, load_data, save_data
 
-
-# %%
-def middle_indices(list_length: int, n: int) -> list[int]:
-    """Calculate the middle `n` indices of a list.
-
-    Args:
-        list_length: The length of the list.
-        n: The number of indices to extract from the middle.
-
-    Returns:
-        List of middle `n` indices.
-    """
-    assert n <= list_length, "n cannot be greater than the list length"
-
-    # Calculate the start and end index for the middle `n` elements
-    start = (list_length - n) // 2
-    end = start + n
-    return list(range(start, end))
-
-
-# %%
-def middle_half_indices(list_length: int) -> list[int]:
-    """Calculate the indices for the middle half of a list.
-
-    Args:
-        list_length: Length of the list.
-
-    Returns:
-        List of indices corresponding to the middle half of the list.
-    """
-    middle_half_count = math.floor(list_length / 2)
-    return middle_indices(list_length, middle_half_count)
+import numpy as np
+from helpers import load_data, load_stimulus_pool, save_data
 
 
 # %%
@@ -117,13 +84,17 @@ def generate_alternating_recalls(
 
 
 # %%
-def calculate_balance_score(combo: tuple[int, ...], index_selection_count: dict[int, int], middle_indices: list[int]) -> float:
+def calculate_balance_score(
+    combo: tuple[int, ...],
+    index_selection_count: dict[int, int],
+    middle_indices: list[int],
+) -> float:
     """
     Calculate a balance score for a given combination of indices based on current index selection counts.
-    
+
     The goal is to balance how often each index is used across trials. This function calculates a score
-    that reflects how well the provided combination of indices contributes to balancing index usage. The 
-    function prioritizes indices that are underrepresented and penalizes combinations that include 
+    that reflects how well the provided combination of indices contributes to balancing index usage. The
+    function prioritizes indices that are underrepresented and penalizes combinations that include
     overrepresented indices.
 
     Args:
@@ -133,14 +104,14 @@ def calculate_balance_score(combo: tuple[int, ...], index_selection_count: dict[
         middle_indices: A list of all possible indices from the middle region of the list.
 
     Returns:
-        A float score indicating how well this combination balances index usage. Lower scores indicate 
+        A float score indicating how well this combination balances index usage. Lower scores indicate
         that the combination better balances the underrepresented indices.
         - Negative values mean the combination includes more underrepresented indices.
         - Positive values penalize overrepresented indices to reduce bias.
     """
     # Total selections made so far
     current_total = sum(index_selection_count.values())
-    
+
     # Calculate the ideal usage count for balancing
     ideal_count = current_total / len(middle_indices) if current_total > 0 else 1
 
@@ -155,15 +126,20 @@ def calculate_balance_score(combo: tuple[int, ...], index_selection_count: dict[
         if index_selection_count[idx] == min_count:
             score -= 1  # Favor combinations that include underrepresented indices
         else:
-            score += abs(index_selection_count[idx] - ideal_count)  # Penalize overrepresented indices
+            score += abs(
+                index_selection_count[idx] - ideal_count
+            )  # Penalize overrepresented indices
 
     return score
 
+
 # %%
-def generate_valid_combinations(middle_indices: list[int], cue_count: int, spacing: int) -> list[tuple[int, ...]]:
+def generate_valid_combinations(
+    middle_indices: list[int], cue_count: int, spacing: int
+) -> list[tuple[int, ...]]:
     """
     Generate all possible valid combinations of cued indices that satisfy the spacing constraint.
-    
+
     Args:
         middle_indices: A list of indices from which the cues are drawn.
         cue_count: The number of cues required for each trial.
@@ -173,16 +149,21 @@ def generate_valid_combinations(middle_indices: list[int], cue_count: int, spaci
         A list of tuples, each representing a valid combination of indices that satisfy the spacing constraint.
     """
     return [
-        combo for combo in itertools.combinations(middle_indices, cue_count)
+        combo
+        for combo in itertools.combinations(middle_indices, cue_count)
         if all(combo[i + 1] - combo[i] >= spacing + 1 for i in range(len(combo) - 1))
     ]
 
 
 # %%
-def select_best_combination(valid_combinations: list[tuple[int, ...]], index_selection_count: dict[int, int], middle_indices: list[int]) -> tuple[int, ...]:
+def select_best_combination(
+    valid_combinations: list[tuple[int, ...]],
+    index_selection_count: dict[int, int],
+    middle_indices: list[int],
+) -> tuple[int, ...]:
     """
     Select the combination that best balances the usage of indices by minimizing the balance score.
-    
+
     Args:
         valid_combinations: A list of valid combinations of cued indices.
         index_selection_count: A dictionary tracking how often each index has been selected.
@@ -192,7 +173,10 @@ def select_best_combination(valid_combinations: list[tuple[int, ...]], index_sel
         A tuple representing the best combination of indices that helps balance underrepresented indices.
     """
     # Calculate balance scores for each combination
-    scores = [(combo, calculate_balance_score(combo, index_selection_count, middle_indices)) for combo in valid_combinations]
+    scores = [
+        (combo, calculate_balance_score(combo, index_selection_count, middle_indices))
+        for combo in valid_combinations
+    ]
 
     # Find the minimum score
     min_score = min(scores, key=lambda x: x[1])[1]
@@ -212,7 +196,7 @@ def generate_balanced_trials_with_priority(
     Generate a set of cued recall trials while balancing the usage of indices and enforcing a spacing constraint.
 
     This function creates trials where each trial is composed of cued recall events (selected from `middle_indices`).
-    The goal is to ensure that indices are used as evenly as possible across trials, while also maintaining a 
+    The goal is to ensure that indices are used as evenly as possible across trials, while also maintaining a
     minimum spacing between cued indices.
 
     Args:
@@ -234,7 +218,9 @@ def generate_balanced_trials_with_priority(
 
     # Step 3: Iteratively select combinations that balance index usage
     while len(selected_combinations) < total_trials:
-        chosen_combo = select_best_combination(valid_combinations, index_selection_count, middle_indices)
+        chosen_combo = select_best_combination(
+            valid_combinations, index_selection_count, middle_indices
+        )
 
         # Add the chosen combination to the selected trials
         selected_combinations.append(chosen_combo)
@@ -245,58 +231,99 @@ def generate_balanced_trials_with_priority(
 
     return selected_combinations
 
+
 # %%
-def generate_category_cue_indices(
+
+# %%
+
+
+def generate_recall_cue_indices(
     trial_count: int,
-    list_length: int,
     control_proportion: float,
-    cue_count: int,
-    total_recalls: int,
-    cue_region_size: int,
-    spacing: int
 ) -> list[list[int]]:
     """
-    Generate alternating indices for category-cued and free recall events across trials, ensuring that cued items are spaced apart and the usage of indices is balanced.
+    Generate recall-event indices for each trial (6 events per trial) based on a fixed study-list
+    structure and fixed cue positions.
+
+    The study list is assumed to have 15 items with the structure:
+        A  B  C  D  D  D  E  F  G  D  D  D  H  I  J
+    (using 1-indexed positions).
+
+    In this design:
+      - The block-presented category is D. Its cue is fixed at position 4.
+      - The only possible isolate cues come from positions B, E, or I
+        (i.e. positions 2, 7, and 14).
+
+    For recall events:
+      - Control (free recall) trials have all 6 events set to -1.
+      - Cued trials have 3 cue events (at positions 1, 3, and 5 of the recall sequence)
+        alternating with free recalls (positions 2, 4, and 6).
+      - The first recall event (cue) is randomly determined for cued trials:
+          • If it is block-first, the pattern is:
+                [block, free, isolate, free, block, free]
+                (i.e. [4, -1, X, -1, 4, -1])
+          • If it is isolate-first, the pattern is:
+                [isolate, free, block, free, isolate, free]
+                (i.e. [X, -1, 4, -1, Y, -1])
+        where the isolate cues (X and Y) are selected by shuffling the list [2, 7, 14].
+
+    To ensure balance, we construct a trial type list that includes:
+      - Exactly control_proportion * trial_count "control" trials.
+      - The remaining trials are cued, split evenly between "block-first" and "isolate-first".
+      - The overall trial order is then shuffled.
 
     Args:
-        trial_count: The total number of trials.
-        list_length: The length of the list from which category cues are drawn.
-        control_proportion: Proportion of trials that include only free recall (no category cues).
-        cue_count: The number of category cues per trial.
-        total_recalls: The total number of recall events (both cued and free recall) per trial.
-        cue_region_size: The number of serial positions to use for category cues.
-        spacing: The minimum spacing between cued indices.
+        trial_count: Total number of trials.
+        control_proportion: Proportion of trials that are control (free recall).
 
     Returns:
-        A list of recall event indices for each trial.
-        Category-cued recalls use indices from the list, while free recalls are represented by [-1].
+        A list (length = trial_count) of lists (each of length 6) of integers where:
+          - -1 indicates a free recall event.
+          - A positive integer indicates the 1-indexed study position for a cued recall.
     """
-    # Number of control trials with only free recall events
-    control_count = int(trial_count * control_proportion)
+    # Determine number of control and cued trials.
+    num_control = int(round(trial_count * control_proportion))
+    num_cued = trial_count - num_control
 
-    # Create control trials (free recall only, represented by [-1])
-    indices = [[-1] * total_recalls for _ in range(control_count)]
+    # For cued trials, create a list that is half "block-first" and half "isolate-first".
+    cued_trial_types = []
+    half = num_cued // 2
+    remainder = num_cued - 2 * half
+    cued_trial_types.extend(["block-first"] * half)
+    cued_trial_types.extend(["isolate-first"] * half)
+    # If there's an extra cued trial, assign it randomly.
+    for _ in range(remainder):
+        cued_trial_types.append(random.choice(["block-first", "isolate-first"]))
 
-    # Remaining number of trials for cued recalls
-    remaining_trial_count = trial_count - control_count
+    # Combine control and cued trial types into one list.
+    trial_types = ["control"] * num_control + cued_trial_types
+    random.shuffle(trial_types)
 
-    # Generate middle region indices
-    serial_positions = middle_indices(list_length, cue_region_size)
+    # Fixed cue definitions (1-indexed):
+    block_cue = 4  # For block cues (category D)
+    isolate_options = [2, 7, 14]  # Possible positions for isolate cues (B, E, I)
 
-    # Step 1: Generate balanced cued recall trials using the updated sampling method
-    cued_trials = generate_balanced_trials_with_priority(serial_positions, cue_count, spacing, remaining_trial_count)
+    all_trials = []
+    for ttype in trial_types:
+        if ttype == "control":
+            # Control trial: all recall events are free recall (-1)
+            trial_recall = [-1] * 6
+        elif ttype == "block-first":
+            # Pattern: [block, free, isolate, free, block, free]
+            isolates = isolate_options[:]  # Copy list for shuffling.
+            random.shuffle(isolates)
+            trial_recall = [block_cue, -1, isolates[0], -1, block_cue, -1]
+        elif ttype == "isolate-first":
+            # Pattern: [isolate, free, block, free, isolate, free]
+            isolates = isolate_options[:]  # Copy list for shuffling.
+            random.shuffle(isolates)
+            trial_recall = [isolates[0], -1, block_cue, -1, isolates[1], -1]
+        else:
+            # Fallback (should not occur)
+            trial_recall = [-1] * 6
+        all_trials.append(trial_recall)
 
-    # Step 2: Combine cued recall trials with free recall trials and insert free recall (-1) in alternating fashion
-    for cued_indices in cued_trials:
-        cued_indices = list(cued_indices)
-        random.shuffle(cued_indices)
-        trial_indices = generate_alternating_recalls(cue_count, total_recalls, cued_indices)
-        indices.append(trial_indices)
-
-    # Step 3: Shuffle the order of control and cued trials to randomize
-    random.shuffle(indices)
-
-    return indices
+    return all_trials
 
 
 # %%
@@ -339,9 +366,9 @@ def validate_stimulus_pool_size(
         AssertionError: If a category does not have enough stimuli to support the required number of trials.
     """
     for label_index, _ in enumerate(labels):
-        assert len(stimulus_pools[label_index]) >= (
-            trial_count / 2
-        ), f"Not enough stimuli in pool for label: {labels[label_index]}"
+        assert len(stimulus_pools[label_index]) >= (trial_count / 2), (
+            f"Not enough stimuli in pool for label: {labels[label_index]}"
+        )
 
 
 # %%
@@ -350,59 +377,96 @@ def sample_stimuli_for_trial(
     subject_stimulus_pools: list[list[str]],
     last_trial_label_indices: np.ndarray,
     aggregated_stimulus_pool: list[str],
-    list_length: int,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Samples stimuli for a trial, ensuring no category from the previous trial is reused.
-    
-    If the number of available categories is insufficient, categories from the previous trial are 
-    reused, but unique stimuli are selected.
-
-    Args:
-        labels: List of category labels.
-        subject_stimulus_pools: Stimulus pools for each subject, which are modified during sampling.
-        last_trial_label_indices: Indices of labels used in the previous trial to avoid reusing them.
-        aggregated_stimulus_pool: The aggregated list of all available stimuli.
-        list_length: The number of stimuli to sample for the trial.
-
-    Returns:
-        A tuple containing the indices of the sampled stimuli, the strings of the sampled stimuli,
-        and the indices of the category labels used in this trial.
     """
-    applicable_label_indices = np.arange(len(labels))[
-        ~np.isin(np.arange(len(labels)), last_trial_label_indices)
-    ]
-    np.random.shuffle(applicable_label_indices)
-
-    # In case not enough applicable labels, sample from all remaining labels
-    extra_label_indices = np.arange(len(labels))[
-        ~np.isin(np.arange(len(labels)), applicable_label_indices)]
-    np.random.shuffle(extra_label_indices)
-    applicable_label_indices = np.concatenate([applicable_label_indices, extra_label_indices])
-
-    trial_stimulus_indices = np.zeros(list_length, dtype=int)
-    trial_stimulus_strings = np.zeros(list_length, dtype=object)
-    trial_label_indices = []
-
-    study_index = 0
-    for label_index in applicable_label_indices:
-        stimulus_pool = subject_stimulus_pools[label_index]
-        if len(stimulus_pool) == 0:
-            continue
+    Samples stimuli for a trial with a fixed study-list structure:
+    
+        A   B   C   D   D   D   E   F   G   D   D   D   H   I   J
+      (positions 1-15, 1-indexed)
+    
+    In this structure:
+      - The block-presented category occupies positions 4-6 and 10-12 (0-indexed: [3,4,5] and [9,10,11]).
+      - The remaining 9 positions are assigned distinct non-block categories.
+    
+    The function:
+      1. Selects 10 distinct categories from `labels` (preferring those not used in the previous trial)
+         to serve as the 1 block category and 9 non-block categories.
+      2. Randomly designates one as the block category and shuffles the remaining 9.
+      3. Fills a 15-element trial template:
+         - Block positions (indices 3,4,5,9,10,11) get the block category.
+         - Non-block positions ([0,1,2,6,7,8,12,13,14]) get the 9 shuffled non-block categories.
+      4. For each position, a stimulus is drawn (and removed) from the corresponding
+         subject_stimulus_pools. The aggregated_stimulus_pool is used to determine the
+         1-indexed stimulus ID.
+    
+    Args:
+        labels: List of all category labels.
+        subject_stimulus_pools: List of stimulus pools for each label (order matches `labels`).
+        last_trial_label_indices: 1D array of label indices used in the previous trial.
+        aggregated_stimulus_pool: Aggregated list of all stimuli (used for lookup of stimulus IDs).
         
-        stimulus_string = stimulus_pool.pop(np.random.randint(len(stimulus_pool)))
+    Returns:
+        A tuple of three numpy arrays:
+          - stimulus_ids: (15,) array of 1-indexed stimulus IDs.
+          - stimulus_strings: (15,) array of the stimulus strings.
+          - trial_label_indices: (15,) array of the label indices assigned to each study position.
+    """
+    TOTAL_POSITIONS = 15
+    # Fixed positions (0-indexed)
+    block_positions = [3, 4, 5, 9, 10, 11]           # positions for block category
+    non_block_positions = [0, 1, 2, 6, 7, 8, 12, 13, 14]  # remaining positions
 
-        trial_stimulus_indices[study_index] = (
-            aggregated_stimulus_pool.index(stimulus_string) + 1
-        )
-        trial_stimulus_strings[study_index] = stimulus_string
+    # We need 10 distinct categories: 1 for block, 9 for non-block.
+    num_needed = 10
+    all_label_indices = np.arange(len(labels))
+    # Prefer categories not used in the previous trial.
+    preferred = [idx for idx in all_label_indices if idx not in last_trial_label_indices]
+    candidate_pool = preferred if len(preferred) >= num_needed else list(all_label_indices)
+    
+    # Randomly select 10 distinct categories.
+    chosen = random.sample(candidate_pool, num_needed)
+    # Randomly designate one as the block category.
+    block_category = random.choice(chosen)
+    non_block_categories = [cat for cat in chosen if cat != block_category]
+    # If needed, fill in to reach 9 non-block categories.
+    if len(non_block_categories) < 9:
+        remaining = [idx for idx in all_label_indices if idx != block_category and idx not in non_block_categories]
+        needed = 9 - len(non_block_categories)
+        non_block_categories.extend(random.sample(remaining, needed))
+    
+    # Shuffle the 9 non-block categories.
+    random.shuffle(non_block_categories)
+    
+    # Build trial label indices according to the fixed template.
+    trial_label_indices = [None] * TOTAL_POSITIONS
+    for pos in block_positions:
+        trial_label_indices[pos] = block_category
+    for pos, cat in zip(non_block_positions, non_block_categories):
+        trial_label_indices[pos] = cat
+    
+    # Now, for each position, pop a stimulus from the corresponding subject's pool.
+    stimulus_ids = np.zeros(TOTAL_POSITIONS, dtype=int)
+    stimulus_strings = np.empty(TOTAL_POSITIONS, dtype=object)
+    trial_subject_stimulus_pools = copy.deepcopy(subject_stimulus_pools)
+    for pos, cat_idx in enumerate(trial_label_indices):
+        before_length = len(subject_stimulus_pools[cat_idx])
+        pool = trial_subject_stimulus_pools[cat_idx]
+        if len(pool) == 0:
+            raise ValueError(f"Stimulus pool for label {labels[cat_idx]} is empty.")
 
-        trial_label_indices.append(label_index)
-        study_index += 1
-        if study_index == list_length:
-            break
+        stim = pool.pop(random.randrange(len(pool)))
+        after_length = len(subject_stimulus_pools[cat_idx])
+        assert before_length == after_length, "Stimulus pool was not modified in place."
+        # Determine the 1-indexed stimulus ID from the aggregated pool.
+        try:
+            stim_id = aggregated_stimulus_pool.index(stim) + 1
+        except ValueError:
+            raise ValueError(f"Stimulus {stim} not found in aggregated stimulus pool.")
+        stimulus_ids[pos] = stim_id
+        stimulus_strings[pos] = stim
 
-    assert len(trial_label_indices) == list_length
-    return trial_stimulus_indices, trial_stimulus_strings, np.array(trial_label_indices)
+    return stimulus_ids, stimulus_strings, np.array(trial_label_indices)
+
 
 
 # %%
@@ -436,17 +500,13 @@ def assign_cue_stimuli(
 
 
 # %%
+
 def construct_study_lists(
     labels: list[str],
     stimulus_pools: list[list[str]],
     trial_count: int,
     subject_count: int,
-    list_length: int,
-    cue_count: int,
-    total_recalls: int,
     control_proportion: float,
-    cue_region_size: int,
-    spacing: int,
     aggregated_stimulus_pool: list[str],
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Construct study lists according to design of cued / free recall experiment.
@@ -457,11 +517,7 @@ def construct_study_lists(
         trial_count: The number of trials per subject.
         subject_count: The number of subjects.
         list_length: The number of presentations per trial.
-        cue_count: The number of category cues per trial.
-        total_recalls: The total number of recall events per trial.
         control_proportion: The proportion of trials with no category cues.
-        cue_region_size: The number of serial positions to use for category cues.
-        spacing: The minimum spacing between cued indices.
         aggregated_stimulus_pool: The aggregated stimulus pool.
 
     Returns:
@@ -472,22 +528,23 @@ def construct_study_lists(
         - An array of serial position indices for the category cues.
         - An array of stimulus IDs for the category cue targets.
     """
+    list_length = 15
+    total_recalls = 6
+
     pres_itemids = np.zeros((trial_count * subject_count, list_length), dtype=int)
     pres_itemstrs = np.zeros((trial_count * subject_count, list_length), dtype=object)
     category_cues = np.zeros((trial_count * subject_count, total_recalls), dtype=int)
     cat_cue_indices = np.zeros((trial_count * subject_count, total_recalls), dtype=int)
 
-    # Loop through each subject
     for s in range(subject_count):
         subject_stimulus_pools = copy.deepcopy(stimulus_pools)
         last_trial_label_indices = np.array([])
 
-        category_cue_indices = generate_category_cue_indices(
-            trial_count, list_length, control_proportion, cue_count, total_recalls, cue_region_size, spacing
+        category_cue_indices = generate_recall_cue_indices(
+            trial_count, control_proportion
         )
         validate_stimulus_pool_size(labels, subject_stimulus_pools, trial_count)
 
-        # Loop through each trial
         for t in range(trial_count):
             trial_stimulus_indices, trial_stimulus_strings, last_trial_label_indices = (
                 sample_stimuli_for_trial(
@@ -495,7 +552,6 @@ def construct_study_lists(
                     subject_stimulus_pools,
                     last_trial_label_indices,
                     aggregated_stimulus_pool,
-                    list_length,
                 )
             )
 
@@ -529,22 +585,15 @@ if __name__ == "__main__":
     #
     # also include a 1D array specifying a pres_id whose corresponding category label will be used for cued recall ('category_cue')
 
-    list_length = 15
     subject_count = 300
     trial_count = 20
-    control_proportion = 4 / 10
-    # cue_count = 1
+    list_length = 15
     total_recalls = 6
-    # cue_region_size = 4
-    # spacing = 2
-    target_data_path = "experiments/block_cat/cuefr.h5"
+    control_proportion = 4 / 10
+    target_data_path = "experiments/block_cat/block_cat.h5"
     target_stimulus_pool_path = "experiments/block_cat/assets/cuefr_pool.txt"
-    target_stimulus_labels_path = (
-        "experiments/block_cat/assets/cuefr_labels.txt"
-    )
-    target_category_pool_path = (
-        "experiments/block_cat/assets/cuefr_category_pool.txt"
-    )
+    target_stimulus_labels_path = "experiments/block_cat/assets/cuefr_labels.txt"
+    target_category_pool_path = "experiments/block_cat/assets/cuefr_category_pool.txt"
     source_pools_path = "experiments/block_cat/assets/asymfr"
     total_trials = trial_count * subject_count
 
@@ -603,12 +652,7 @@ if __name__ == "__main__":
         stimulus_pools,
         trial_count,
         subject_count,
-        list_length,
-        cue_count,
-        total_recalls,
         control_proportion,
-        cue_region_size,
-        spacing,
         aggregated_stimulus_pool,
     )
 
