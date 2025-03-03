@@ -180,18 +180,33 @@
             })
 
             // Configure Recall Events:
-            for (let j = 0; j < category_cues[i].length; j++) {
-                let category_cue = category_pool[category_cues[i][j] - 1];
+            if (category_cues[i].every(cue => cue === 0)) {
+                // All cues are 0 – push a single, parametrized entry
                 timeline.push({
-                type: jsPsychFreeRecall,
-                initial_category_cue: category_cue,
-                response_limit: 1,
-                maximum_recall_time: 5000,
-                data: {
-                    "category_target": category_targets[i][j],
-                    "category_target_string": category_target_strings[i][j],
+                    type: jsPsychFreeRecall,
+                    initial_category_cue: "",
+                    response_limit: 30,
+                    maximum_recall_time: 40000,
+                    data: {
+                            category_target: "",
+                            category_target_string: "",
+                    }
+                });
+            } else {
+                // At least one cue is non-zero – push an entry for each cue
+                for (let j = 0; j < category_cues[i].length; j++) {
+                    let category_cue = category_pool[category_cues[i][j] - 1];
+                    timeline.push({
+                        type: jsPsychFreeRecall,
+                        initial_category_cue: category_cue,
+                        response_limit: 1,
+                        maximum_recall_time: 5000,
+                        data: {
+                            category_target: category_targets[i][j],
+                            category_target_string: category_target_strings[i][j],
+                        }
+                    });
                 }
-            });
             }
 
             // Configure End of Trial Events:

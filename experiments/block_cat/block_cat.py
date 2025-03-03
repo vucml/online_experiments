@@ -307,20 +307,20 @@ def generate_recall_cue_indices(
     for ttype in trial_types:
         if ttype == "control":
             # Control trial: all recall events are free recall (-1)
-            trial_recall = [-1] * 6
+            trial_recall = [-1] * 4
         elif ttype == "block-first":
             # Pattern: [block, free, isolate, free, block, free]
             isolates = isolate_options[:]  # Copy list for shuffling.
             random.shuffle(isolates)
-            trial_recall = [block_cue, -1, isolates[0], -1, block_cue, -1]
+            trial_recall = [block_cue, -1, isolates[0], -1]
         elif ttype == "isolate-first":
             # Pattern: [isolate, free, block, free, isolate, free]
             isolates = isolate_options[:]  # Copy list for shuffling.
             random.shuffle(isolates)
-            trial_recall = [isolates[0], -1, block_cue, -1, isolates[1], -1]
+            trial_recall = [isolates[0], -1, block_cue, -1]
         else:
             # Fallback (should not occur)
-            trial_recall = [-1] * 6
+            raise ValueError(f"Invalid trial type: {ttype}")
         all_trials.append(trial_recall)
 
     return all_trials
@@ -529,7 +529,7 @@ def construct_study_lists(
         - An array of stimulus IDs for the category cue targets.
     """
     list_length = 15
-    total_recalls = 6
+    total_recalls = 4
 
     pres_itemids = np.zeros((trial_count * subject_count, list_length), dtype=int)
     pres_itemstrs = np.zeros((trial_count * subject_count, list_length), dtype=object)
@@ -570,7 +570,6 @@ def construct_study_lists(
     cat_cue_itemids = retrieve_cue_target_items(cat_cue_indices, pres_itemids)
     return pres_itemids, pres_itemstrs, category_cues, cat_cue_indices, cat_cue_itemids
 
-
 # %%
 if __name__ == "__main__":
     # EMBAM format:
@@ -588,7 +587,7 @@ if __name__ == "__main__":
     subject_count = 300
     trial_count = 20
     list_length = 15
-    total_recalls = 6
+    total_recalls = 4
     control_proportion = 4 / 10
     target_data_path = "experiments/block_cat/block_cat.h5"
     target_stimulus_pool_path = "experiments/block_cat/assets/cuefr_pool.txt"
