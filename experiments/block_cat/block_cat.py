@@ -565,7 +565,7 @@ if __name__ == "__main__":
     # also include a 1D array specifying a pres_id whose corresponding category label will be used for cued recall ('category_cue')
 
     subject_count = 300
-    trial_count = 20
+    trial_count = 15
     list_length = 15
     # Now each trial has exactly 2 recall events: [cue, free] or [no_cue, free].
     total_recalls = 2
