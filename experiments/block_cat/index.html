@@ -179,35 +179,34 @@
                 // inter_word_time: 0,
             })
 
+
             // Configure Recall Events:
-            if (category_cues[i].every(cue => cue === 0)) {
-                // All cues are 0 – push a single, parametrized entry
-                timeline.push({
-                    type: jsPsychFreeRecall,
-                    initial_category_cue: "",
-                    response_limit: 30,
-                    maximum_recall_time: 40000,
-                    data: {
-                            category_target: "",
-                            category_target_string: "",
-                    }
-                });
-            } else {
-                // At least one cue is non-zero – push an entry for each cue
-                for (let j = 0; j < category_cues[i].length; j++) {
-                    let category_cue = category_pool[category_cues[i][j] - 1];
-                    timeline.push({
-                        type: jsPsychFreeRecall,
-                        initial_category_cue: category_cue,
-                        response_limit: 1,
-                        maximum_recall_time: 5000,
-                        data: {
-                            category_target: category_targets[i][j],
-                            category_target_string: category_target_strings[i][j],
-                        }
-                    });
-                }
+            let category_cue = '';
+            if ('category_path' in config && category_cues[i][0] > 0) {
+                category_cue = category_pool[category_cues[i][0] - 1];
             }
+
+            timeline.push({
+                type: jsPsychFreeRecall,
+                initial_category_cue: category_cue,
+                response_limit: 1,
+                maximum_recall_time: 10000,
+                data: {
+                    "category_target": category_targets[i][0],
+                    "category_target_string": category_target_strings[i][0]
+                }
+            });
+
+            timeline.push({
+                type: jsPsychFreeRecall,
+                // initial_category_cue: category_cue,
+                response_limit: 1000, // practically unlimited
+                maximum_recall_time: 30000,
+                data: {
+                    "category_target": "",
+                    "category_target_string": ""
+                }
+            });
 
             // Configure End of Trial Events:
             const end_trial_fn = function() {

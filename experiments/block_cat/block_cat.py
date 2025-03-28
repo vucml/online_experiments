@@ -242,86 +242,57 @@ def generate_recall_cue_indices(
     control_proportion: float,
 ) -> list[list[int]]:
     """
-    Generate recall-event indices for each trial (6 events per trial) based on a fixed study-list
-    structure and fixed cue positions.
-
-    The study list is assumed to have 15 items with the structure:
-        A  B  C  D  D  D  E  F  G  D  D  D  H  I  J
-    (using 1-indexed positions).
-
-    In this design:
-      - The block-presented category is D. Its cue is fixed at position 4.
-      - The only possible isolate cues come from positions B, E, or I
-        (i.e. positions 2, 7, and 14).
-
-    For recall events:
-      - Control (free recall) trials have all 6 events set to -1.
-      - Cued trials have 3 cue events (at positions 1, 3, and 5 of the recall sequence)
-        alternating with free recalls (positions 2, 4, and 6).
-      - The first recall event (cue) is randomly determined for cued trials:
-          • If it is block-first, the pattern is:
-                [block, free, isolate, free, block, free]
-                (i.e. [4, -1, X, -1, 4, -1])
-          • If it is isolate-first, the pattern is:
-                [isolate, free, block, free, isolate, free]
-                (i.e. [X, -1, 4, -1, Y, -1])
-        where the isolate cues (X and Y) are selected by shuffling the list [2, 7, 14].
-
-    To ensure balance, we construct a trial type list that includes:
-      - Exactly control_proportion * trial_count "control" trials.
-      - The remaining trials are cued, split evenly between "block-first" and "isolate-first".
-      - The overall trial order is then shuffled.
+    Generate recall-event indices for each trial (2 events per trial) under the new design:
+      - Some fraction of trials are "control" (no cue).
+      - The rest are divided evenly between "block-target" (cue=4) and "isolate-target" (cue in [2,7,14]).
+      - Each cued trial has exactly one cue event followed by free recall:
+          [ cue_position, -1 ]
+      - Control trials have: [ -1, -1 ].
 
     Args:
         trial_count: Total number of trials.
-        control_proportion: Proportion of trials that are control (free recall).
+        control_proportion: Proportion of trials that are control (free recall only).
 
     Returns:
-        A list (length = trial_count) of lists (each of length 6) of integers where:
-          - -1 indicates a free recall event.
-          - A positive integer indicates the 1-indexed study position for a cued recall.
+        A list (length = trial_count) of lists (each of length 2):
+          - For control trials => [-1, -1]
+          - For block-target => [4, -1]
+          - For isolate-target => [some position in {2,7,14}, -1]
     """
-    # Determine number of control and cued trials.
+    # 1. Figure out how many trials are control vs cued.
     num_control = int(round(trial_count * control_proportion))
     num_cued = trial_count - num_control
 
-    # For cued trials, create a list that is half "block-first" and half "isolate-first".
-    cued_trial_types = []
+    # 2. Split cued trials evenly between block-target and isolate-target.
     half = num_cued // 2
     remainder = num_cued - 2 * half
-    cued_trial_types.extend(["block-first"] * half)
-    cued_trial_types.extend(["isolate-first"] * half)
-    # If there's an extra cued trial, assign it randomly.
+    # So we have 'half' block-target, 'half' isolate-target, plus any leftover assigned randomly.
+    cued_types = ["block"] * half + ["isolate"] * half
     for _ in range(remainder):
-        cued_trial_types.append(random.choice(["block-first", "isolate-first"]))
+        cued_types.append(random.choice(["block", "isolate"]))
 
-    # Combine control and cued trial types into one list.
-    trial_types = ["control"] * num_control + cued_trial_types
+    # 3. Combine into a single list of trial types and shuffle.
+    trial_types = ["control"] * num_control + cued_types
     random.shuffle(trial_types)
 
-    # Fixed cue definitions (1-indexed):
-    block_cue = 4  # For block cues (category D)
-    isolate_options = [2, 7, 14]  # Possible positions for isolate cues (B, E, I)
+    # 4. Build the recall index arrays for each trial.
+    #    block_cue: 4
+    #    isolate_cue: pick from [2,7,14]
+    isolate_positions = [2, 7, 14]
 
     all_trials = []
     for ttype in trial_types:
         if ttype == "control":
-            # Control trial: all recall events are free recall (-1)
-            trial_recall = [-1] * 4
-        elif ttype == "block-first":
-            # Pattern: [block, free, isolate, free, block, free]
-            isolates = isolate_options[:]  # Copy list for shuffling.
-            random.shuffle(isolates)
-            trial_recall = [block_cue, -1, isolates[0], -1]
-        elif ttype == "isolate-first":
-            # Pattern: [isolate, free, block, free, isolate, free]
-            isolates = isolate_options[:]  # Copy list for shuffling.
-            random.shuffle(isolates)
-            trial_recall = [isolates[0], -1, block_cue, -1]
+            recall_indices = [-1, -1]
+        elif ttype == "block":
+            recall_indices = [4, -1]  # single event at position=4, then free recall
+        elif ttype == "isolate":
+            # pick 1 from [2,7,14]
+            chosen = random.choice(isolate_positions)
+            recall_indices = [chosen, -1]
         else:
-            # Fallback (should not occur)
             raise ValueError(f"Invalid trial type: {ttype}")
-        all_trials.append(trial_recall)
+        all_trials.append(recall_indices)
 
     return all_trials
 
@@ -340,12 +311,12 @@ def retrieve_cue_target_items(
         An array containing the stimulus IDs corresponding to the category cues.
     """
     num_trials, cue_count = cat_cue_indices.shape
-    category_targets = np.zeros_like(cat_cue_indices)  # Initialize the result array
+    category_targets = np.zeros_like(cat_cue_indices)  # shape: (trial_count, 2)
 
     for i, j in itertools.product(range(num_trials), range(cue_count)):
         index = cat_cue_indices[i, j]
-        if index != 0:  # If index is not zero (0 indicates no cue)
-            # Subtract 1 to adjust to 0-based indexing
+        if index != 0:  # index=0 means no cue; note we store -1 in python but fill with 0 after +1 offset
+            # Subtract 1 to move from 1-based to 0-based indexing in pres_itemids
             category_targets[i, j] = pres_itemids[i][index - 1]
 
     return category_targets
@@ -416,57 +387,66 @@ def sample_stimuli_for_trial(
     block_positions = [3, 4, 5, 9, 10, 11]           # positions for block category
     non_block_positions = [0, 1, 2, 6, 7, 8, 12, 13, 14]  # remaining positions
 
-    # We need 10 distinct categories: 1 for block, 9 for non-block.
+    # We need 10 distinct categories => 1 for block, 9 for non-block
     num_needed = 10
     all_label_indices = np.arange(len(labels))
-    # Prefer categories not used in the previous trial.
+
+    # Prefer categories not used in the previous trial
     preferred = [idx for idx in all_label_indices if idx not in last_trial_label_indices]
-    candidate_pool = preferred if len(preferred) >= num_needed else list(all_label_indices)
-    
-    # Randomly select 10 distinct categories.
+    if len(preferred) >= num_needed:
+        candidate_pool = preferred
+    else:
+        candidate_pool = list(all_label_indices)
+
     chosen = random.sample(candidate_pool, num_needed)
     # Randomly designate one as the block category.
     block_category = random.choice(chosen)
     non_block_categories = [cat for cat in chosen if cat != block_category]
     # If needed, fill in to reach 9 non-block categories.
     if len(non_block_categories) < 9:
-        remaining = [idx for idx in all_label_indices if idx != block_category and idx not in non_block_categories]
+        remaining = [idx for idx in all_label_indices
+                     if idx != block_category and idx not in non_block_categories]
         needed = 9 - len(non_block_categories)
         non_block_categories.extend(random.sample(remaining, needed))
-    
+
     # Shuffle the 9 non-block categories.
     random.shuffle(non_block_categories)
-    
+
     # Build trial label indices according to the fixed template.
     trial_label_indices = [None] * TOTAL_POSITIONS
     for pos in block_positions:
         trial_label_indices[pos] = block_category
     for pos, cat in zip(non_block_positions, non_block_categories):
         trial_label_indices[pos] = cat
-    
+
     # Now, for each position, pop a stimulus from the corresponding subject's pool.
     stimulus_ids = np.zeros(TOTAL_POSITIONS, dtype=int)
     stimulus_strings = np.empty(TOTAL_POSITIONS, dtype=object)
     trial_subject_stimulus_pools = copy.deepcopy(subject_stimulus_pools)
+
     for pos, cat_idx in enumerate(trial_label_indices):
-        before_length = len(subject_stimulus_pools[cat_idx])
+        before_len = len(subject_stimulus_pools[cat_idx])
         pool = trial_subject_stimulus_pools[cat_idx]
         if len(pool) == 0:
             raise ValueError(f"Stimulus pool for label {labels[cat_idx]} is empty.")
 
-        stim = pool.pop(random.randrange(len(pool)))
-        after_length = len(subject_stimulus_pools[cat_idx])
-        assert before_length == after_length, "Stimulus pool was not modified in place."
-        # Determine the 1-indexed stimulus ID from the aggregated pool.
+        stim = pool.pop(random.randrange(len(pool)))  # remove random stimulus
+        after_len = len(subject_stimulus_pools[cat_idx])
+        assert before_len == after_len, "Stimulus pool was not modified in place."
+
+        # Convert to 1-based ID
         try:
             stim_id = aggregated_stimulus_pool.index(stim) + 1
-        except ValueError:
-            raise ValueError(f"Stimulus {stim} not found in aggregated stimulus pool.")
+        except ValueError as e:
+            raise ValueError(f"Stimulus {stim} not found in aggregated pool.") from e
         stimulus_ids[pos] = stim_id
         stimulus_strings[pos] = stim
 
-    return stimulus_ids, stimulus_strings, np.array(trial_label_indices)
-
+    return (
+        stimulus_ids,
+        stimulus_strings,
+        np.array(trial_label_indices)
+    )
 
 
 # %%
@@ -529,8 +509,10 @@ def construct_study_lists(
         - An array of stimulus IDs for the category cue targets.
     """
     list_length = 15
-    total_recalls = 4
+    # Now we only want 2 recall events (e.g., [cue, -1]) or [-1, -1]
+    total_recalls = 2  
 
+    # Allocate arrays to store all subjects x trials
     pres_itemids = np.zeros((trial_count * subject_count, list_length), dtype=int)
     pres_itemstrs = np.zeros((trial_count * subject_count, list_length), dtype=object)
     category_cues = np.zeros((trial_count * subject_count, total_recalls), dtype=int)
@@ -540,29 +522,27 @@ def construct_study_lists(
         subject_stimulus_pools = copy.deepcopy(stimulus_pools)
         last_trial_label_indices = np.array([])
 
-        category_cue_indices = generate_recall_cue_indices(
-            trial_count, control_proportion
-        )
+        # Generate the new 2-element recall arrays
+        recall_index_arrays = generate_recall_cue_indices(trial_count, control_proportion)
         validate_stimulus_pool_size(labels, subject_stimulus_pools, trial_count)
 
         for t in range(trial_count):
-            trial_stimulus_indices, trial_stimulus_strings, last_trial_label_indices = (
-                sample_stimuli_for_trial(
-                    labels,
-                    subject_stimulus_pools,
-                    last_trial_label_indices,
-                    aggregated_stimulus_pool,
-                )
+            trial_stim_ids, trial_stim_strs, last_trial_label_indices = sample_stimuli_for_trial(
+                labels,
+                subject_stimulus_pools,
+                last_trial_label_indices,
+                aggregated_stimulus_pool,
             )
 
             # add trial to study lists
             trial_index = s * trial_count + t
-            pres_itemids[trial_index, :] = trial_stimulus_indices
-            pres_itemstrs[trial_index, :] = trial_stimulus_strings
+            pres_itemids[trial_index, :] = trial_stim_ids
+            pres_itemstrs[trial_index, :] = trial_stim_strs
 
-            # Assign category cues
+            # Assign the single category cue (if any)
+            trial_cue_array = recall_index_arrays[t]
             trial_category_cues, trial_cat_cue_indices = assign_cue_stimuli(
-                trial_index, category_cue_indices[t], pres_itemids, total_recalls
+                trial_index, trial_cue_array, pres_itemids, total_recalls
             )
             category_cues[trial_index, :] = trial_category_cues
             cat_cue_indices[trial_index, :] = trial_cat_cue_indices
@@ -587,14 +567,16 @@ if __name__ == "__main__":
     subject_count = 300
     trial_count = 20
     list_length = 15
-    total_recalls = 4
-    control_proportion = 4 / 10
+    # Now each trial has exactly 2 recall events: [cue, free] or [no_cue, free].
+    total_recalls = 2
+    # 40% of trials are "control" => [-1, -1].
+    control_proportion = 0.4
+
     target_data_path = "experiments/block_cat/block_cat.h5"
     target_stimulus_pool_path = "experiments/block_cat/assets/cuefr_pool.txt"
     target_stimulus_labels_path = "experiments/block_cat/assets/cuefr_labels.txt"
     target_category_pool_path = "experiments/block_cat/assets/cuefr_category_pool.txt"
     source_pools_path = "experiments/block_cat/assets/asymfr"
-    total_trials = trial_count * subject_count
 
     # construct stimulus pool across specified category labels
     labels = [
@@ -633,9 +615,11 @@ if __name__ == "__main__":
     ]
     labels = [label.upper() for label in labels]
 
+    # Load the pools
     stimulus_pools: list[list[str]] = [
         load_stimulus_pool(f"{source_pools_path}/{label}.txt") for label in labels
     ]
+    # Flatten/aggregate
     aggregated_stimulus_pool, aggregated_stimulus_labels = aggregate_stimulus_pools(
         stimulus_pools, labels
     )
@@ -655,54 +639,39 @@ if __name__ == "__main__":
         aggregated_stimulus_pool,
     )
 
-    # construct data dict
+    # Construct final data dict
     result: dict[str, np.ndarray] = {
         "subject": np.repeat(np.arange(subject_count), trial_count)[:, np.newaxis],
-        "listLength": np.repeat(list_length, subject_count * trial_count)[
-            :, np.newaxis
-        ],
+        "listLength": np.repeat(list_length, subject_count * trial_count)[:, np.newaxis],
         "pres_itemnos": np.tile(
             np.arange(1, list_length + 1), (subject_count * trial_count, 1)
         ),
         "pres_itemids": pres_itemids,
+        # Now each trial has 2 recall events
         "category_cues": category_cues,
         "category_cue_indices": category_cue_indices,
         "category_cue_itemids": category_cue_itemids,
     }
 
+    # Save results
     save_data(result, target_data_path)
 
-    # tests:
-    # load result file
+    # Basic sanity checks
     loaded_result = load_data(target_data_path)
-
-    # confirm shapes
     assert loaded_result["subject"].shape == (subject_count * trial_count, 1)
     assert loaded_result["listLength"].shape == (subject_count * trial_count, 1)
-    assert loaded_result["pres_itemnos"].shape == (
-        subject_count * trial_count,
-        list_length,
-    )
-    assert loaded_result["pres_itemids"].shape == (
-        subject_count * trial_count,
-        list_length,
-    )
-    assert loaded_result["category_cues"].shape == (
-        subject_count * trial_count,
-        total_recalls,
-    )
-    assert loaded_result["category_cue_indices"].shape == (
-        subject_count * trial_count,
-        total_recalls,
-    )
+    assert loaded_result["pres_itemnos"].shape == (subject_count * trial_count, list_length)
+    assert loaded_result["pres_itemids"].shape == (subject_count * trial_count, list_length)
+    # Only 2 columns for cues:
+    assert loaded_result["category_cues"].shape == (subject_count * trial_count, 2)
+    assert loaded_result["category_cue_indices"].shape == (subject_count * trial_count, 2)
+    assert loaded_result["category_cue_itemids"].shape == (subject_count * trial_count, 2)
 
-    # confirm pres_itemids and pres_itemnos are 1-indexed
-    # (we reserve 0 for padding when list lengths vary)
     assert np.min(loaded_result["pres_itemids"]) == 1
     assert np.max(loaded_result["pres_itemids"]) > list_length
     assert np.min(loaded_result["pres_itemnos"]) == 1
 
-    # also save constructed stimulus pools and labels
+    # Save stimulus pools and labels
     with open(target_stimulus_pool_path, "w") as f:
         f.write("\n".join(aggregated_stimulus_pool))
     with open(target_stimulus_labels_path, "w") as f:
