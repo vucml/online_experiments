@@ -510,6 +510,7 @@ if __name__ == "__main__":
         print("Subject ID:", participant_subjectids)
         print("Block ID:", participant_blockids)
         print()
+        break
 
     control_condition = category_ids == 0
     targetting_condition = category_ids != 0
@@ -532,6 +533,8 @@ if __name__ == "__main__":
         "recalls": recalls,
         "block": block_indices[:, np.newaxis],
     }
+
+    print(f"Unique Subjects: {np.unique(subject_ids), len(np.unique(subject_ids))}")
 
     save_data(result, target_data_path)
     loaded_result = load_data(target_data_path)
