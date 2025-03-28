@@ -5,7 +5,7 @@ function initializeExperiment() {
   
     if (typeof jatos !== 'undefined') {
         console.log('Running in JATOS');
-        prolific_id = jatos.urlQueryParameters.PROLIFIC_ID || '';
+        prolific_id = jatos.urlQueryParameters["PROLIFIC_PID"] || '';
         jsPsychInitOptions = {
             on_finish: () => jatos.endStudy(jsPsych.data.get().json())
         };
