@@ -417,10 +417,10 @@ def retrieve_pres_itemids(
 
 # %%
 if __name__ == "__main__":
-    jatos_data_path = "experiments/cat_target_short/pooled.jsonl"
-    stimulus_pool_path = "experiments/cat_target_short/assets/cuefr_pool.txt"
-    category_pool_path = "experiments/cat_target_short/assets/cuefr_category_pool.txt"
-    target_data_path = "experiments/cat_target_short/expt_milind_pooled.h5"
+    jatos_data_path = "experiments/block_cat/2025_03_29_results_data_20250330050154.jsonl"
+    stimulus_pool_path = "experiments/block_cat/assets/cuefr_pool.txt"
+    category_pool_path = "experiments/block_cat/assets/cuefr_category_pool.txt"
+    target_data_path = "experiments/block_cat/expt_block_cat.h5"
     include_intrusions = False
     distance_threshold = 2
 
@@ -510,6 +510,7 @@ if __name__ == "__main__":
         print("Subject ID:", participant_subjectids)
         print("Block ID:", participant_blockids)
         print()
+        break
 
     control_condition = category_ids == 0
     targetting_condition = category_ids != 0
@@ -532,6 +533,8 @@ if __name__ == "__main__":
         "recalls": recalls,
         "block": block_indices[:, np.newaxis],
     }
+
+    print(f"Unique Subjects: {np.unique(subject_ids), len(np.unique(subject_ids))}")
 
     save_data(result, target_data_path)
     loaded_result = load_data(target_data_path)
