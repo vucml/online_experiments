@@ -277,8 +277,8 @@ def generate_recall_cue_indices(
 
     # 4. Build the recall index arrays for each trial.
     #    block_cue: 4
-    #    isolate_cue: pick from [2,7,14]
-    isolate_positions = [2, 7, 14]
+    #    isolate_cue: pick from [2,8,14]
+    isolate_positions = [2, 8, 14]
 
     all_trials = []
     for ttype in trial_types:
@@ -287,7 +287,7 @@ def generate_recall_cue_indices(
         elif ttype == "block":
             recall_indices = [4, -1]  # single event at position=4, then free recall
         elif ttype == "isolate":
-            # pick 1 from [2,7,14]
+            # pick 1 from [2,8,14]
             chosen = random.choice(isolate_positions)
             recall_indices = [chosen, -1]
         else:
@@ -474,7 +474,7 @@ def assign_cue_stimuli(
         index = category_cue_indices[cue_idx]
         if index != -1:  # Cued recall
             category_cues[cue_idx] = pres_itemids[trial_index, index]
-            cat_cue_positions[cue_idx] = index + 1  # Convert to 1-indexed
+            cat_cue_positions[cue_idx] = index
 
     return category_cues, cat_cue_positions
 

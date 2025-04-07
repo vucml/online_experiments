@@ -510,7 +510,6 @@ if __name__ == "__main__":
         print("Subject ID:", participant_subjectids)
         print("Block ID:", participant_blockids)
         print()
-        break
 
     control_condition = category_ids == 0
     targetting_condition = category_ids != 0
