@@ -417,10 +417,10 @@ def retrieve_pres_itemids(
 
 # %%
 if __name__ == "__main__":
-    jatos_data_path = "experiments/block_cat/2025_03_29_results_data_20250330050154.jsonl"
+    jatos_data_path = "experiments/block_cat/2025_04_10_results_data_20250410155955.jsonl"
     stimulus_pool_path = "experiments/block_cat/assets/cuefr_pool.txt"
     category_pool_path = "experiments/block_cat/assets/cuefr_category_pool.txt"
-    target_data_path = "experiments/block_cat/expt_block_cat.h5"
+    target_data_path = "experiments/block_cat/2025_04_10_block_cat.h5"
     include_intrusions = False
     distance_threshold = 2
 
