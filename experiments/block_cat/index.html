@@ -166,7 +166,11 @@
         const stimulus_pool = await loadItemPool(config.stimuli_path)
 
         // configure subject and get subject presentations
-        const subjectId = using_jatos ? configureSubject(data, jatos.batchSession) : 1;
+        // const subjectId = configureSubject(data);
+        const subjects = data.get("subject").to_array()[0];
+        const subjectIds = [... new Set(subjects)]
+        const randomIndex = Math.floor(Math.random() * subjectIds.length);
+        const subjectId = subjectIds[randomIndex];
         config.subjectId = subjectId
         const subject_presentations = getEntriesBySubjectIndex(data, "pres_itemids", subjectId)
         let trial_count = subject_presentations.length
@@ -246,6 +250,11 @@
                     "category_target_string": category_target_strings[i][0]
                 }
             });
+            
+            console.log(i + 'th trial category_cue: ' + category_cues[i][0]);
+            console.log(i + 'th trial category_cue: ' + category_cue);
+            console.log(i + 'th trial category_target: ' + category_targets[i][0]);
+            console.log(i + 'th trial category_target_string: ' + category_target_strings[i][0]);
 
             timeline.push({
                 type: jsPsychFreeRecall,

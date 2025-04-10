@@ -38,31 +38,52 @@ async function loadItemPool(pool_path) {
   return text.split('\n');
 }
 
-function getAvailableSubjects(data, batchSession) {
-  let subject = data.get("subject").to_array()[0];
-  let subjectIds;
-  if (!batchSession.defined('/subjectIds')) {
-    subjectIds = [... new Set(subject)]
-    batchSession.set('subjectIds', subjectIds)
-  } else {
-    subjectIds = batchSession.get('subjectIds');
-  }
-  return subjectIds;
+// function getAvailableSubjects(data, batchSession) {
+//   let subject = data.get("subject").to_array()[0];
+//   let subjectIds;
+//   if (!batchSession.defined('/subjectIds')) {
+//     subjectIds = [... new Set(subject)]
+//     batchSession.set('subjectIds', subjectIds)
+//   } else {
+//     subjectIds = batchSession.get('subjectIds');
+//   }
+//   return subjectIds;
+// }
+
+// function configureSubject(data, batchSession) {
+//   let subjectIds = getAvailableSubjects(data, batchSession);
+
+//   // set current subj_id to next available subject id
+//   if (subjectIds.length == 0) {
+//     throw new Error("Max number of subjects reached");
+//   }
+//   const subjectId = subjectIds.shift();
+
+//   // update batchsession to reflect used subject id
+//   batchSession.set('subjectIds', subjectIds);
+
+//   return subjectId;
+// }
+
+function getAvailableSubjects(data) {
+  // Get the 2D array from data.
+  const subjects2D = data.get("subject").to_array();
+  // Extract the subject id from each row.
+  const subjectIds = subjects2D.map(row => row[0]);
+  // Remove duplicates if necessary.
+  return [...new Set(subjectIds)];
 }
 
-function configureSubject(data, batchSession) {
-  let subjectIds = getAvailableSubjects(data, batchSession);
+function configureSubject(data) {
+  const subjectIds = getAvailableSubjects(data);
 
-  // set current subj_id to next available subject id
-  if (subjectIds.length == 0) {
-    throw new Error("Max number of subjects reached");
+  if (subjectIds.length === 0) {
+    throw new Error("No available subjects.");
   }
-  const subjectId = subjectIds.shift();
 
-  // update batchsession to reflect used subject id
-  batchSession.set('subjectIds', subjectIds);
-
-  return subjectId;
+  // Randomly select one subject id.
+  const randomIndex = Math.floor(Math.random() * subjectIds.length);
+  return subjectIds[randomIndex];
 }
 
 function getTrialPresentations(data) {

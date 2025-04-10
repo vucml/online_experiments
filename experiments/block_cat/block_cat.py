@@ -237,64 +237,30 @@ def generate_balanced_trials_with_priority(
 # %%
 
 
-def generate_recall_cue_indices(
-    trial_count: int,
-    control_proportion: float,
-) -> list[list[int]]:
+def generate_recall_cue_indices() -> list[list[int]]:
     """
-    Generate recall-event indices for each trial (2 events per trial) under the new design:
-      - Some fraction of trials are "control" (no cue).
-      - The rest are divided evenly between "block-target" (cue=4) and "isolate-target" (cue in [2,7,14]).
-      - Each cued trial has exactly one cue event followed by free recall:
-          [ cue_position, -1 ]
-      - Control trials have: [ -1, -1 ].
-
+    Generate recall-event indices for each trial (2 events per trial) under the new design.
     Args:
         trial_count: Total number of trials.
-        control_proportion: Proportion of trials that are control (free recall only).
 
     Returns:
         A list (length = trial_count) of lists (each of length 2):
-          - For control trials => [-1, -1]
-          - For block-target => [4, -1]
-          - For isolate-target => [some position in {2,7,14}, -1]
+          - For control trials => [0, 0]
+          - For block-target => [4, 0]
+          - For isolate-target => [some position in {2,8,14}, 0]
     """
-    # 1. Figure out how many trials are control vs cued.
-    num_control = int(round(trial_count * control_proportion))
-    num_cued = trial_count - num_control
 
-    # 2. Split cued trials evenly between block-target and isolate-target.
-    half = num_cued // 2
-    remainder = num_cued - 2 * half
-    # So we have 'half' block-target, 'half' isolate-target, plus any leftover assigned randomly.
-    cued_types = ["block"] * half + ["isolate"] * half
-    for _ in range(remainder):
-        cued_types.append(random.choice(["block", "isolate"]))
-
-    # 3. Combine into a single list of trial types and shuffle.
-    trial_types = ["control"] * num_control + cued_types
+    # let's directly define trial types by retrieval cues
+    trial_types = (
+        # control
+        [[0, 0]] * 4
+        # block
+        + [[4, 0]] * 8
+        # isolate
+        + [[2, 0], [8, 0], [14, 0]]
+    )
     random.shuffle(trial_types)
-
-    # 4. Build the recall index arrays for each trial.
-    #    block_cue: 4
-    #    isolate_cue: pick from [2,8,14]
-    isolate_positions = [2, 8, 14]
-
-    all_trials = []
-    for ttype in trial_types:
-        if ttype == "control":
-            recall_indices = [-1, -1]
-        elif ttype == "block":
-            recall_indices = [4, -1]  # single event at position=4, then free recall
-        elif ttype == "isolate":
-            # pick 1 from [2,8,14]
-            chosen = random.choice(isolate_positions)
-            recall_indices = [chosen, -1]
-        else:
-            raise ValueError(f"Invalid trial type: {ttype}")
-        all_trials.append(recall_indices)
-
-    return all_trials
+    return trial_types
 
 
 # %%
@@ -472,8 +438,8 @@ def assign_cue_stimuli(
 
     for cue_idx in range(total_recalls):
         index = category_cue_indices[cue_idx]
-        if index != -1:  # Cued recall
-            category_cues[cue_idx] = pres_itemids[trial_index, index]
+        if index != 0:  # Cued recall
+            category_cues[cue_idx] = pres_itemids[trial_index, index-1]
             cat_cue_positions[cue_idx] = index
 
     return category_cues, cat_cue_positions
@@ -486,7 +452,6 @@ def construct_study_lists(
     stimulus_pools: list[list[str]],
     trial_count: int,
     subject_count: int,
-    control_proportion: float,
     aggregated_stimulus_pool: list[str],
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Construct study lists according to design of cued / free recall experiment.
@@ -497,7 +462,6 @@ def construct_study_lists(
         trial_count: The number of trials per subject.
         subject_count: The number of subjects.
         list_length: The number of presentations per trial.
-        control_proportion: The proportion of trials with no category cues.
         aggregated_stimulus_pool: The aggregated stimulus pool.
 
     Returns:
@@ -523,7 +487,7 @@ def construct_study_lists(
         last_trial_label_indices = np.array([])
 
         # Generate the new 2-element recall arrays
-        recall_index_arrays = generate_recall_cue_indices(trial_count, control_proportion)
+        recall_index_arrays = generate_recall_cue_indices()
         validate_stimulus_pool_size(labels, subject_stimulus_pools, trial_count)
 
         for t in range(trial_count):
@@ -564,13 +528,12 @@ if __name__ == "__main__":
     #
     # also include a 1D array specifying a pres_id whose corresponding category label will be used for cued recall ('category_cue')
 
-    subject_count = 300
+    subject_count = 1000
     trial_count = 15
     list_length = 15
     # Now each trial has exactly 2 recall events: [cue, free] or [no_cue, free].
     total_recalls = 2
     # 40% of trials are "control" => [-1, -1].
-    control_proportion = 0.4
 
     target_data_path = "experiments/block_cat/block_cat.h5"
     target_stimulus_pool_path = "experiments/block_cat/assets/cuefr_pool.txt"
@@ -635,7 +598,6 @@ if __name__ == "__main__":
         stimulus_pools,
         trial_count,
         subject_count,
-        control_proportion,
         aggregated_stimulus_pool,
     )
 
