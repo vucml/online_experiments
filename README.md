@@ -1,14 +1,3 @@
-cat_target_short link: https://jatos.mindprobe.eu/publix/run?code=zc5qiDkWfs0
-
-URL for in person consent form:
-https://redcap.vumc.org/surveys/?s=JLW7M9DNJ8P7MXYT
-
-URL for in person debriefing: 
-https://redcap.vumc.org/surveys/?s=JMP7WDEDXAKLKE4A
-
-URL for in person participant information:
-https://redcap.vumc.org/surveys/?s=C7FEAHWLTY4CLXRK
-
 # online_experiments
 
 This repository attempts to streamline the process of creating and running browser-based experiments using JavaScript, HTML, and CSS. We try to:
