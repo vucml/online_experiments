@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Experiment</title>
+        <script src="jatos.js"></script> 
+        <script>
+            // Set base URL of file paths different for JATOS than other hosting environments
+            const base = document.createElement('base');
+            base.href = typeof jatos !== 'undefined' ? '.' : '../../'; 
+            document.head.appendChild(base);
+          </script>
+        <script src="core/jspsych/jspsych.js"></script>
+        <script src="core/jspsych/plugins/plugin-html-keyboard-response.js"></script>
+        <script src="core/jspsych/plugins/plugin-call-function.js"></script>
+        <script src="core/jspsych/plugins/plugin-instructions.js"></script>
+        <script src="core/jspsych/plugins/plugin-fullscreen.js"></script>
+        <script src="core/jspsych/custom-plugins/jspsych-fixation.js"></script>
+        <script src="core/jspsych/plugins/plugin-html-button-response.js"></script>
+        <script src="core/jspsych/custom-plugins/jspsych-item-presentation.js"></script>
+        <script src="core/jspsych/custom-plugins/jspsych-free-recall.js"></script>
+        <link href="core/jspsych/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+        <link href="core/jspsych/css/lpl-recall-recog-probe.css" rel="stylesheet" type="text/css"></link>
+        <script src="core/init_experiment.js"></script>
+        <script type="module" src="experiments/cat_targ_15/helpers.js"></script>
+    </head>
+    <body></body>
+    <script type="module">
+
+        import { transpose, unique_entries, getEntriesBySubjectIndex, loadH5Data, loadItemPool, configureSubject, getTrialPerformance, getTotalPerformance, calculateBonus, getTrialTargetSuccess } from "./experiments/cat_targ_15/helpers.js";
+
+        const using_jatos = typeof jatos !== 'undefined';
+
+        // Paths to data and stimuli
+        const config = {
+            "data_path": "experiments/cat_targ_15/cat_targ_15.h5",
+            "stimuli_path": "experiments/cat_targ_15/assets/cuefr_pool.txt",
+            "category_path": "experiments/cat_targ_15/assets/cuefr_labels.txt",
+        };
+
+        // Startup Timeline Events
+        const cursor_off = {
+            type: jsPsychCallFunction,
+            func: function() {
+                document.body.style.cursor= "none";
+            }
+        }
+
+        const cursor_on = {
+            type: jsPsychCallFunction,
+            func: function() {
+                document.body.style.cursor= "auto";
+            }
+        }
+
+        const fullscreen = {
+            type: jsPsychFullscreen,
+            message: '<p ><u>Full Screen Mode:</u> To help ensure data quality, we ask that you complete the experiment with your browser in fullscreen mode. If your browser supports it, the experiment will switch to full screen mode when you press the button below. Once you are finished with the experiment, your browser should leave fullscreen mode automatically.</p><p>Press Continue when you are ready to proceed.</p>',
+            fullscreen_mode: true
+        }
+
+        // const consent = {
+        //     type: jsPsychInstructions,
+        //     pages: [
+        //     '<p  >The following information is provided to inform you about the research project and your participation in it. Please read this form carefully before proceeding.</p><embed src="assets/Remote_ICD_BEH_PERF.pdf" style="width: 75%" height="750"></embed>'
+        //     ],
+        //     show_clickable_nav: true,
+        //     key_forward: 'm',
+        //     key_backward: 'z',
+        //     button_label_previous: 'Previous (<strong>Z</strong>)',
+        //     button_label_next: 'Next (<strong>M</strong>)'
+        // }
+
+        const instructions = {
+        type: jsPsychInstructions,
+        pages: [
+            /* Page 1 */
+            `<p>Welcome to the experiment!</p>
+            <p>In this experiment, you will study a list of 15 words (one at a time), each of which belongs to a particular category.</p>
+            <p>After you study the list, you'll get a memory test. 
+            Please press Next when you are ready to proceed.</p>`,
+            
+            /* Page 2 */
+            `<p style="font-size: 24px;">STUDY PERIOD INSTRUCTIONS</p>
+            <p>You will see 15 items one at a time, each labeled with its category, like this:</p>
+            <p class="stimulus-category" style="font-size: 24px;">MUSIC STYLE</p>
+            <p class="stimulus-word" style="font-size: 48px;">hip hop</p>
+            <p>Your goal is to remember all of these items for a later memory test. Pay attention to both the item and its category!</p>`,
+            
+            /* Page 3 */
+            `<p style="font-size: 24px;">MEMORY TEST</p>
+            <p>After the full list is shown, you'll have up to two prompts for each trial:</p>
+            <ul>
+            <strong>Category Cue (10 seconds)</strong>: Sometimes, you'll first see a prompt asking you to recall a word from a specific category. For example
+            </ul>
+            <p class="instruction-text" style="font-size: 24px; border: solid purple">
+            Recall MUSIC STYLE
+            </p>
+            <p style="font-size: 48px;">_</p>
+            <p>If you can remember an item from that category, type it in and press ENTER.</p>
+            <ul>
+            <strong>Free Recall (60 seconds)</strong>: Next, you'll have time to recall <em>any</em> of the 15 studied items. Type as many different items as you can. Press ENTER after each item.
+            </ul>
+            <p>If there is no category cue for a trial, you'll go straight to the free recall prompt.</p>`,
+            
+            /* Page 4 */
+            `<p style="font-size: 24px;">PERFORMANCE & BONUS</p>
+            <p>You'll earn a base bonus for each correct item you recall. 
+            Whenever the trial includes a category cue and you correctly recall that cued item in the first prompt, you earn a large extra multiplier for that item. 
+            The maximum total bonus is $10.</p>
+            <p>Pay attention to both items and categories to maximize your reward!</p>`,
+            
+            /* Page 5 */
+            `<p style="font-size: 24px;">TYPING RESPONSES</p>
+            <p>After you type each item, press ENTER to submit it. You can press BACKSPACE to correct any typos <em>before</em> you press ENTER.</p>
+            <p>Minor spelling mistakes are acceptable; just do your best so that it's clear which item you intended.</p>`,
+            
+            /* Page 6 */
+            `<p style="font-size: 24px;">TIMING & OTHER TIPS</p>
+            <p>You have <strong>10 seconds</strong> to respond to a category cue if it appears, and then <strong>50 seconds</strong> for free recall. 
+            If you finish early, you can press ENTER or wait for the timer to run out. 
+            If you can't recall anything more, just wait until the time is up.</p>
+            <p>You will see a short break at the end of each trial.</p>`,
+            
+            /* Page 7 (Optional Example) */
+            `<p style="font-size: 24px;">EXAMPLE TRIAL (Simplified)</p>
+            <p>Let's illustrate with a smaller 6-item example:</p>
+            <p class="stimulus-category" style="font-size: 24px;">COUNTRY</p>
+            <p class="stimulus-word" style="font-size: 48px;">Japan</p>
+            <p class="stimulus-category" style="font-size: 24px;">ANIMAL</p>
+            <p class="stimulus-word" style="font-size: 48px;">Dog</p>
+            <p>... and so on.</p>
+            <p>After these 6 items, you might see:</p>
+            <p class="instruction-text" style="font-size: 24px; border: solid purple">Recall ANIMAL</p>
+            <p style="font-size: 48px;">_</p>
+            <p>(10 seconds to recall something like “Dog”)</p>
+            <p>Then you'll see: <br><span class="instruction-text" style="font-size: 24px;">Recall ANY ITEM</span></p>
+            <p style="font-size: 48px;">_</p>
+            <p>(50 seconds to list all the other items you can remember.)</p>`,
+            
+            /* Page 8 */
+            `<p style="font-size: 24px;">FINAL NOTES</p>
+            <p>In the real experiment, each list has 15 words, and each trial follows this same format. 
+            After you finish all trials, you'll be shown your total number of correct recalls and your bonus.</p>
+            <p>Good luck!</p>`
+        ],
+        show_clickable_nav: true,
+        key_forward: 'm',
+        key_backward: 'z',
+        button_label_previous: 'Previous (<strong>Z</strong>)',
+        button_label_next: 'Next (<strong>M</strong>)'
+        };
+
+        const check_in = {
+    type: jsPsychInstructions,
+    pages:[
+        '<p>END OF INSTRUCTIONS. Click the right arrow on your keyboard to begin the first trial.</p>',
+    ],
+}
+
+        // load data from config.data_path
+        console.log('data_path: ' + config.data_path)
+        const data = await loadH5Data(config.data_path)
+
+        // load stimulus pool from config.stimuli_path
+        console.log('stimuli_path: ' + config.stimuli_path)
+        const stimulus_pool = await loadItemPool(config.stimuli_path)
+
+        // configure subject and get subject presentations
+        // const subjectId = configureSubject(data);
+        const subjects = data.get("subject").to_array()[0];
+        const subjectIds = [... new Set(subjects)]
+        const randomIndex = Math.floor(Math.random() * subjectIds.length);
+        const subjectId = subjectIds[randomIndex];
+        config.subjectId = subjectId
+        const subject_presentations = getEntriesBySubjectIndex(data, "pres_itemids", subjectId)
+        let trial_count = subject_presentations.length
+        console.log('subjectId: ' + subjectId)
+        
+        // load category pool and cues and targets if available
+        let category_pool;
+        let category_cues;
+        let category_targets;
+        let category_target_strings;
+        if ('category_path' in config) {
+            console.log('category_path: ' + config.category_path)
+            category_cues = getEntriesBySubjectIndex(data, "category_cues", subjectId)
+            category_targets = getEntriesBySubjectIndex(data, "category_cue_itemids", subjectId)
+            category_pool = await loadItemPool(config.category_path)
+            category_target_strings = category_targets.map((target_array) => {
+            return target_array.map((target) => {
+                if (target === 0) {
+                return '';
+                } else {
+                return stimulus_pool[target - 1];
+                }
+            });
+            });
+        }
+
+        // Configure Trial Events:
+        let timeline = [fullscreen, instructions, check_in, cursor_off];
+        // let timeline = [];
+        for (let i = 0; i < trial_count; i++) {
+
+            // Configure Study Events:
+            let presentation_stimuli = [];
+            for (let j = 0; j < subject_presentations[i].length; j++) {
+                if (subject_presentations[i][j] !== 0) {
+                    presentation_stimuli.push(stimulus_pool[subject_presentations[i][j] - 1]);
+                }
+            }
+            console.log(i + 'th trial presentation_stimuli: ' + presentation_stimuli);
+            
+            let presentation_categories = []
+            if ('category_path' in config) {
+            for (let j = 0; j < subject_presentations[i].length; j++) {
+                if (subject_presentations[i][j] === 0) {
+                presentation_categories.push('');
+                } else {
+                presentation_categories.push(category_pool[subject_presentations[i][j] - 1]);
+                }
+            }
+            console.log(i + 'th trial presentation_categories: ' + presentation_categories);
+            }
+
+            timeline.push(cursor_off)
+            timeline.push({type: jsPsychFixation})
+            timeline.push({
+                type: jsPsychItemPresentation, 
+                word_list: presentation_stimuli, 
+                category_list: presentation_categories,
+                // word_time: 1,
+                // inter_word_time: 0,
+            })
+
+
+            // Configure Recall Events:
+            let category_cue = '';
+            if ('category_path' in config && category_cues[i][0] > 0) {
+                category_cue = category_pool[category_cues[i][0] - 1];
+            }
+
+            timeline.push({
+                type: jsPsychFreeRecall,
+                initial_category_cue: category_cue,
+                response_limit: 1,
+                maximum_recall_time: 10000,
+                data: {
+                    "category_target": category_targets[i][0],
+                    "category_target_string": category_target_strings[i][0]
+                }
+            });
+            
+            console.log(i + 'th trial category_cue: ' + category_cues[i][0]);
+            console.log(i + 'th trial category_cue: ' + category_cue);
+            console.log(i + 'th trial category_target: ' + category_targets[i][0]);
+            console.log(i + 'th trial category_target_string: ' + category_target_strings[i][0]);
+
+            timeline.push({
+                type: jsPsychFreeRecall,
+                // initial_category_cue: category_cue,
+                response_limit: 1000, // practically unlimited
+                maximum_recall_time: 50000,
+                data: {
+                    "category_target": "",
+                    "category_target_string": ""
+                }
+            });
+
+            // Configure End of Trial Events:
+            const end_trial_fn = function() {
+                const last_trial_data = jsPsych.data.getLastTimelineData()
+                const recall_total = getTrialPerformance(last_trial_data) // technically buggy
+                const trial_count = jsPsych.getCurrentTrial().data.trial_count
+                const i = jsPsych.getCurrentTrial().data.trial_index
+
+                let message = jsPsych.getCurrentTrial().data.message
+                const num_cued_recall_events = category_cues[i].filter(cue => cue > 0).length;
+
+                const cued_items_message = 'You successfully recalled {success_count} out of {num_cued_recall_events} items cued by category labels in this trial.';
+                let category_target_success = [];
+                let success_count = 0;  // Count how many successful recalls
+
+                if ('category_path' in config) {
+                    const is_control_trial = category_cues[i].every(cue => cue === 0);
+                    if (!is_control_trial) {
+                        for (let recall_index = 0; recall_index < category_cues[i].length; recall_index++) {
+                            if (category_cues[i][recall_index] === 0) {
+                                continue;
+                            } else { 
+                                let category_target = category_targets[i][recall_index];
+                                let category_target_string = category_target_strings[i][recall_index];
+                                let target_success = getTrialTargetSuccess(last_trial_data, category_target_string, recall_index);
+                                category_target_success.push(target_success);
+                                success_count += target_success;
+                            }
+                        }
+                        message = `<p>${cued_items_message
+                            .replace('{success_count}', success_count)
+                            .replace('{num_cued_recall_events}', num_cued_recall_events)}</p>` + message;
+                    }
+                }
+                const full_message = `<p>You've completed trial ${i+1} of ${trial_count}, nice work!</p><p>Total Items Recalled: ${recall_total}${message}`
+                    return [full_message];
+                return [full_message];
+            }
+    
+            // Configure End of Trial Message:
+            let end_of_trial_message;
+            switch (i) {
+                case 0:
+                    end_of_trial_message = `<p >You've completed the first trial! Please click the right arrow on your keyboard to proceed to the next trial.</p>`;
+                    break;
+                case trial_count - 1:
+                    end_of_trial_message = `<p >You have completed the experiment. Thank you for your participation!</p>`;
+                    break;
+                default:
+                    end_of_trial_message = `<p >When you're ready to proceed, press Next.</p>`;
+            }
+
+            timeline.push(cursor_on)
+            if (i == 0) {
+                timeline.push({
+                    type: jsPsychInstructions,
+                    pages: end_trial_fn,
+                    data: {"trial_index": i, "trial_count": trial_count, "message": end_of_trial_message}
+                })
+            } else {
+                timeline.push({
+                    type: jsPsychInstructions,
+                    pages: end_trial_fn,
+                    show_clickable_nav: true,
+                    key_forward: 'm',
+                    key_backward: 'z',
+                    button_label_previous: 'Previous (<strong>Z</strong>)',
+                    button_label_next: 'Next (<strong>M</strong>)',
+                    data: {"trial_index": i, "trial_count": trial_count, "message": end_of_trial_message}
+                })
+            }
+        }
+        timeline.push({
+            type: jsPsychHtmlButtonResponse,
+            stimulus: function() {
+                const bonus = calculateBonus(jsPsych.data.getLastTimelineData(), category_target_strings);
+                return `You've completed the experiment! Your total performance bonus is $${bonus}. Click "SUBMIT" or wait five seconds to complete the experiment and confirm your bonus. Make sure you proceed to the next page to ensure your bonus is recorded.`;
+            },
+            choices: ["SUBMIT"],
+            trial_duration: 5000,
+            data: function() {
+                return { bonus: calculateBonus(jsPsych.data.getLastTimelineData(), category_target_strings) };
+            }
+            });
+
+
+        // initializes experiment different for JATOS than other hosting environments
+        jsPsych = initializeExperiment();
+        jsPsych.data.addProperties(config);
+        jsPsych.run(timeline);
+    </script>
+</html>
