@@ -174,7 +174,6 @@ def sample_stimuli_for_trial(
         candidate_pool = list(all_label_indices)
 
     chosen = random.sample(candidate_pool, num_needed)
-    # Randomly designate one as the block category.
     categories = [cat for cat in chosen]
     # Shuffle the 9 non-block categories.
     random.shuffle(categories)
@@ -187,6 +186,7 @@ def sample_stimuli_for_trial(
     # Now, for each position, pop a stimulus from the corresponding subject's pool.
     stimulus_ids = np.zeros(TOTAL_POSITIONS, dtype=int)
     stimulus_strings = np.empty(TOTAL_POSITIONS, dtype=object)
+    trial_subject_stimulus_pools = copy.deepcopy(subject_stimulus_pools)
 
     for pos, cat_idx in enumerate(trial_label_indices):
         pool = subject_stimulus_pools[cat_idx]
@@ -320,7 +320,7 @@ if __name__ == "__main__":
     #
     # also include a 1D array specifying a pres_id whose corresponding category label will be used for cued recall ('category_cue')
 
-    subject_count = 300
+    subject_count = 1000
     trial_count = 15
     list_length = 15
     # Now each trial has exactly 2 recall events: [cue, free] or [no_cue, free].
